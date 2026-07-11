@@ -33,7 +33,7 @@ LiquidityLens uses a decoupled architecture designed for high-throughput financi
 2. **Backend (FastAPI & SQLAlchemy):** 
    - **Transaction Engine:** Handles the simulated ledger movements.
    - **Intelligence Layer:** Runs asynchronously over the transaction stream. Contains a deterministic Liquidity Forecasting Service and an Anomaly Detection Service.
-3. **LLM Translation Layer:** Only used for translating mathematical anomalies into human-readable, localized (Bengali) operational advice.
+3. **Deterministic Localization Layer:** Translates complex mathematical anomalies into human-readable, localized (Bengali) operational advice using verified templates, entirely removing the risk of LLM hallucinations.
 
 ---
 
@@ -56,7 +56,7 @@ To prove analytical quality and system performance, we measured three key metric
 2. **Alert Explanation Coverage (Reliability):** 
    - **Measured Evidence:** **100%** of generated alerts are accompanied by a Deterministic Deduction (e.g., "transaction_splitting", "high_velocity"). Zero black-box alerts are generated; every alert provides the mathematical evidence and confidence score required for human review.
 3. **API Processing Latency (Performance):** 
-   - **Measured Evidence:** Because the forecasting engine is fully deterministic and decoupled from a heavy LLM, the `/analyze` endpoint processes 5,000+ synthetic transaction events and generates a full runway forecast in **< 150ms average latency**. (LLMs are strictly reserved for the async translation step).
+   - **Measured Evidence:** Because the entire pipeline (including localized translation) is fully deterministic and decoupled from slow, unpredictable LLMs, the `/analyze` endpoint processes 5,000+ synthetic transaction events and generates a full runway forecast in **< 150ms average latency**.
 
 ---
 

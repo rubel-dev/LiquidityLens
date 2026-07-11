@@ -77,12 +77,12 @@ start 2nd implementation phase
 
 ## Checks Run
 - `gh run list -R rubel-dev/LiquidityLens --limit 3` showed the latest foundation CI run failed.
-- `python -m pytest` from `backend/` passed locally with 16 passed, 2 skipped, and 97.21% coverage.
-- PostgreSQL migration tests skipped locally because Docker/PostgreSQL was unavailable.
+- `python -m pytest` from `backend/` passed locally with 16 passed, 2 skipped, and 97.21% coverage before local PostgreSQL credentials were provided.
+- `python -m pytest tests\integration\test_domain_migration_postgres.py -q` passed with 2 tests against local PostgreSQL database `hacathon_db` after setting `DATABASE_SYNC_URL`.
 - `docker compose up -d postgres` failed because Docker Desktop/daemon was not running.
 
 ## Migration Result
-SQLAlchemy metadata and Alembic migration file are present. PostgreSQL upgrade/downgrade/re-upgrade validation is configured for CI but not locally verified in this sandbox.
+SQLAlchemy metadata and Alembic migration file are present. PostgreSQL upgrade/downgrade/re-upgrade validation passed against local database `hacathon_db`; remote CI validation remains pending.
 
 ## SonarQube Status
 Pending remote CI. SonarQube pass is not claimed.
@@ -91,4 +91,4 @@ Pending remote CI. SonarQube pass is not claimed.
 Pending.
 
 ## Final Outcome
-Database schema code, migration foundation, CI PostgreSQL service configuration, tests, and documentation were added. The module remains In Progress until PostgreSQL migration validation and the pre-existing remote foundation CI failure are inspected and resolved.
+Database schema code, migration foundation, CI PostgreSQL service configuration, tests, and documentation were added. The module is locally implemented after PostgreSQL migration validation passed against `hacathon_db`; remote CI/Sonar must still be inspected before marking it Verified.

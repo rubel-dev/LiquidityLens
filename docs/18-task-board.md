@@ -5,7 +5,7 @@
 | 0 | Review and merge governance commit | DOC-001,QUALITY-001 | Done |
 | 1 | Scaffold repository foundation | ARCH-001,ARCH-002,API-001,DB-001 | Done |
 | 1 | Add backend/frontend tooling | QUALITY-001,QUALITY-002,CI-001,CI-002 | Done |
-| 2 | Add SQLAlchemy models and Alembic migrations | DB-001,FR-001,FR-002,FR-008,NFR-002,NFR-003,NFR-004,DATA-001,DATA-002,DATA-003 | In Progress |
+| 2 | Add SQLAlchemy models and Alembic migrations | DB-001,FR-001,FR-002,FR-008,NFR-002,NFR-003,NFR-004,DATA-001,DATA-002,DATA-003 | Done |
 | 3 | Add deterministic synthetic scenarios | DATA-001,FR-009 | Pending |
 | 4 | Add provider ingestion and validation | NFR-003 | Pending |
 | 5 | Add liquidity runway engine | FR-004 | Pending |

@@ -8,7 +8,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 |---|---|---|
 | 0 | Governance, prompt validation, CI, SonarQube | Documented/Configured |
 | 1 | Repository foundation | Implemented |
-| 2 | Database schema and migrations | Not started |
+| 2 | Database schema and migrations | In Progress |
 | 3 | Synthetic scenario engine | Not started |
 | 4 | Provider ingestion and validation | Not started |
 | 5 | Liquidity engine | Not started |
@@ -34,4 +34,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 - Product-code CI checks for backend, frontend, coverage, governance, Sonar scan, and Quality Gate.
 
 ## Explicitly Not Implemented
-Database domain schema, business migrations, synthetic scenarios, provider ingestion, liquidity forecasting, anomaly detection, confidence fusion, explanations, alerts, cases, authentication, provider-scope authorization, dashboards, metrics endpoints, reset/replay, and production deployment remain not started.
+Business logic, seed scenarios, provider ingestion, liquidity forecasting, anomaly detection services, confidence fusion services, explanation services, alert services, case services, authentication, provider-scope authorization, dashboards, metrics endpoints, reset/replay, and production deployment remain not started.
+
+## Database Schema Status
+SQLAlchemy models and an initial Alembic schema migration exist for the documented MVP tables. Local metadata tests pass. PostgreSQL migration tests are configured but skipped locally when PostgreSQL/Docker is unavailable; remote CI/local Docker must confirm upgrade/downgrade/re-upgrade before this phase is marked Verified.

@@ -26,7 +26,7 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | ARCH-001 | Modular monolith | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
 | ARCH-002 | No MVP microservices | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
 | API-001 | Versioned /api/v1 contracts | API design | api | `/api/v1/health`, `/api/v1/readiness` implemented; feature APIs planned | Foundation page health status only | backend/frontend foundation tests | MET-007 | DEMO-001 | In Progress |
-| DB-001 | PostgreSQL with SQLAlchemy/Alembic | DB design | persistence | n/a | n/a | readiness/config tests; migration tests planned | MET-012 | n/a | In Progress |
+| DB-001 | PostgreSQL with SQLAlchemy/Alembic | DB design | persistence | n/a | n/a | metadata tests pass; PostgreSQL migration tests configured for CI and skipped locally when DB unavailable | MET-012 | n/a | In Progress |
 | SEC-001 | No credentials or real identities | PDF | security | all APIs planned | all UI | safety validation planned | MET-012 | n/a | Approved |
 | SAFE-001 | No real financial activity | PDF | all | no execution endpoint | no command UI | safety validation planned | MET-012 | DEMO-001 | Approved |
 | SAFE-002 | No wrongdoing declaration | PDF | explanation | alerts planned | alert UI | safety validation planned | MET-006 | DEMO-001 | Approved |

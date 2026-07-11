@@ -87,7 +87,15 @@ CI and SonarQube are configured before product code begins. Required secret name
 The authoritative project key is in `sonar-project.properties`. Do not commit secret values. SonarQube Quality Gate must not be claimed as passed until remote CI confirms it.
 
 ## Current Status
-Design, governance, prompt traceability, CI, SonarQube configuration, and repository foundation are prepared. Only health/readiness endpoints, empty module boundaries, local Docker runtime, and the minimal synthetic-data frontend surface are implemented. Product business logic, domain ORM models, business migrations, dashboards, alerts, cases, authentication, and algorithms are intentionally not implemented yet.
+Design, governance, prompt traceability, CI, SonarQube configuration, repository foundation, and the database schema module are prepared. Only health/readiness endpoints, empty module boundaries, local Docker runtime, the minimal synthetic-data frontend surface, SQLAlchemy domain models, and the initial Alembic schema migration are implemented. Product business logic, seed scenarios, dashboards, alerts/case services, authentication, and algorithms are intentionally not implemented yet.
+
+## Database Migrations
+Run migrations from `backend/` after PostgreSQL is available:
+```bash
+alembic upgrade head
+alembic downgrade base
+alembic upgrade head
+```
 
 ## Recommended First Coding Module
 Repository foundation, followed by synthetic scenario fixtures.

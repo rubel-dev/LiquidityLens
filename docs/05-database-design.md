@@ -1,6 +1,28 @@
 # PostgreSQL Database Design
 
-No ORM models or migrations are created in this step.
+SQLAlchemy ORM models and the initial Alembic domain schema migration are implemented for the MVP table registry. Alembic remains the authoritative schema creation path; the application runtime must not call `metadata.create_all()`.
+
+## Implementation Notes
+- Monetary values use PostgreSQL-compatible `NUMERIC(14,2)` for cash, balances, and transactions; confidence values use `NUMERIC(5,4)` for `0..1` ranges.
+- Timestamp columns use timezone-aware `DateTime(timezone=True)` and are intended to store UTC values.
+- Shared cash snapshots do not include `provider_id`; provider balance snapshots are scoped to one agent/provider account and include composite foreign keys to prevent cross-provider mismatch.
+- Nullable balance amounts represent unknown or missing data. Unknown balances must not default to zero.
+- Public-facing identifiers use deterministic synthetic references such as `SIM-AGENT-0001`, `SIM-CUST-0001`, and `SIM-TXN-000001`.
+- Append-only history/audit tables avoid delete-orphan cascades.
+
+## Composite Index Rationale
+- `ix_transactions_agent_occurred`: supports agent timeline and evidence review.
+- `ix_transactions_provider_occurred`: supports provider-scoped anomaly windows.
+- `ix_transactions_account_occurred`: supports synthetic account velocity checks.
+- `ix_provider_balance_agent_provider_observed`: supports provider runway queries by outlet and time.
+- `ix_shared_cash_agent_observed`: supports shared-cash runway queries by outlet and time.
+- `ix_feed_provider_agent_observed`: supports feed quality inspection by provider/outlet/time.
+- `ix_alerts_status_priority_owner_provider_created`: supports alert queues by lifecycle, urgency, owner, and provider.
+- `ix_cases_status_owner_provider_updated`: supports case work queues and stale case review.
+- `ix_audit_entity_created`: supports audit trace lookup for a specific entity.
+- `ix_scenario_runs_scenario_status_started`: supports scenario run replay/status listing.
+- `ix_anomaly_agent_provider_detected`: supports anomaly review by outlet/provider/time.
+- `ix_forecasts_agent_provider_time`: supports forecast history by outlet/provider/time.
 
 ## ER Diagram
 ```mermaid

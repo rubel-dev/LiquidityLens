@@ -28,7 +28,17 @@ docker compose up -d postgres
 alembic upgrade head
 ```
 
-No business migrations exist yet, so `alembic upgrade head` currently validates the migration foundation only.
+The initial domain schema migration exists. It creates schema only; seed/scenario data still belongs to the next module.
+
+After the database schema module, the initial domain migration is:
+```bash
+cd backend
+alembic upgrade head
+alembic downgrade base
+alembic upgrade head
+```
+
+Local PostgreSQL must be running before those commands execute. In GitHub Actions, backend jobs provide a PostgreSQL service for migration tests.
 
 ## Seed and Scenario Commands
 Planned commands after scenario engine exists:

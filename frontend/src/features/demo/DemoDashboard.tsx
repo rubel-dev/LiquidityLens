@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { AnalyticsSection } from "@/features/analytics";
 import { FoundationStatus } from "@/features/foundation/FoundationStatus";
 import {
   DEMO_USERS,
@@ -875,6 +876,19 @@ export function DemoDashboard() {
           ))}
         </section>
       )}
+
+      {/* ── Analytics Charts ── always visible regardless of role */}
+      <AnalyticsSection
+        liveAnalysis={liveAnalysis}
+        liveAlerts={liveAlerts}
+        overview={overview}
+        isLoading={isRunning}
+        apiErrorMessage={
+          runMessage.includes("fixture mode") && liveAnalysis === null
+            ? runMessage
+            : null
+        }
+      />
 
       {activeRole === "agent" && <AgentWorkspace overview={overview} />}
 

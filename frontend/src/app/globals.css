@@ -1391,6 +1391,495 @@ select:focus-visible {
   padding: 12px 2px 0;
 }
 
+/* ── Analytics Section ────────────────────────────────────────────────────── */
+.analytics-section {
+  display: grid;
+  gap: 20px;
+}
+
+/* ── Chart Panel ──────────────────────────────────────────────────────────── */
+.chart-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 28px 32px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-panel--loading,
+.chart-panel--empty {
+  min-height: 140px;
+}
+
+.chart-panel--error {
+  border-color: var(--border-critical);
+  background: var(--critical-soft);
+  min-height: 120px;
+}
+
+.chart-panel__header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.chart-panel__header h2 {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.chart-panel__subtitle {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  margin: 4px 0 0;
+}
+
+/* ── Data Mode Badges ─────────────────────────────────────────────────────── */
+.data-badge {
+  border-radius: 999px;
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.data-badge--live {
+  background: var(--brand-soft);
+  border-color: var(--brand-glow);
+  color: var(--brand);
+}
+
+.data-badge--synthetic {
+  background: var(--watch-soft);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+.data-badge--loading {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+  color: var(--text-tertiary);
+}
+
+.data-badge--error {
+  background: var(--critical-soft);
+  border-color: var(--border-critical);
+  color: var(--critical);
+}
+
+/* ── Skeleton Loading ─────────────────────────────────────────────────────── */
+.chart-skeleton {
+  animation: shimmer 1.6s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--bg-elevated) 25%,
+    var(--border) 50%,
+    var(--bg-elevated) 75%
+  );
+  background-size: 400% 100%;
+  border-radius: var(--r-sm);
+  height: 200px;
+  margin-top: 12px;
+}
+
+.chart-skeleton--table {
+  height: 120px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Error / Empty States ─────────────────────────────────────────────────── */
+.chart-error-message {
+  color: var(--critical);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.chart-error-detail {
+  color: var(--text-secondary);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  margin-top: 6px;
+  word-break: break-word;
+}
+
+.chart-empty-message {
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+
+/* ── Chart Container ──────────────────────────────────────────────────────── */
+.chart-container {
+  margin-top: 4px;
+}
+
+/* ── Shortage Summary ─────────────────────────────────────────────────────── */
+.chart-shortage-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chart-shortage-tag {
+  align-items: center;
+  background: var(--critical-soft);
+  border: 1px solid var(--border-critical);
+  border-radius: 999px;
+  color: var(--critical);
+  display: inline-flex;
+  font-size: 0.68rem;
+  font-weight: 600;
+  gap: 6px;
+  padding: 4px 10px;
+}
+
+.chart-shortage-dot {
+  border-radius: 99px;
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+}
+
+/* ── Insufficient Confidence Notice ──────────────────────────────────────── */
+.chart-insufficient-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.chart-insufficient-tag {
+  background: var(--warning-soft);
+  border: 1px solid var(--border-warning);
+  border-radius: var(--r-sm);
+  color: var(--warning);
+  font-size: 0.68rem;
+  padding: 6px 10px;
+}
+
+/* ── Chart Tooltip ────────────────────────────────────────────────────────── */
+.chart-tooltip {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  max-width: 280px;
+  padding: 10px 14px;
+}
+
+.chart-tooltip-label {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
+.chart-tooltip-row {
+  align-items: center;
+  color: var(--text-secondary);
+  display: flex;
+  font-size: 0.74rem;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chart-tooltip-row strong {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.chart-tooltip-dot {
+  border-radius: 99px;
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+}
+
+.chart-tooltip-anomaly {
+  align-items: flex-start;
+  background: var(--critical-soft);
+  border: 1px solid var(--border-critical);
+  border-radius: var(--r-sm);
+  color: var(--critical);
+  display: flex;
+  font-size: 0.68rem;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 7px 9px;
+}
+
+/* ── Pressure Chart Baseline Row ──────────────────────────────────────────── */
+.chart-baseline-row {
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.chart-baseline-item {
+  border-left: 1px solid var(--border);
+  padding: 10px 18px;
+}
+
+.chart-baseline-item:first-child {
+  border-left: 0;
+}
+
+.chart-baseline-item span {
+  color: var(--text-tertiary);
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chart-baseline-item strong {
+  color: var(--text-primary);
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.chart-baseline-ratio--anomaly strong {
+  color: var(--critical);
+}
+
+/* ── Anomaly Notice ───────────────────────────────────────────────────────── */
+.chart-anomaly-notice {
+  align-items: flex-start;
+  background: var(--warning-soft);
+  border: 1px solid var(--border-warning);
+  border-left: 3px solid var(--warning);
+  border-radius: var(--r-sm);
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+}
+
+.chart-anomaly-notice__icon {
+  color: var(--warning);
+  flex-shrink: 0;
+  font-size: 1rem;
+  margin-top: 1px;
+}
+
+.chart-anomaly-notice strong {
+  color: var(--text-primary);
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.chart-anomaly-notice p {
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Chart Legend ─────────────────────────────────────────────────────────── */
+.chart-legend-row {
+  align-items: center;
+  color: var(--text-secondary);
+  display: flex;
+  font-size: 0.7rem;
+  gap: 6px;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.chart-legend-dot {
+  border-radius: 99px;
+  flex-shrink: 0;
+  height: 9px;
+  width: 9px;
+}
+
+.chart-legend-dot--normal {
+  background: var(--watch);
+  opacity: 0.6;
+}
+
+.chart-legend-dot--anomaly {
+  background: var(--critical);
+  opacity: 0.85;
+}
+
+/* ── Advisory footnote ────────────────────────────────────────────────────── */
+.chart-advisory {
+  border-top: 1px solid var(--border);
+  color: var(--text-tertiary);
+  font-size: 0.64rem;
+  line-height: 1.5;
+  margin-top: 14px;
+  padding-top: 10px;
+}
+
+/* ── Operational Priority Table ───────────────────────────────────────────── */
+.priority-table-panel {
+  padding-bottom: 24px;
+}
+
+.priority-table-wrapper {
+  margin-top: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.priority-table {
+  border-collapse: collapse;
+  font-size: 0.76rem;
+  min-width: 760px;
+  width: 100%;
+}
+
+.priority-table__caption {
+  color: var(--text-tertiary);
+  font-size: 0.65rem;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.priority-table thead th {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-bright);
+  color: var(--text-tertiary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 9px 12px;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.priority-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+.priority-table tbody tr:last-child {
+  border-bottom: 0;
+}
+
+.priority-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.priority-table td {
+  padding: 11px 12px;
+  vertical-align: middle;
+}
+
+/* Row accent by risk */
+.priority-row--critical td:first-child {
+  border-left: 3px solid var(--critical);
+}
+
+.priority-row--warning td:first-child {
+  border-left: 3px solid var(--warning);
+}
+
+.priority-row--stable td:first-child {
+  border-left: 3px solid var(--stable);
+}
+
+.priority-row--healthy td:first-child {
+  border-left: 3px solid var(--brand);
+}
+
+.priority-row--unknown td:first-child,
+.priority-row--watch td:first-child {
+  border-left: 3px solid var(--watch);
+}
+
+/* Provider cell */
+.priority-provider-name {
+  color: var(--text-primary);
+  display: block;
+  font-weight: 600;
+}
+
+.priority-provider-tag {
+  background: var(--brand-soft);
+  border-radius: 999px;
+  color: var(--brand);
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  margin-top: 3px;
+  padding: 2px 7px;
+}
+
+.priority-provider-code {
+  color: var(--text-tertiary);
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  margin-top: 2px;
+}
+
+/* Runway cell */
+.priority-runway {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.priority-runway--urgent {
+  color: var(--critical);
+}
+
+/* Confidence cell */
+.priority-confidence {
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 9px;
+}
+
+/* Status cell */
+.priority-status {
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+}
+
+/* Next step cell */
+.priority-next-step {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  max-width: 260px;
+  display: block;
+}
+
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 1050px) {
   .scenario-console {

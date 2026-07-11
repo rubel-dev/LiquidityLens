@@ -217,3 +217,38 @@ Provider selection is controlled by `LLM_EXPLANATION_PROVIDER`:
 - `anthropic`: Anthropic-compatible adapter, if a future secret is explicitly approved.
 
 MVP timeout policy: one attempt, maximum 3 seconds. No retry is required for MVP. Timeout, malformed output, unsafe wording, unsupported language, or disabled provider must trigger deterministic fallback (FR-011).
+
+## Frontend Analytics Visualization Module
+
+Added in sprint 2 as `frontend/src/features/analytics/`.
+
+### Charting Library
+**Recharts 2.x** — React-first SVG composable chart library.
+- Reason: works in jsdom (Vitest), no Canvas-only APIs, full TypeScript types, accessible via ARIA, no CSS-in-JS conflicts, no default pie/doughnut charts.
+- Import rule: Recharts is only imported inside `features/analytics/`. No chart component may be imported in domain or service layers.
+
+### Module Layout
+```text
+frontend/src/features/analytics/
+  transforms.ts               — pure data transforms (no React, no side-effects)
+  LiquidityRunwayChart.tsx    — time-series line chart per provider
+  TransactionPressureChart.tsx — demand vs baseline with anomaly highlight
+  OperationalPriorityTable.tsx — urgency-sorted table for ops teams
+  AnalyticsSection.tsx        — composition wrapper with live/synthetic mode
+  index.ts                    — barrel export
+```
+
+### Data Rules (enforced in transforms.ts)
+| Rule | Implementation |
+|---|---|
+| Provider balances must never be merged | Each RunwaySeries/PriorityRow has a distinct providerCode; none are summed |
+| `provider_id === null` = Shared physical cash | Explicit `isSharedCash` flag, always separate from e-money lines |
+| Missing `runway_minutes` → null | Never coerced to 0; renders "Unknown (data unavailable)" |
+| Confidence < 0.40 → suppress forecast line | `sufficientConfidence` flag gates chart line rendering |
+| Safe anomaly language only | Hardcoded allowlist in `SAFE_ANOMALY_LABELS`; no "fraud detected" |
+| Live badge vs. Synthetic badge | `AnalyticsSection` gates: live only when `liveAnalysis !== null` |
+| API error → error state | Never silently fall back to fixture when live was expected and failed |
+
+### UI Constraint
+The analytics module does not perform financial decision logic. All forecasts and findings are produced exclusively by the deterministic backend engine. The UI only renders pre-computed results.
+

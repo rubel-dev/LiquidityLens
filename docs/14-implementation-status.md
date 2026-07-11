@@ -81,3 +81,8 @@ provider/shared-cash scope isolation, audit history, and rollback. The complete 
 unit suite passed `86` tests; governance passed `18` tests. Ruff formatting/lint,
 strict MyPy across `100` source files, compilation, prompt validation, and requirement
 traceability validation passed.
+
+## Frontend Analytics Visualization Module
+Implemented the Liquidity Runway Chart, Transaction Pressure Chart, and Operational Priority Table inside `frontend/src/features/analytics/`. The module strictly preserves provider isolation (shared physical cash is never merged with e-money), implements confidence-based graceful degradation (hiding low-confidence projections), and surfaces backend anomalies using strictly advisory language (never declaring "fraud"). Recharts is used for charting components. The module supports swapping between "Synthetic demo data" (fallback) and "Live backend result" modes, explicitly rendering API error states instead of silent substitutions.
+
+Local evidence: The frontend module passed `78` tests with `96.35%` line coverage, including `35` specific data transformation tests and integration tests verifying structural constraints (such as the absence of fraud terminology). `npm run typecheck` passes cleanly.

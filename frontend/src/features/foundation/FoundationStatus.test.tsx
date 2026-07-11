@@ -103,10 +103,14 @@ describe("LiquidityLens role-based demo", () => {
     await user.click(screen.getByRole("tab", { name: "Agent" }));
 
     expect(screen.getByText("Balance unavailable")).toBeInTheDocument();
+    // The analytics module also renders insufficient-data notices for
+    // all providers in SCN-003, so use getAllByText to allow multiple.
     expect(
-      screen.getByText(/Insufficient data — no confident forecast/),
-    ).toBeInTheDocument();
-    expect(screen.getByText("30%")).toBeInTheDocument();
+      screen.getAllByText(/Insufficient data — no confident forecast/).length,
+    ).toBeGreaterThan(0);
+    // The analytics priority table also shows 30% confidence for each provider,
+    // so use getAllByText and assert it appears at least once.
+    expect(screen.getAllByText("30%").length).toBeGreaterThan(0);
   });
 
   it("keeps expected Eid demand out of the review queue", async () => {

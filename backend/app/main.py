@@ -3,6 +3,8 @@ from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
+from alembic import command as alembic_command
+from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
@@ -26,8 +28,25 @@ from app.persistence.seed import ensure_demo_seed
 logger = logging.getLogger(__name__)
 
 
+def _run_migrations() -> None:
+    """Run alembic upgrade head using the Python API.
+
+    alembic.ini is expected at the working-directory root (i.e. the backend/
+    directory, which FastAPI Cloud sets as the application directory).
+    """
+    cfg = AlembicConfig("alembic.ini")
+    alembic_command.upgrade(cfg, "head")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    logger.info("Running database migrations...")
+    try:
+        _run_migrations()
+        logger.info("Migrations complete.")
+    except Exception:
+        logger.exception("Migration failed — backend may not function correctly")
+
     logger.info("Seeding demo reference data...")
     try:
         with SessionLocal() as session:
@@ -46,7 +65,7 @@ def create_app() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=settings.allowed_origins_list,
         allow_credentials=False,
         allow_methods=["GET", "POST"],
         allow_headers=["*"],

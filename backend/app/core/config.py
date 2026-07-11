@@ -56,6 +56,14 @@ class Settings(BaseSettings):
         default="BDT",
         validation_alias="VALIDATION_SUPPORTED_CURRENCIES",
     )
+    allowed_origins: str = Field(
+        default="http://localhost:3000",
+        validation_alias="ALLOWED_ORIGINS",
+    )
+
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
 
 
 @lru_cache

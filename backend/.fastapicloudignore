@@ -1,0 +1,18 @@
+# Development and test files not needed in production
+tests/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+.coverage
+*.egg-info/
+
+# Local dev files
+.env
+entrypoint.sh
+Dockerfile
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo

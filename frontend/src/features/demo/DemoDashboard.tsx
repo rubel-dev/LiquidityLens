@@ -970,10 +970,9 @@ export function DemoDashboard() {
       )}
 
       <footer className="product-footer">
-        <span>Decision support, not financial execution</span>
+        <span>Decision support only · no financial execution capability</span>
         <span>
-          Feature data is a contract-aligned demo fixture until `/api/v1`
-          feature endpoints ship
+          Deterministic engine · synthetic data only · human review required before any action
         </span>
       </footer>
     </main>

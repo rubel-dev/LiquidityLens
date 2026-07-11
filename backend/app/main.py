@@ -40,13 +40,7 @@ def _run_migrations() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    import asyncio
-    logger.info("Running database migrations...")
-    try:
-        await asyncio.to_thread(_run_migrations)
-        logger.info("Migrations complete.")
-    except Exception:
-        logger.exception("Migration failed — backend may not function correctly")
+    # Migrations are run out-of-band, not on startup.
 
     logger.info("Seeding demo reference data...")
     try:

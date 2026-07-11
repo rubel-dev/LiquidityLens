@@ -15,4 +15,3 @@ def test_sample_identifiers_are_synthetic_and_not_phone_like():
     for value in SAMPLE_SYNTHETIC_IDS:
         assert value.startswith("SIM-")
         assert not PHONE_LIKE_RE.match(value)
-

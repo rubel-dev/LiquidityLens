@@ -18,4 +18,3 @@ def error_payload(
     if details:
         payload["error"]["details"] = details
     return payload
-

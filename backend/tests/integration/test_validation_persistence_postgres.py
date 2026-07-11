@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from alembic import command
 from app.persistence.models.audit import AuditEvent
-from app.persistence.models.balance import ProviderBalanceSnapshot
+from app.persistence.models.balance import ProviderBalanceSnapshot, SharedCashSnapshot
 from app.persistence.models.feed import DataQualityEvent, ProviderFeedStatus
 from app.persistence.models.transaction import Transaction
 from app.scenarios.repository import ScenarioRepository
@@ -73,20 +73,27 @@ def seed_reference(session: Session) -> None:
     session.commit()
 
 
-def tx(ref: str = "SIM-TXN-910001-000001", amount: Decimal = Decimal("100.00")):
+def tx(
+    ref: str = "SIM-TXN-910001-000001",
+    amount: Decimal = Decimal("100.00"),
+    provider_code: str = "BK",
+    account_ref: str = "SIM-ACCT-BK-0001",
+    sequence: int | None = None,
+):
     ts = datetime(2026, 7, 11, 9, 0, tzinfo=UTC)
     return CanonicalTransactionInput(
-        provider_code="BK",
+        provider_code=provider_code,
         agent_ref="SIM-AGENT-0001",
-        account_ref="SIM-ACCT-BK-0001",
+        account_ref=account_ref,
         synthetic_transaction_ref=ref,
-        synthetic_account_ref="SIM-ACCT-BK-0001",
+        synthetic_account_ref=account_ref,
         synthetic_customer_ref="SIM-CUST-0001",
         transaction_type="cash_out",
         amount=amount,
         currency="BDT",
         event_timestamp=ts,
         received_timestamp=ts + timedelta(seconds=1),
+        source_sequence=sequence,
     )
 
 
@@ -114,6 +121,7 @@ def test_valid_transaction_persists_once_and_duplicate_retry_is_idempotent(migra
         assert first.disposition == RecordDisposition.ACCEPTED
         assert second.disposition == RecordDisposition.DUPLICATE_IGNORED
         assert session.scalar(select(func.count()).select_from(Transaction)) == 1
+        assert session.scalar(select(func.count()).select_from(AuditEvent)) == 2
 
 
 def test_rejected_transaction_does_not_create_trusted_row_and_persists_evidence(migrated_engine):
@@ -187,6 +195,13 @@ def test_shared_cash_has_no_provider_scope(migrated_engine):
             )
         )
         assert result.disposition == RecordDisposition.ACCEPTED
+        assert session.scalar(select(func.count()).select_from(SharedCashSnapshot)) == 1
+        assert (
+            session.scalar(
+                select(AuditEvent.provider_id).where(AuditEvent.entity_type == "shared_cash")
+            )
+            is None
+        )
 
 
 def test_feed_quality_updates_status_events_and_audit(migrated_engine):
@@ -207,6 +222,68 @@ def test_feed_quality_updates_status_events_and_audit(migrated_engine):
         assert session.scalar(select(func.count()).select_from(ProviderFeedStatus)) == 1
         assert session.scalar(select(func.count()).select_from(DataQualityEvent)) == 1
         assert session.scalar(select(func.count()).select_from(AuditEvent)) >= 1
+
+
+def test_missing_feed_persists_missing_quality_event(migrated_engine):
+    with Session(migrated_engine) as session:
+        seed_reference(session)
+        expected = datetime(2026, 7, 11, 9, 0, tzinfo=UTC)
+        result = ValidationService(session).evaluate_feed_quality(
+            CanonicalFeedStatusInput(
+                provider_code="BK",
+                agent_ref="SIM-AGENT-0001",
+                expected_timestamp=expected,
+                received_timestamp=None,
+                last_successful_timestamp=None,
+                source_status="missing",
+            )
+        )
+
+        assert result.disposition == RecordDisposition.QUARANTINED
+        assert session.scalar(select(DataQualityEvent.event_type)) == "missing_feed"
+
+
+def test_provider_separation_rejects_account_scope_mismatch(migrated_engine):
+    with Session(migrated_engine) as session:
+        seed_reference(session)
+        result = ValidationService(session).ingest_transaction(
+            tx(
+                ref="SIM-TXN-910001-000050",
+                provider_code="NG",
+                account_ref="SIM-ACCT-BK-0001",
+            )
+        )
+
+        assert result.disposition == RecordDisposition.REJECTED
+        assert session.scalar(select(func.count()).select_from(Transaction)) == 0
+
+
+def test_failed_ingestion_rolls_back_transaction(monkeypatch, migrated_engine):
+    with Session(migrated_engine) as session:
+        seed_reference(session)
+        service = ValidationService(session)
+
+        def fail_audit(**_kwargs):
+            raise RuntimeError("forced audit failure")
+
+        monkeypatch.setattr(service.repository, "persist_audit", fail_audit)
+
+        with pytest.raises(RuntimeError, match="forced audit failure"):
+            service.ingest_transaction(tx(ref="SIM-TXN-910001-000060"))
+
+        assert session.scalar(select(func.count()).select_from(Transaction)) == 0
+
+
+def test_sequence_gap_persists_warning_evidence(migrated_engine):
+    with Session(migrated_engine) as session:
+        seed_reference(session)
+        service = ValidationService(session)
+        first = service.ingest_transaction(tx(ref="SIM-TXN-910001-000070", sequence=1))
+        gap = service.ingest_transaction(tx(ref="SIM-TXN-910001-000071", sequence=3))
+
+        assert first.disposition == RecordDisposition.ACCEPTED
+        assert gap.disposition == RecordDisposition.ACCEPTED_WITH_WARNING
+        assert session.scalar(select(DataQualityEvent.event_type)) == "sequence_gap"
 
 
 def test_scenario_records_validate_without_using_ground_truth(migrated_engine):

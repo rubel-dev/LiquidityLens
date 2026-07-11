@@ -33,4 +33,3 @@ def check_database_ready(settings: Settings | None = None) -> bool:
     except Exception:
         return False
     return True
-

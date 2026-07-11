@@ -29,4 +29,3 @@ class UpdatedAtMixin(CreatedAtMixin):
         onupdate=func.now(),
         nullable=False,
     )
-

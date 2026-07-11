@@ -76,7 +76,11 @@ def validate_feed_status_input(
     stale_delta = None
     if record.last_successful_timestamp is not None:
         stale_delta = record.expected_timestamp - record.last_successful_timestamp
-    if stale_delta is not None and stale_delta > timedelta(minutes=settings.stale_minutes):
+    if (
+        record.last_successful_timestamp is not None
+        and stale_delta is not None
+        and stale_delta > timedelta(minutes=settings.stale_minutes)
+    ):
         findings.append(
             _finding(
                 record,

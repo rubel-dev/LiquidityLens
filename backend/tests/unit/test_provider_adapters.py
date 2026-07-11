@@ -63,3 +63,18 @@ def test_simulated_adapter_maps_nullable_provider_balance():
 
     assert isinstance(canonical, CanonicalProviderBalanceInput)
     assert canonical.reported_balance is None
+
+
+def test_simulated_provider_adapter_rejects_shared_cash_records():
+    adapter = SimulatedProviderAdapter("BK")
+    record = SimulatedProviderRecord(
+        provider_code="BK",
+        agent_ref="SIM-AGENT-0001",
+        account_ref="SIM-ACCT-BK-0001",
+        record_type="shared_cash",
+        record_ref="SIM-CASH-0001",
+        amount=Decimal("5000.00"),
+    )
+
+    with pytest.raises(ProviderAdapterError, match="unsupported simulated record type"):
+        adapter.map_record(record)

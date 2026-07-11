@@ -12,7 +12,7 @@ def generate_feed_statuses(
     for provider_code in ("BK", "NG", "RK"):
         status = FeedQualityStatus.COMPLETE
         observed_at = start_timestamp + timedelta(hours=2)
-        ingested_at = observed_at + timedelta(minutes=1)
+        ingested_at: datetime | None = observed_at + timedelta(minutes=1)
         event_type = None
 
         if definition.code == "delayed_feed" and provider_code == "BK":

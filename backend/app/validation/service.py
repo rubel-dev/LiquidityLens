@@ -3,7 +3,10 @@ from dataclasses import replace
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings, get_settings
+from app.persistence.models.agent import Agent
 from app.persistence.models.enums import FeedQualityStatus
+from app.persistence.models.provider import Provider
+from app.persistence.models.scenario import ScenarioRun
 from app.providers.base import CanonicalRecord
 from app.providers.schemas import SimulatedProviderRecord
 from app.providers.simulated import SimulatedProviderAdapter
@@ -26,6 +29,7 @@ from app.validation.schemas import (
     CanonicalProviderBalanceInput,
     CanonicalSharedCashInput,
     CanonicalTransactionInput,
+    ValidationFinding,
     ValidationResult,
     ValidationSettings,
 )
@@ -47,6 +51,14 @@ class ValidationService:
             self.repository.transaction_by_ref(canonical.synthetic_transaction_ref) is not None
         )
         latest = None if account is None else self.repository.latest_transaction(account)
+        latest_sequence = (
+            None
+            if provider is None or account is None
+            else self.repository.latest_transaction_source_sequence(
+                provider,
+                canonical.account_ref,
+            )
+        )
         findings = validate_transaction_input(
             canonical,
             self.settings,
@@ -55,6 +67,7 @@ class ValidationService:
             account,
             duplicate,
             None if latest is None else latest.occurred_at,
+            latest_sequence,
         )
         return _result(canonical, findings)
 
@@ -66,6 +79,14 @@ class ValidationService:
             account = self.repository.account_by_ref(canonical.account_ref)
             duplicate_row = self.repository.transaction_by_ref(canonical.synthetic_transaction_ref)
             latest = None if account is None else self.repository.latest_transaction(account)
+            latest_sequence = (
+                None
+                if provider is None or account is None
+                else self.repository.latest_transaction_source_sequence(
+                    provider,
+                    canonical.account_ref,
+                )
+            )
             findings = validate_transaction_input(
                 canonical,
                 self.settings,
@@ -74,6 +95,7 @@ class ValidationService:
                 account,
                 duplicate_row is not None,
                 None if latest is None else latest.occurred_at,
+                latest_sequence,
             )
             result = _result(canonical, findings)
             scenario_run = self.repository.scenario_run_by_ref(canonical.scenario_run_ref)
@@ -121,6 +143,8 @@ class ValidationService:
                 metadata={
                     "disposition": result.disposition.value,
                     "quality_score": str(result.quality_score.overall_score),
+                    "account_ref": canonical.account_ref,
+                    "source_sequence": canonical.source_sequence,
                 },
             )
             return replace(result, persisted_id=str(persisted.id))
@@ -285,7 +309,13 @@ class ValidationService:
             return self.ingest_shared_cash(record)
         return self.evaluate_feed_quality(record)
 
-    def _persist_warning_if_needed(self, provider, agent, scenario_run, findings) -> None:
+    def _persist_warning_if_needed(
+        self,
+        provider: Provider | None,
+        agent: Agent | None,
+        scenario_run: ScenarioRun | None,
+        findings: tuple[ValidationFinding, ...],
+    ) -> None:
         warning_findings = tuple(
             item for item in findings if item.usability == RecordUsability.USABLE_WITH_WARNING
         )
@@ -296,10 +326,10 @@ class ValidationService:
 
     def _persist_rejection(
         self,
-        provider,
-        agent,
-        scenario_run,
-        findings,
+        provider: Provider | None,
+        agent: Agent | None,
+        scenario_run: ScenarioRun | None,
+        findings: tuple[ValidationFinding, ...],
         action: str,
         correlation_id: str,
         entity_type: str,
@@ -340,7 +370,7 @@ def validation_settings(settings: Settings) -> ValidationSettings:
     )
 
 
-def _result(record: object, findings) -> ValidationResult:
+def _result(record: object, findings: tuple[ValidationFinding, ...]) -> ValidationResult:
     finding_tuple = tuple(findings)
     disposition = disposition_for(finding_tuple)
     return ValidationResult(

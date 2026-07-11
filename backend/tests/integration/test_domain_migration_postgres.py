@@ -4,16 +4,21 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
-from alembic import command
 from alembic.config import Config
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
+from alembic import command
 from app.persistence.models.agent import Agent, AgentProviderAccount
 from app.persistence.models.area import Area
 from app.persistence.models.balance import ProviderBalanceSnapshot, SharedCashSnapshot
-from app.persistence.models.enums import AccountStatus, AgentStatus, TransactionStatus, TransactionType
+from app.persistence.models.enums import (
+    AccountStatus,
+    AgentStatus,
+    TransactionStatus,
+    TransactionType,
+)
 from app.persistence.models.provider import Provider
 from app.persistence.models.transaction import Transaction
 
@@ -83,8 +88,12 @@ def seed_scope(session: Session):
         display_code="Demo Outlet",
         status=AgentStatus.ACTIVE,
     )
-    provider_a = Provider(code="SIM-PROVIDER-A", display_name="Sim Provider A", boundary_note="separate")
-    provider_b = Provider(code="SIM-PROVIDER-B", display_name="Sim Provider B", boundary_note="separate")
+    provider_a = Provider(
+        code="SIM-PROVIDER-A", display_name="Sim Provider A", boundary_note="separate"
+    )
+    provider_b = Provider(
+        code="SIM-PROVIDER-B", display_name="Sim Provider B", boundary_note="separate"
+    )
     account_a = AgentProviderAccount(
         agent=agent,
         provider=provider_a,

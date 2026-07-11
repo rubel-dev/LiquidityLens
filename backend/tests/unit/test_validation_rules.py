@@ -5,11 +5,13 @@ from types import SimpleNamespace
 import pytest
 
 from app.persistence.models.enums import FeedQualityStatus, TransactionType
-from app.validation.enums import ValidationCategory
+from app.validation.balance_validator import validate_shared_cash_input
+from app.validation.enums import RecordDisposition, ValidationCategory
 from app.validation.feed_validator import status_for_findings, validate_feed_status_input
-from app.validation.quality_score import score_findings
+from app.validation.quality_score import disposition_for, score_findings
 from app.validation.schemas import (
     CanonicalFeedStatusInput,
+    CanonicalSharedCashInput,
     CanonicalTransactionInput,
     ValidationSettings,
 )
@@ -60,18 +62,18 @@ def feed(**overrides) -> CanonicalFeedStatusInput:
 
 
 def test_valid_transaction_has_high_quality_score():
+    provider, agent, account = provider_agent_account()
     findings = validate_transaction_input(
         transaction(),
         ValidationSettings(),
-        provider=object(),
-        agent=object(),
-        account=None,
+        provider=provider,
+        agent=agent,
+        account=account,
         duplicate_exists=False,
         latest_transaction_time=None,
     )
-    categories = {item.category for item in findings}
 
-    assert ValidationCategory.MISSING_REQUIRED_FIELD in categories
+    assert findings == ()
     assert score_findings(tuple()).overall_score == Decimal("1.00")
 
 
@@ -125,6 +127,39 @@ def test_invalid_currency_and_transaction_type_are_rejected():
     assert ValidationCategory.INVALID_TRANSACTION_TYPE in categories
 
 
+def test_unknown_provider_is_rejected():
+    _, agent, account = provider_agent_account()
+    findings = validate_transaction_input(
+        transaction(provider_code="SIM-PROVIDER-UNKNOWN"),
+        ValidationSettings(),
+        provider=None,
+        agent=agent,
+        account=account,
+        duplicate_exists=False,
+        latest_transaction_time=None,
+    )
+
+    assert ValidationCategory.UNKNOWN_PROVIDER in {item.category for item in findings}
+
+
+def test_provider_account_mismatch_is_rejected():
+    provider = SimpleNamespace(id="provider-bk")
+    agent = SimpleNamespace(id="agent-id")
+    account = SimpleNamespace(provider_id="provider-ng", agent_id="agent-id")
+
+    findings = validate_transaction_input(
+        transaction(),
+        ValidationSettings(),
+        provider=provider,
+        agent=agent,
+        account=account,
+        duplicate_exists=False,
+        latest_transaction_time=None,
+    )
+
+    assert ValidationCategory.PROVIDER_SCOPE_MISMATCH in {item.category for item in findings}
+
+
 def test_future_timestamp_and_out_of_order_event_are_detected():
     future = now() + timedelta(hours=1)
     provider, agent, account = provider_agent_account()
@@ -157,7 +192,26 @@ def test_duplicate_transaction_is_warning_and_score_is_deterministic():
     second_score = score_findings(findings)
     assert ValidationCategory.DUPLICATE_TRANSACTION in {item.category for item in findings}
     assert first_score == second_score
-    assert first_score.confidence_multiplier == Decimal("1.00")
+    assert first_score.confidence_multiplier < Decimal("1.00")
+    assert disposition_for(findings) == RecordDisposition.DUPLICATE_IGNORED
+
+
+def test_true_sequence_gap_compares_latest_known_source_sequence():
+    provider, agent, account = provider_agent_account()
+
+    findings = validate_transaction_input(
+        transaction(source_sequence=7),
+        ValidationSettings(),
+        provider=provider,
+        agent=agent,
+        account=account,
+        duplicate_exists=False,
+        latest_transaction_time=None,
+        latest_source_sequence=4,
+    )
+
+    assert ValidationCategory.SEQUENCE_GAP in {item.category for item in findings}
+    assert any("next source sequence 5" in item.expected for item in findings)
 
 
 def test_feed_delayed_stale_missing_and_conflicting_statuses():
@@ -196,6 +250,24 @@ def test_feed_delayed_stale_missing_and_conflicting_statuses():
     assert status_for_findings(conflict) == FeedQualityStatus.CONFLICTING
 
 
+def test_shared_cash_validation_is_provider_independent():
+    ts = now()
+    findings = validate_shared_cash_input(
+        CanonicalSharedCashInput(
+            agent_ref="SIM-AGENT-0001",
+            reported_cash=Decimal("5000.00"),
+            snapshot_timestamp=ts,
+            received_timestamp=ts + timedelta(seconds=1),
+            source="SIM-CASH-SNAPSHOT-0001",
+        ),
+        ValidationSettings(),
+        agent=object(),
+        duplicate_exists=False,
+    )
+
+    assert findings == ()
+
+
 def test_quality_score_low_for_missing_feed():
     findings = validate_feed_status_input(
         feed(source_status=FeedQualityStatus.MISSING, received_timestamp=None),
@@ -205,4 +277,5 @@ def test_quality_score_low_for_missing_feed():
     )
     score = score_findings(findings)
     assert score.overall_score < Decimal("0.70")
-    assert "confidence" in "confidence_multiplier"
+    assert score.confidence_multiplier == score.overall_score
+    assert all(item.evidence for item in findings)

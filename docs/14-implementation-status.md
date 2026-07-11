@@ -8,7 +8,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 |---|---|---|
 | 0 | Governance, prompt validation, CI, SonarQube | Documented/Configured |
 | 1 | Repository foundation | Implemented |
-| 2 | Database schema and migrations | Implemented |
+| 2 | Database schema and migrations | Verified locally |
 | 3 | Synthetic scenario engine | Implemented/Locally Verified |
 | 4 | Provider ingestion and validation | Implemented/Locally Verified |
 | 5 | Liquidity engine | Not started |
@@ -37,7 +37,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 Liquidity forecasting, anomaly detection services, confidence fusion services, explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, dashboards, metrics endpoints, and production deployment remain not started.
 
 ## Database Schema Status
-SQLAlchemy models and an initial Alembic schema migration exist for the documented MVP tables. Local metadata tests pass. PostgreSQL migration tests passed against the local PostgreSQL database `hacathon_db` using `postgresql+psycopg` connectivity. Remote CI/Sonar must still confirm this phase before it is marked Verified.
+SQLAlchemy models and an initial Alembic schema migration exist for the documented MVP tables. Local metadata tests pass. PostgreSQL migration tests passed against the local PostgreSQL database `hacathon_db` using `postgresql+psycopg` connectivity. Remote CI/Sonar results must still be reported honestly for each pushed commit.
 
 ## Scenario Engine Status
 Implemented internal scenario service and CLI commands for list, run, reset, and replay. The engine supports ten canonical scenarios, three synthetic provider contexts, shared-cash/provider-balance separation, deterministic seeds, explicit start timestamps, stored fingerprints, audit-backed ground truth, missing/delayed/conflicting feed states, and selected-run reset/replay.
@@ -45,6 +45,6 @@ Implemented internal scenario service and CLI commands for list, run, reset, and
 Local evidence: backend Pytest from `backend/` passed with `39 passed` and `90.23%` coverage against local PostgreSQL `hacathon_db`. Scenario CLI list/run/replay/reset succeeded for `SIM-RUN-990001`; replay reproduced fingerprint `154bb67ce5df79d4abeba6e4bee810b697b7f3c740ff134a6953082f2e4a5b33`.
 
 ## Provider Ingestion and Validation Status
-Implemented internal provider adapter and validation service modules. The implementation includes canonical transaction, provider-balance, shared-cash, and feed-status schemas; simulated provider adapters; validation categories; deterministic data-quality scoring; dispositions; trusted persistence for accepted records; evidence/audit persistence for warnings, rejections, quarantine, and feed-quality issues; and idempotent duplicate transaction handling.
+Implemented internal provider adapter and validation service modules. The implementation includes canonical transaction, provider-balance, shared-cash, and feed-status schemas; provider-owned simulated adapters; validation categories; deterministic rule-based data-quality scoring; dispositions; trusted persistence for accepted records; evidence/audit persistence for warnings, rejections, quarantine, and feed-quality issues; true source-sequence gap detection; and idempotent duplicate transaction handling.
 
-Local evidence: backend Pytest from `backend/` passed with `61 passed` and `88.86%` coverage against local PostgreSQL `hacathon_db`. Targeted Ruff format/lint checks passed for provider ingestion and validation files. Whole-backend Ruff still reports pre-existing lint/format issues outside this module, and MyPy is unavailable in the local Python environment.
+Local evidence: required Git Bash closeout chain from `backend/` passed with Ruff format check, Ruff lint, strict MyPy, Pytest, and coverage XML generation. Backend Pytest passed with `70 passed` and `89.49%` coverage against local PostgreSQL `hacathon_db`. Validation-specific tests collected: `31`. Measured validation latency over 100 accepted ingestions averaged `12.376 ms`; p95 was `20.776 ms`. Governance, commit-traceability, and remote CI/Sonar evidence must be recorded after the closeout commit.

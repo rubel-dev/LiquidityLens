@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -9,6 +10,10 @@ from app.persistence.base import Base
 from app.persistence.models.enums import FeedQualityStatus, Severity, enum_values
 from app.persistence.models.mixins import CreatedAtMixin, UuidPrimaryKeyMixin
 
+if TYPE_CHECKING:
+    from app.persistence.models.provider import Provider
+    from app.persistence.models.scenario import ScenarioRun
+
 
 class ProviderFeedStatus(UuidPrimaryKeyMixin, Base):
     __tablename__ = "provider_feed_statuses"
@@ -17,8 +22,12 @@ class ProviderFeedStatus(UuidPrimaryKeyMixin, Base):
         Index("ix_feed_provider_status", "provider_id", "status"),
     )
 
-    provider_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("providers.id"), nullable=False)
-    agent_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("agents.id"), nullable=True)
+    provider_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("providers.id"), nullable=False
+    )
+    agent_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("agents.id"), nullable=True
+    )
     scenario_run_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("scenario_runs.id"),

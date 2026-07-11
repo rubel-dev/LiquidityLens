@@ -1,7 +1,6 @@
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import delete, func, select
@@ -387,9 +386,7 @@ class ScenarioRepository:
         )
         self.session.execute(delete(Transaction).where(Transaction.scenario_run_id == run.id))
         self.session.execute(
-            delete(ProviderBalanceSnapshot).where(
-                ProviderBalanceSnapshot.scenario_run_id == run.id
-            )
+            delete(ProviderBalanceSnapshot).where(ProviderBalanceSnapshot.scenario_run_id == run.id)
         )
         self.session.execute(
             delete(SharedCashSnapshot).where(SharedCashSnapshot.scenario_run_id == run.id)

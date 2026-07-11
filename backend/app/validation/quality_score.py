@@ -10,7 +10,7 @@ from app.validation.schemas import DataQualityScore, ValidationFinding
 
 PENALTIES: dict[ValidationCategory, Decimal] = {
     ValidationCategory.VALID: Decimal("0.00"),
-    ValidationCategory.DUPLICATE_TRANSACTION: Decimal("0.00"),
+    ValidationCategory.DUPLICATE_TRANSACTION: Decimal("0.10"),
     ValidationCategory.DUPLICATE_SNAPSHOT: Decimal("0.05"),
     ValidationCategory.DELAYED_FEED: Decimal("0.15"),
     ValidationCategory.STALE_FEED: Decimal("0.25"),

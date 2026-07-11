@@ -7,7 +7,6 @@ from app.validation.normalizer import normalize_provider_code
 from app.validation.schemas import (
     CanonicalFeedStatusInput,
     CanonicalProviderBalanceInput,
-    CanonicalSharedCashInput,
     CanonicalTransactionInput,
 )
 
@@ -57,16 +56,6 @@ class SimulatedProviderAdapter(ProviderAdapter):
                 received_timestamp=received,
                 source_sequence=record.source_sequence,
                 availability_state=record.availability_state,
-                scenario_run_ref=record.scenario_run_ref,
-                source_metadata=record.metadata,
-            )
-        if record.record_type == "shared_cash":
-            return CanonicalSharedCashInput(
-                agent_ref=record.agent_ref,
-                reported_cash=record.amount,
-                snapshot_timestamp=event,
-                received_timestamp=received,
-                source="simulated_provider_adapter",
                 scenario_run_ref=record.scenario_run_ref,
                 source_metadata=record.metadata,
             )

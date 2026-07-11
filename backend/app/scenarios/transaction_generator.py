@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from app.persistence.models.enums import TransactionType
 from app.scenarios.random_source import DeterministicRandom, validate_synthetic_identifier
-from app.scenarios.schemas import GeneratedTransaction, ScenarioDefinition, ProfileName
+from app.scenarios.schemas import GeneratedTransaction, ProfileName, ScenarioDefinition
 
 PROFILE_TRANSACTION_COUNTS: dict[ProfileName, int] = {"small": 18, "medium": 45, "demo": 90}
 

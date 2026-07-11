@@ -10,4 +10,3 @@ def test_application_startup():
     response = client.get("/api/v1/health")
 
     assert response.status_code == 200
-

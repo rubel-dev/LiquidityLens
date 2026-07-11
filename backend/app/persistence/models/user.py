@@ -1,4 +1,5 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import CheckConstraint, ForeignKey, Index, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -6,6 +7,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.base import Base
 from app.persistence.models.mixins import CreatedAtMixin, UuidPrimaryKeyMixin
+
+if TYPE_CHECKING:
+    from app.persistence.models.area import Area
+    from app.persistence.models.provider import Provider
 
 
 class User(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
@@ -45,13 +50,20 @@ class UserRoleAssignment(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
         Index("ix_user_role_provider", "user_id", "provider_id"),
     )
 
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    role_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False)
-    provider_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("providers.id"), nullable=True)
-    area_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("areas.id"), nullable=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
+    )
+    role_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False
+    )
+    provider_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("providers.id"), nullable=True
+    )
+    area_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("areas.id"), nullable=True
+    )
 
     user: Mapped[User] = relationship(back_populates="role_assignments")
     role: Mapped[Role] = relationship(back_populates="assignments")
     provider: Mapped["Provider | None"] = relationship(back_populates="role_assignments")
     area: Mapped["Area | None"] = relationship(back_populates="role_assignments")
-

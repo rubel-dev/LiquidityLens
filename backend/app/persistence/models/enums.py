@@ -4,7 +4,7 @@ from typing import TypeVar
 EnumType = TypeVar("EnumType", bound=StrEnum)
 
 
-def enum_values(enum_cls: type[EnumType]) -> list[str]:
+def enum_values(enum_cls: type[EnumType]) -> list[str]:  # noqa: UP047
     return [member.value for member in enum_cls]
 
 

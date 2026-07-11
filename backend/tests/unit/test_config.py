@@ -21,4 +21,3 @@ def test_llm_disabled_by_default():
 
     assert settings.llm_explanation_enabled is False
     assert settings.llm_explanation_provider == "none"
-

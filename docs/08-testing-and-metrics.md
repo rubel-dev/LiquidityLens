@@ -27,19 +27,24 @@ Latest local evidence:
 - PostgreSQL database: `hacathon_db` using `postgresql+psycopg://postgres:12345@localhost:5432/hacathon_db`.
 - Scenario CLI smoke: list, run, replay, and reset succeeded for `SIM-RUN-990001`.
 - Demo profile generation threshold: integration test requires completion below 5 seconds in the local environment.
-- Targeted Ruff format/lint checks passed for the provider ingestion and validation module. Whole-backend Ruff still reports pre-existing lint/format issues outside this module, and MyPy is unavailable in the local Python environment; both remain required in CI/local developer environments where installed.
+- Whole-backend Ruff format/check and MyPy now pass locally after validation closeout cleanup.
 
 ## Implemented Validation Metrics Evidence
 Latest local backend evidence for provider ingestion and validation:
-- Backend test suite from `backend/`: `61 passed`, coverage `88.86%`.
+- Required Git Bash closeout chain from `backend/`: Ruff format check passed, Ruff lint passed, MyPy strict check passed, Pytest passed, coverage XML generated.
+- Backend test suite from `backend/`: `70 passed`, coverage `89.49%`.
+- Validation-specific tests collected: `31`.
 - Valid transaction persistence: accepted once; duplicate retry returned `duplicate_ignored` and did not create a second trusted row.
 - Invalid transaction persistence: zero-amount record was rejected, produced quality evidence, and created no trusted transaction row.
 - Missing balance correctness: nullable provider balance persisted as `NULL`, not zero.
-- Feed quality correctness: delayed feed produced a warning, `provider_feed_statuses`, `data_quality_events`, and audit evidence.
+- Feed quality correctness: delayed feed produced a warning; missing feed and conflicting balance produced quarantined evidence; `provider_feed_statuses`, `data_quality_events`, and audit evidence persisted.
+- Sequence quality correctness: incoming source sequence is compared to the latest accepted source sequence and true gaps produce warning evidence.
+- Provider-boundary correctness: provider adapters map only provider transaction, provider balance, and provider feed status records; shared cash remains provider-independent.
 - Scenario integration: generated scenario transactions validated without reading ground-truth labels.
 - Demo-sized validation latency: integration test ingests 40 records under a 5 second local threshold.
+- Measured validation latency: 100 accepted transaction ingestions averaged `12.376 ms`; p95 was `20.776 ms`.
 
-Data-quality score scale is `0.00` to `1.00`; quality levels are `high`, `medium`, `low`, and `unusable`. The score subtracts deterministic category penalties and returns a `confidence_multiplier` for future confidence fusion without calculating liquidity/anomaly confidence itself.
+Data-quality score scale is `0.00` to `1.00`; quality levels are `high`, `medium`, `low`, and `unusable`. This is a deterministic, rule-based data-quality score, not calibrated model confidence and not machine learning. The score subtracts explainable category penalties and returns an explicit `confidence_multiplier` for future confidence fusion without calculating liquidity/anomaly confidence itself. Duplicate records are dispositioned as `duplicate_ignored` and receive a quality penalty so they do not appear as fully clean trusted new data.
 
 ## Confidence Fusion Algorithm
 The MVP confidence score starts at `1.00` for a forecast/finding with complete valid input and subtracts data-quality and evidence deductions. It is clamped to `[0.00, 1.00]`.

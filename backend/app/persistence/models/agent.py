@@ -1,4 +1,5 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -8,6 +9,12 @@ from app.persistence.base import Base
 from app.persistence.models.enums import AccountStatus, AgentStatus, enum_values
 from app.persistence.models.mixins import CreatedAtMixin, UuidPrimaryKeyMixin
 
+if TYPE_CHECKING:
+    from app.persistence.models.area import Area
+    from app.persistence.models.balance import ProviderBalanceSnapshot, SharedCashSnapshot
+    from app.persistence.models.provider import Provider
+    from app.persistence.models.transaction import Transaction
+
 
 class Agent(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
     __tablename__ = "agents"
@@ -16,7 +23,9 @@ class Agent(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
         Index("ix_agents_area", "area_id"),
     )
 
-    area_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("areas.id"), nullable=False)
+    area_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("areas.id"), nullable=False
+    )
     synthetic_agent_ref: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
     display_code: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[AgentStatus] = mapped_column(
@@ -40,8 +49,12 @@ class AgentProviderAccount(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
         Index("ix_agent_provider_accounts_provider_agent", "provider_id", "agent_id"),
     )
 
-    agent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False)
-    provider_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("providers.id"), nullable=False)
+    agent_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False
+    )
+    provider_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("providers.id"), nullable=False
+    )
     synthetic_account_ref: Mapped[str] = mapped_column(String(40), nullable=False)
     status: Mapped[AccountStatus] = mapped_column(
         Enum(AccountStatus, name="account_status", values_callable=enum_values),

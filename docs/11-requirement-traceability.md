@@ -4,7 +4,7 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 
 | Requirement ID | Requirement | Source | Module | API | UI | Test | Metric | Demo Step | Status |
 |---|---|---|---|---|---|---|---|---|---|
-| FR-001 | Shared cash separate from provider balances | PDF | overview | /api/v1/agents/{agent_id}/overview planned | Agent/Ops overview | AC-001 | MET-006 | DEMO-001 | Approved |
+| FR-001 | Shared cash separate from provider balances | PDF | overview/validation | Internal shared-cash ingestion implemented; /api/v1/agents/{agent_id}/overview planned | Agent/Ops overview planned | AC-001 | MET-006 | DEMO-001 | Implemented |
 | FR-002 | At least two providers, three where practical | PDF | scenario | /api/v1/providers planned | Overview | AC-001 | MET-006 | DEMO-001 | Approved |
 | FR-003 | Deceptive-total visualization | Challenger idea | frontend | /api/v1/agents/{agent_id}/overview planned | Agent overview | AC-002 | MET-006 | DEMO-001 | Approved |
 | FR-004 | Provider/shared runway clock | Challenger idea | liquidity | /api/v1/liquidity-forecasts planned | Overview/alerts | AC-003 | MET-001, MET-002 | DEMO-001 | Approved |
@@ -19,7 +19,7 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | NFR-001 | Responsive demo interactions | PDF | platform | planned | All UI | AC-010 | MET-007 | DEMO-001 | Approved |
 | NFR-002 | Explainable/auditable alerts | PDF | alerts/audit | /api/v1/audit-events planned | Alert/case UI | AC-007 | MET-006, MET-009 | DEMO-001 | Approved |
 | NFR-003 | Bad data reduces confidence | PDF | validation/fusion | Internal validation service implemented; /api/v1/data-quality-statuses planned | Alerts planned | AC-006 | MET-008 | DEMO-001 | Implemented |
-| NFR-004 | Provider isolation | PDF | auth | Internal provider-scoped validation implemented; all scoped APIs planned | all scoped UI planned | AC-011 | MET-012 | DEMO-001 | In Progress |
+| NFR-004 | Provider isolation | PDF | validation/auth | Internal provider-scoped validation implemented; all scoped APIs planned | all scoped UI planned | AC-011 | MET-012 | DEMO-001 | In Progress |
 | DATA-001 | Synthetic data only | PDF | scenario | CLI implemented; /api/v1/scenarios planned | n/a | AC-009 | MET-005 | DEMO-001 | Implemented |
 | DATA-002 | Synthetic non-phone-like IDs | Governance | scenario | CLI implemented; /api/v1/transactions planned | Evidence UI planned | AC-004 | MET-003 | DEMO-001 | Implemented |
 | DATA-003 | Shared cash is not provider feed | Governance | data model | CLI seed data implemented; /api/v1/agents/{agent_id}/cash-snapshots planned | Overview planned | AC-001 | MET-006 | DEMO-001 | Implemented |

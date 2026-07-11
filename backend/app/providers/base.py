@@ -4,15 +4,11 @@ from app.providers.schemas import SimulatedProviderRecord
 from app.validation.schemas import (
     CanonicalFeedStatusInput,
     CanonicalProviderBalanceInput,
-    CanonicalSharedCashInput,
     CanonicalTransactionInput,
 )
 
 CanonicalRecord = (
-    CanonicalTransactionInput
-    | CanonicalProviderBalanceInput
-    | CanonicalSharedCashInput
-    | CanonicalFeedStatusInput
+    CanonicalTransactionInput | CanonicalProviderBalanceInput | CanonicalFeedStatusInput
 )
 
 

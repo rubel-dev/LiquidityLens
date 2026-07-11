@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from app.persistence.models.agent import Agent, AgentProviderAccount
@@ -15,7 +15,8 @@ def validate_transaction_input(
     agent: Agent | None,
     account: AgentProviderAccount | None,
     duplicate_exists: bool,
-    latest_transaction_time,
+    latest_transaction_time: datetime | None,
+    latest_source_sequence: int | None = None,
 ) -> tuple[ValidationFinding, ...]:
     findings = validate_common(
         provider_code=record.provider_code,
@@ -146,6 +147,18 @@ def validate_transaction_input(
                 str(record.source_sequence),
             )
         )
+    elif record.source_sequence is not None and latest_source_sequence is not None:
+        expected_sequence = latest_source_sequence + 1
+        if record.source_sequence != expected_sequence:
+            findings.append(
+                _warning(
+                    record,
+                    len(findings),
+                    ValidationCategory.SEQUENCE_GAP,
+                    f"next source sequence {expected_sequence}",
+                    str(record.source_sequence),
+                )
+            )
     return tuple(findings)
 
 

@@ -4,12 +4,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from alembic import command
 from alembic.config import Config
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
+from alembic import command
 from app.persistence.models.audit import AuditEvent
 from app.persistence.models.balance import ProviderBalanceSnapshot
 from app.persistence.models.enums import ScenarioRunStatus
@@ -85,9 +85,9 @@ def test_scenario_run_commits_reference_data_records_and_ground_truth(migrated_e
         assert session.scalar(select(func.count()).select_from(ProviderFeedStatus)) == 3
         assert (
             session.scalar(
-                select(func.count()).select_from(AuditEvent).where(
-                    AuditEvent.action == "scenario.ground_truth_event"
-                )
+                select(func.count())
+                .select_from(AuditEvent)
+                .where(AuditEvent.action == "scenario.ground_truth_event")
             )
             == 4
         )
@@ -119,11 +119,15 @@ def test_reset_affects_only_selected_run(migrated_engine):
     with Session(migrated_engine) as session:
         run_one = ScenarioRepository(session).find_run("SIM-RUN-900003")
         run_two = ScenarioRepository(session).find_run("SIM-RUN-900004")
-        run_one_transactions = select(func.count()).select_from(Transaction).where(
-            Transaction.scenario_run_id == run_one.id
+        run_one_transactions = (
+            select(func.count())
+            .select_from(Transaction)
+            .where(Transaction.scenario_run_id == run_one.id)
         )
-        run_two_transactions = select(func.count()).select_from(Transaction).where(
-            Transaction.scenario_run_id == run_two.id
+        run_two_transactions = (
+            select(func.count())
+            .select_from(Transaction)
+            .where(Transaction.scenario_run_id == run_two.id)
         )
         assert session.scalar(run_one_transactions) == 0
         assert session.scalar(run_two_transactions) == 18
@@ -146,9 +150,9 @@ def test_missing_balance_persists_as_null_not_zero(migrated_engine):
         )
         assert (
             session.scalar(
-                select(func.count()).select_from(ProviderBalanceSnapshot).where(
-                    ProviderBalanceSnapshot.amount.is_(None)
-                )
+                select(func.count())
+                .select_from(ProviderBalanceSnapshot)
+                .where(ProviderBalanceSnapshot.amount.is_(None))
             )
             == 1
         )

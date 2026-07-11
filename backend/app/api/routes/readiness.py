@@ -6,12 +6,13 @@ from app.core.errors import error_payload
 from app.persistence.database import check_database_ready
 
 router = APIRouter(tags=["readiness"])
+SETTINGS_DEPENDENCY = Depends(get_settings)
 
 
 @router.get("/readiness", response_model=None)
 def readiness(
     request: Request,
-    settings: Settings = Depends(get_settings),
+    settings: Settings = SETTINGS_DEPENDENCY,
 ) -> dict[str, str] | JSONResponse:
     if check_database_ready(settings):
         return {

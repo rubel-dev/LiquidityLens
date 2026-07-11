@@ -176,12 +176,12 @@ def validate_shared_cash_input(
 
 
 def _provider_finding(
-    record,
+    record: CanonicalProviderBalanceInput,
     index: int,
     category: ValidationCategory,
     expected: str,
     observed: str,
-):
+) -> ValidationFinding:
     return build_finding(
         index=index + 1,
         rule_id=f"VAL-BAL-{index + 1:03d}",
@@ -199,12 +199,12 @@ def _provider_finding(
 
 
 def _provider_warning(
-    record,
+    record: CanonicalProviderBalanceInput,
     index: int,
     category: ValidationCategory,
     expected: str,
     observed: str,
-):
+) -> ValidationFinding:
     return build_finding(
         index=index + 1,
         rule_id=f"VAL-BAL-{index + 1:03d}",
@@ -222,12 +222,12 @@ def _provider_warning(
 
 
 def _provider_quarantine(
-    record,
+    record: CanonicalProviderBalanceInput,
     index: int,
     category: ValidationCategory,
     expected: str,
     observed: str,
-):
+) -> ValidationFinding:
     return build_finding(
         index=index + 1,
         rule_id=f"VAL-BAL-{index + 1:03d}",
@@ -244,7 +244,13 @@ def _provider_quarantine(
     )
 
 
-def _cash_finding(record, index: int, category: ValidationCategory, expected: str, observed: str):
+def _cash_finding(
+    record: CanonicalSharedCashInput,
+    index: int,
+    category: ValidationCategory,
+    expected: str,
+    observed: str,
+) -> ValidationFinding:
     return build_finding(
         index=index + 1,
         rule_id=f"VAL-CASH-{index + 1:03d}",
@@ -261,7 +267,13 @@ def _cash_finding(record, index: int, category: ValidationCategory, expected: st
     )
 
 
-def _cash_warning(record, index: int, category: ValidationCategory, expected: str, observed: str):
+def _cash_warning(
+    record: CanonicalSharedCashInput,
+    index: int,
+    category: ValidationCategory,
+    expected: str,
+    observed: str,
+) -> ValidationFinding:
     return build_finding(
         index=index + 1,
         rule_id=f"VAL-CASH-{index + 1:03d}",

@@ -1,8 +1,15 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Index, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.base import Base
 from app.persistence.models.mixins import UuidPrimaryKeyMixin
+
+if TYPE_CHECKING:
+    from app.persistence.models.agent import AgentProviderAccount
+    from app.persistence.models.feed import ProviderFeedStatus
+    from app.persistence.models.user import UserRoleAssignment
 
 
 class Provider(UuidPrimaryKeyMixin, Base):
@@ -16,4 +23,3 @@ class Provider(UuidPrimaryKeyMixin, Base):
     accounts: Mapped[list["AgentProviderAccount"]] = relationship(back_populates="provider")
     feed_statuses: Mapped[list["ProviderFeedStatus"]] = relationship(back_populates="provider")
     role_assignments: Mapped[list["UserRoleAssignment"]] = relationship(back_populates="provider")
-

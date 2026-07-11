@@ -41,4 +41,3 @@ def test_readiness_error_response_does_not_expose_secrets(monkeypatch):
     assert response.status_code == 503
     assert "super-secret" not in body
     assert secret_url not in body
-

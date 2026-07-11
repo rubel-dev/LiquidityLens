@@ -4,23 +4,23 @@
 |---|---|---|
 | 0 | Governance, prompt validation, CI, SonarQube | Configured |
 | 1 | Repository foundation | Implemented |
-| 2 | Database schema and migrations | Implemented |
+| 2 | Database schema and migrations | Verified locally |
 | 3 | Synthetic scenario engine | Implemented |
 | 4 | Provider ingestion and validation | Implemented |
-| 5 | Liquidity engine | Pending |
-| 6 | Anomaly engine | Pending |
-| 7 | Confidence and decision fusion | Pending |
-| 8 | Explanation service and fallback | Pending |
-| 9 | Alerts and cases | Pending |
-| 10 | Authentication and provider-scope authorization | Pending |
-| 11 | Backend APIs | Pending |
-| 12 | Agent UI | Pending |
-| 13 | Operations UI | Pending |
-| 14 | Risk UI | Pending |
-| 15 | Metrics and observability | Pending |
-| 16 | Integration and failure testing | Pending |
-| 17 | Demo packaging | Pending |
-| 18 | Release preparation | Pending |
+| 5 | Liquidity engine | Not Started |
+| 6 | Anomaly engine | Not Started |
+| 7 | Confidence and decision fusion | Not Started |
+| 8 | Explanation service and fallback | Not Started |
+| 9 | Alerts and cases | Not Started |
+| 10 | Authentication and provider-scope authorization | Not Started |
+| 11 | Backend APIs | Not Started |
+| 12 | Agent UI | Not Started |
+| 13 | Operations UI | Not Started |
+| 14 | Risk UI | Not Started |
+| 15 | Metrics and observability | Not Started |
+| 16 | Integration and failure testing | Not Started |
+| 17 | Demo packaging | Not Started |
+| 18 | Release preparation | Not Started |
 
 ```mermaid
 flowchart TD

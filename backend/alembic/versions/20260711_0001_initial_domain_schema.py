@@ -8,7 +8,6 @@ Create Date: 2026-07-11
 from collections.abc import Sequence
 
 from alembic import op
-
 from app.persistence.base import Base, import_all_models
 
 revision: str = "20260711_0001"
@@ -25,4 +24,3 @@ def upgrade() -> None:
 def downgrade() -> None:
     import_all_models()
     Base.metadata.drop_all(bind=op.get_bind())
-

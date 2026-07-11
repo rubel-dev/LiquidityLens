@@ -1,3 +1,5 @@
+import uuid
+
 from app.persistence.models.audit import AuditEvent
 from app.persistence.models.provider import Provider
 from app.validation.schemas import ValidationFinding
@@ -7,7 +9,7 @@ def validation_audit_event(
     *,
     action: str,
     entity_type: str,
-    entity_id,
+    entity_id: uuid.UUID,
     provider: Provider | None,
     correlation_id: str | None,
     findings: tuple[ValidationFinding, ...],

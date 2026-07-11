@@ -93,3 +93,14 @@ Provider ingestion validation supports these dispositions:
 - `duplicate_ignored`: idempotent retry, no duplicate business row or duplicate quality event.
 
 Validation findings include rule ID, category, severity, provider scope, agent scope, source record ID, affected fields, expected/observed condition, evidence, safe next step, and usability. Evidence must remain synthetic and must not include secrets, real identities, or wrongdoing claims.
+
+## Provider Adapter Boundary
+Provider-scoped adapters may map only provider-owned records:
+- provider transactions;
+- provider balance snapshots;
+- provider feed status records.
+
+Shared physical cash is not a provider feed and must enter through provider-independent canonical shared-cash ingestion tied to the agent/outlet or scenario context. Shared-cash records must not carry provider ownership.
+
+## Source Sequence Validation
+Validation compares an incoming transaction source sequence with the latest accepted source sequence recorded for the same provider/account scope. Negative sequence values are rejected. Non-contiguous values, such as receiving sequence `7` after latest known sequence `4`, are recorded as `sequence_gap` warning evidence rather than being treated as clean trusted input.

@@ -14,4 +14,3 @@ def test_health_endpoint_success():
         "service": "liquiditylens-api",
         "version": "0.1.0",
     }
-

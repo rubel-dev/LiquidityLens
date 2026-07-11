@@ -17,8 +17,12 @@ class AuditEvent(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
         Index("ix_audit_provider_action", "provider_id", "action"),
     )
 
-    actor_user_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    provider_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("providers.id"), nullable=True)
+    actor_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+    provider_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("providers.id"), nullable=True
+    )
     action: Mapped[str] = mapped_column(String(120), nullable=False)
     entity_type: Mapped[str] = mapped_column(String(120), nullable=False)
     entity_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
@@ -32,8 +36,12 @@ class HumanFeedback(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
     __tablename__ = "human_feedback"
     __table_args__ = (Index("ix_human_feedback_case", "case_id"),)
 
-    case_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("cases.id"), nullable=False)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("cases.id"), nullable=False
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
+    )
     feedback_type: Mapped[str] = mapped_column(String(80), nullable=False)
     details: Mapped[dict[str, object]] = mapped_column(JSONB, nullable=False, default=dict)
 
@@ -45,9 +53,10 @@ class MetricObservation(UuidPrimaryKeyMixin, CreatedAtMixin, Base):
         Index("ix_metric_observations_metric_id", "metric_id"),
     )
 
-    scenario_run_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("scenario_runs.id"), nullable=False)
+    scenario_run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("scenario_runs.id"), nullable=False
+    )
     metric_id: Mapped[str] = mapped_column(String(16), nullable=False)
     value: Mapped[Decimal] = mapped_column(Numeric(14, 4), nullable=False)
     threshold: Mapped[Decimal | None] = mapped_column(Numeric(14, 4), nullable=True)
     passed: Mapped[bool] = mapped_column(nullable=False)
-

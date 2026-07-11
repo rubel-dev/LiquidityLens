@@ -99,6 +99,32 @@ class ValidationRepository:
             .order_by(Transaction.occurred_at.desc())
         )
 
+    def latest_transaction_source_sequence(
+        self,
+        provider: Provider,
+        account_ref: str,
+    ) -> int | None:
+        audits = self.session.scalars(
+            select(AuditEvent)
+            .where(
+                AuditEvent.provider_id == provider.id,
+                AuditEvent.entity_type == "transaction",
+                AuditEvent.action.in_(
+                    ("validation.record_accepted", "validation.warning_generated")
+                ),
+            )
+            .order_by(AuditEvent.created_at.desc())
+            .limit(50)
+        )
+        for audit in audits:
+            metadata = audit.metadata_json
+            if metadata.get("account_ref") != account_ref:
+                continue
+            sequence = metadata.get("source_sequence")
+            if isinstance(sequence, int):
+                return sequence
+        return None
+
     def persist_transaction(
         self,
         record: CanonicalTransactionInput,

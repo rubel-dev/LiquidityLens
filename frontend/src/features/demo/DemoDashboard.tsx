@@ -788,7 +788,7 @@ export function DemoDashboard() {
                 {formatMoney(
                   String(
                     Number(overview.deceptive_total.aggregate_balance.amount) -
-                      Number(overview.shared_cash.amount),
+                    Number(overview.shared_cash.amount),
                   ),
                 )}
               </strong>

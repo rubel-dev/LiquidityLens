@@ -45,36 +45,37 @@ def analyze_run(
     if not scope.has_any_role("ops", "risk", "manager", "demo"):
         raise HTTPException(status_code=403, detail="ops, risk, manager, or demo role required")
 
-    # ── 1. Locate the scenario run ────────────────────────────────────────────
+    # ── 1. Locate the scenario run & agent ────────────────────────────────────
     scenario_repo = ScenarioRepository(session)
-    try:
-        with session.begin():
+    with session.begin():
+        try:
             run = scenario_repo.find_run(run_ref)
             run_id = run.id
-    except ScenarioNotFoundError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except ScenarioNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
 
-    # ── 2. Find the demo agent for this run ───────────────────────────────────
-    agent = session.scalar(select(Agent).where(Agent.synthetic_agent_ref == "SIM-AGENT-0001"))
-    if agent is None:
+        agent_id = session.scalar(select(Agent.id).where(Agent.synthetic_agent_ref == "SIM-AGENT-0001"))
+        
+    if agent_id is None:
         raise HTTPException(status_code=404, detail="demo agent not found — run a scenario first")
 
-    # ── 3. Liquidity forecasting ──────────────────────────────────────────────
+    # ── 2. Liquidity forecasting ──────────────────────────────────────────────
     forecast_results = LiquidityForecastingService(session).forecast_agent(
-        agent.id, scenario_run_id=run_id
+        agent_id, scenario_run_id=run_id
     )
 
-    # ── 4. Anomaly detection ──────────────────────────────────────────────────
+    # ── 3. Anomaly detection ──────────────────────────────────────────────────
     finding_results = AnomalyDetectionService(session).detect_agent(
-        agent.id, scenario_run_id=run_id
+        agent_id, scenario_run_id=run_id
     )
 
-    # ── 5. Build provider name lookup ─────────────────────────────────────────
-    provider_names: dict[uuid.UUID, str] = {}
-    for provider in session.scalars(select(Provider)).all():
-        provider_names[provider.id] = provider.display_name
+    # ── 4. Build provider name lookup ─────────────────────────────────────────
+    with session.begin():
+        provider_names: dict[uuid.UUID, str] = {}
+        for provider in session.scalars(select(Provider)).all():
+            provider_names[provider.id] = provider.display_name
 
-    # ── 6. Generate alerts from forecasts ────────────────────────────────────
+    # ── 5. Generate alerts from forecasts ────────────────────────────────────
     alert_service = AlertService(session)
     alert_ids: list[uuid.UUID] = []
 
@@ -89,7 +90,7 @@ def analyze_run(
         except AlertSourceError:
             pass
 
-    # ── 7. Generate alerts from anomaly findings ──────────────────────────────
+    # ── 6. Generate alerts from anomaly findings ──────────────────────────────
     for finding in finding_results:
         if finding.finding_id is None:
             continue
@@ -99,18 +100,19 @@ def analyze_run(
         except AlertSourceError:
             pass
 
-    # ── 8. Generate alerts from degraded feed statuses ────────────────────────
-    degraded_feeds = session.scalars(
-        select(ProviderFeedStatus).where(
-            ProviderFeedStatus.scenario_run_id == run_id,
-            ProviderFeedStatus.status != FeedQualityStatus.COMPLETE,
-            ProviderFeedStatus.agent_id.is_not(None),
-        )
-    ).all()
+    # ── 7. Generate alerts from degraded feed statuses ────────────────────────
+    with session.begin():
+        degraded_feed_ids = session.scalars(
+            select(ProviderFeedStatus.id).where(
+                ProviderFeedStatus.scenario_run_id == run_id,
+                ProviderFeedStatus.status != FeedQualityStatus.COMPLETE,
+                ProviderFeedStatus.agent_id.is_not(None),
+            )
+        ).all()
 
-    for feed in degraded_feeds:
+    for feed_id in degraded_feed_ids:
         try:
-            alert = alert_service.create_data_quality_alert(feed.id)
+            alert = alert_service.create_data_quality_alert(feed_id)
             alert_ids.append(alert.alert_id)
         except (AlertSourceError, Exception):
             pass

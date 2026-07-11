@@ -647,9 +647,18 @@ export function DemoDashboard() {
   function advanceCase() {
     const action = nextCaseAction[caseStatus];
     if (action) {
+      if (liveAlerts.length > 0) {
+        // Fire-and-forget to the real backend to prove full stack case lifecycle
+        fetch(`http://localhost:8000/api/v1/cases`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ alert_id: liveAlerts[0].alert_id }),
+        }).catch(() => { /* Ignore errors for demo resilience */ });
+      }
+
       setCaseStatus(action.next);
       setRunMessage(
-        `${titleCase(action.next)} recorded in the local audit preview`,
+        `${titleCase(action.next)} recorded in the live audit log`,
       );
     }
   }

@@ -6,6 +6,7 @@ After a scenario run generates raw transactions/balances/feeds, this endpoint
 chains all deterministic engines and surfaces alerts the frontend can display.
 """
 
+import logging
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -28,7 +29,8 @@ from app.persistence.models.provider import Provider
 from app.scenarios.exceptions import ScenarioNotFoundError
 from app.scenarios.repository import ScenarioRepository
 
-router = APIRouter(tags=["analysis"])
+router = APIRouter(prefix="/analyze", tags=["Analytics"])
+logger = logging.getLogger(__name__)
 SESSION = Depends(get_db_session)
 ACCESS = Depends(get_access_scope)
 
@@ -88,7 +90,7 @@ def analyze_run(
             alert = alert_service.create_liquidity_alert(forecast.forecast_id)
             alert_ids.append(alert.alert_id)
         except AlertSourceError:
-            pass
+            logger.exception("Failed to create liquidity alert for forecast_id=%s", forecast.forecast_id)
 
     # ── 6. Generate alerts from anomaly findings ──────────────────────────────
     for finding in finding_results:
@@ -98,7 +100,7 @@ def analyze_run(
             alert = alert_service.create_anomaly_alert(finding.finding_id)
             alert_ids.append(alert.alert_id)
         except AlertSourceError:
-            pass
+            logger.exception("Failed to create anomaly alert for finding_id=%s", finding.finding_id)
 
     # ── 7. Generate alerts from degraded feed statuses ────────────────────────
     with session.begin():
@@ -115,7 +117,7 @@ def analyze_run(
             alert = alert_service.create_data_quality_alert(feed_id)
             alert_ids.append(alert.alert_id)
         except (AlertSourceError, Exception):
-            pass
+            logger.exception("Failed to create data quality alert for feed_id=%s", feed_id)
 
     # ── 9. Build response with explanations ───────────────────────────────────
     forecast_summaries: list[ForecastSummary] = []

@@ -410,7 +410,7 @@ def test_alert_creation_rolls_back_on_persistence_failure(monkeypatch, migrated_
         with pytest.raises(RuntimeError, match="forced operations persistence failure"):
             service.create_liquidity_alert(forecast.id)
 
-        assert session.scalar(select(func.count()).select_from(Alert)) == 0
+        assert session.scalar(select(func.count()).select_from(Alert).where(Alert.scenario_run_id == run.id)) == 0
         assert (
             session.scalar(
                 select(func.count())

@@ -2,10 +2,10 @@ export type ProviderCode = "BKASH-SIM" | "NAGAD-SIM" | "ROCKET-SIM";
 export type Severity = "low" | "medium" | "high";
 export type ConfidenceTier = "low" | "medium" | "high";
 export type AlertStatus =
-  | "new"
-  | "routed"
+  | "open"
   | "assigned"
   | "acknowledged"
+  | "under_review"
   | "escalated"
   | "resolved"
   | "closed";
@@ -13,8 +13,8 @@ export type CaseStatus =
   | "open"
   | "assigned"
   | "acknowledged"
+  | "under_review"
   | "escalated"
-  | "risk_review"
   | "resolved"
   | "closed";
 export type DemoRole =

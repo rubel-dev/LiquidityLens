@@ -218,7 +218,7 @@ export const alertDetail: AlertDetail = {
   provider_code: "BKASH-SIM",
   agent_id: "SIM-AGENT-0001",
   severity: "high",
-  status: "routed",
+  status: "open",
   reason:
     "bKash simulated balance runway is short while aggregate value still looks healthy.",
   recommended_next_step:

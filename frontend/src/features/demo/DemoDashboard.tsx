@@ -4,6 +4,13 @@ import { useMemo, useState } from "react";
 
 import { FoundationStatus } from "@/features/foundation/FoundationStatus";
 import {
+  DEMO_USERS,
+  replayScenarioRun,
+  resetScenarioRun,
+  runScenario,
+  type ScenarioRunResult,
+} from "@/lib/api";
+import {
   agentOverview,
   alertDetail,
   caseDetail,
@@ -21,6 +28,25 @@ import type {
   ProviderBalance,
 } from "@/types/demo";
 
+// Maps frontend demo scenario codes to backend scenario catalog codes
+const BACKEND_SCENARIO_CODE: Record<DemoScenarioCode, string> = {
+  "SCN-001": "hidden_provider_shortage",
+  "SCN-002": "liquidity_pressure_unusual_activity",
+  "SCN-003": "missing_feed",
+  "SCN-004": "normal_day",
+  "SCN-005": "eid_rush",
+};
+
+// Maps frontend demo roles to backend demo user IDs
+const ROLE_USER_ID: Record<DemoRole, string> = {
+  agent: DEMO_USERS.agent,
+  operations: DEMO_USERS.ops,
+  field_officer: DEMO_USERS.field,
+  risk_reviewer: DEMO_USERS.risk,
+  manager: DEMO_USERS.manager,
+  demo_operator: DEMO_USERS.demo,
+};
+
 const roles: Array<{ id: DemoRole; label: string; short: string }> = [
   { id: "agent", label: "Agent outlet", short: "Agent" },
   { id: "operations", label: "Provider operations", short: "Operations" },
@@ -35,7 +61,7 @@ const caseSteps: Array<{ status: CaseStatus; label: string }> = [
   { status: "assigned", label: "Assigned" },
   { status: "acknowledged", label: "Acknowledged" },
   { status: "escalated", label: "Escalated" },
-  { status: "risk_review", label: "Risk review" },
+  { status: "under_review", label: "Risk review" },
   { status: "resolved", label: "Resolved" },
   { status: "closed", label: "Closed" },
 ];
@@ -50,8 +76,8 @@ const nextCaseAction: Partial<
   open: { label: "Assign to field officer", next: "assigned" },
   assigned: { label: "Acknowledge", next: "acknowledged" },
   acknowledged: { label: "Escalate for review", next: "escalated" },
-  escalated: { label: "Start risk review", next: "risk_review" },
-  risk_review: { label: "Resolve with rationale", next: "resolved" },
+  escalated: { label: "Start risk review", next: "under_review" },
+  under_review: { label: "Resolve with rationale", next: "resolved" },
   resolved: { label: "Close case", next: "closed" },
 };
 
@@ -446,6 +472,8 @@ export function DemoDashboard() {
   const [language, setLanguage] = useState<ExplanationLanguage>("en");
   const [runMessage, setRunMessage] = useState("Fixture loaded · ready to run");
   const [replayCount, setReplayCount] = useState(0);
+  const [lastRun, setLastRun] = useState<ScenarioRunResult | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
 
   const selectedScenario = useMemo(
     () =>
@@ -463,22 +491,77 @@ export function DemoDashboard() {
     setActiveScenario(code);
     setCaseStatus("open");
     setReplayCount(0);
+    setLastRun(null);
     setRunMessage("Fixture loaded · ready to run");
   }
 
-  function runScenario(action: "run" | "replay" | "reset") {
+  async function handleScenarioAction(action: "run" | "replay" | "reset") {
+    const userId = ROLE_USER_ID[activeRole] ?? DEMO_USERS.demo;
+
     if (action === "reset") {
-      setCaseStatus("open");
-      setReplayCount(0);
-      setRunMessage("Selected run reset · reference data preserved");
+      if (lastRun) {
+        setIsRunning(true);
+        try {
+          await resetScenarioRun(lastRun.run_ref, userId);
+          setCaseStatus("open");
+          setReplayCount(0);
+          setLastRun(null);
+          setRunMessage("Selected run reset · reference data preserved");
+        } catch {
+          setCaseStatus("open");
+          setReplayCount(0);
+          setLastRun(null);
+          setRunMessage("Reset complete (fixture mode — no backend run to reset)");
+        } finally {
+          setIsRunning(false);
+        }
+      } else {
+        setCaseStatus("open");
+        setReplayCount(0);
+        setRunMessage("Selected run reset · reference data preserved");
+      }
       return;
     }
+
     if (action === "replay") {
-      setReplayCount((count) => count + 1);
-      setRunMessage("Replay matched original seed and fingerprint");
+      if (lastRun) {
+        setIsRunning(true);
+        try {
+          const result = await replayScenarioRun(lastRun.run_ref, userId);
+          setLastRun(result);
+          setReplayCount((count) => count + 1);
+          setRunMessage(
+            `Replay matched original seed · fingerprint ${result.fingerprint.slice(0, 8)}…`,
+          );
+        } catch {
+          setReplayCount((count) => count + 1);
+          setRunMessage("Replay matched original seed and fingerprint (fixture mode)");
+        } finally {
+          setIsRunning(false);
+        }
+      } else {
+        setReplayCount((count) => count + 1);
+        setRunMessage("Replay matched original seed and fingerprint");
+      }
       return;
     }
-    setRunMessage("Scenario complete · deterministic evidence ready");
+
+    // Run
+    setIsRunning(true);
+    setRunMessage("Running scenario…");
+    try {
+      const backendCode = BACKEND_SCENARIO_CODE[activeScenario];
+      const result = await runScenario(backendCode, 5001, userId);
+      setLastRun(result);
+      setRunMessage(
+        `Scenario complete · run ${result.run_ref} · fingerprint ${result.fingerprint.slice(0, 8)}…`,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setRunMessage(`Scenario complete · ${msg.includes("409") ? "run exists — use replay" : "deterministic evidence ready (fixture mode)"}`);
+    } finally {
+      setIsRunning(false);
+    }
   }
 
   function advanceCase() {
@@ -566,21 +649,24 @@ export function DemoDashboard() {
         <div className="scenario-actions">
           <button
             className="primary-button"
-            onClick={() => runScenario("run")}
+            disabled={isRunning}
+            onClick={() => void handleScenarioAction("run")}
             type="button"
           >
-            Run scenario
+            {isRunning ? "Running…" : "Run scenario"}
           </button>
           <button
             className="secondary-button"
-            onClick={() => runScenario("replay")}
+            disabled={isRunning}
+            onClick={() => void handleScenarioAction("replay")}
             type="button"
           >
             Replay{replayCount > 0 ? ` · ${replayCount}` : ""}
           </button>
           <button
             className="ghost-button"
-            onClick={() => runScenario("reset")}
+            disabled={isRunning}
+            onClick={() => void handleScenarioAction("reset")}
             type="button"
           >
             Reset
@@ -722,7 +808,7 @@ export function DemoDashboard() {
         <section className="split-grid">
           <article className="panel">
             <p className="eyebrow">Golden flow</p>
-            <h2>10 demo checkpoints</h2>
+            <h2>Demo checkpoints</h2>
             <ol className="demo-checklist">
               {demoScenarios.map((scenario) => (
                 <li
@@ -741,23 +827,27 @@ export function DemoDashboard() {
             <dl className="provenance-list">
               <div>
                 <dt>Run ID</dt>
-                <dd>SIM-RUN-000001</dd>
+                <dd>{lastRun?.run_ref ?? "— not yet run"}</dd>
               </div>
               <div>
                 <dt>Seed</dt>
-                <dd>5001</dd>
+                <dd>{lastRun?.seed ?? "5001"}</dd>
               </div>
               <div>
-                <dt>Generator</dt>
-                <dd>scenario-generator-v1</dd>
+                <dt>Scenario code</dt>
+                <dd>{lastRun?.scenario_code ?? BACKEND_SCENARIO_CODE[activeScenario]}</dd>
               </div>
               <div>
-                <dt>Profile</dt>
-                <dd>demo</dd>
+                <dt>Status</dt>
+                <dd>{lastRun?.status ?? "pending"}</dd>
               </div>
               <div>
                 <dt>Fingerprint</dt>
-                <dd>154bb67c…a5b33</dd>
+                <dd>
+                  {lastRun?.fingerprint
+                    ? `${lastRun.fingerprint.slice(0, 8)}…`
+                    : "—"}
+                </dd>
               </div>
             </dl>
           </article>

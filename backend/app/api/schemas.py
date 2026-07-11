@@ -11,6 +11,115 @@ class ApiModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+# ── Session ──────────────────────────────────────────────────────────────────
+
+
+class SessionResponse(BaseModel):
+    user_id: uuid.UUID
+    display_name: str
+    roles: list[str]
+    provider_ids: list[uuid.UUID]
+    area_ids: list[uuid.UUID]
+    global_access: bool
+
+
+# ── Scenarios ────────────────────────────────────────────────────────────────
+
+
+class ScenarioSummaryResponse(ApiModel):
+    scenario_id: uuid.UUID = Field(alias="id")
+    code: str
+    name: str
+    description: str
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+class RunScenarioRequest(BaseModel):
+    seed: int | str = Field(default=5001)
+    profile: str = Field(default="demo")
+
+
+class ScenarioRunResponse(BaseModel):
+    run_ref: str
+    scenario_code: str
+    status: str
+    seed: str
+    fingerprint: str
+    generated_counts: dict[str, int]
+
+
+# ── Liquidity Forecasts ───────────────────────────────────────────────────────
+
+
+class LiquidityForecastResponse(ApiModel):
+    forecast_id: uuid.UUID = Field(alias="id")
+    agent_id: uuid.UUID
+    provider_id: uuid.UUID | None
+    forecast_type: str
+    forecast_time: datetime
+    shortage_at: datetime | None
+    confidence: Decimal
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+# ── Anomaly Findings ──────────────────────────────────────────────────────────
+
+
+class AnomalyFindingResponse(ApiModel):
+    finding_id: uuid.UUID = Field(alias="id")
+    provider_id: uuid.UUID
+    agent_id: uuid.UUID
+    finding_type: str
+    severity: str
+    score: Decimal
+    detected_at: datetime
+    human_review_required: bool
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+# ── Data Quality ──────────────────────────────────────────────────────────────
+
+
+class DataQualityStatusResponse(ApiModel):
+    status_id: uuid.UUID = Field(alias="id")
+    provider_id: uuid.UUID
+    agent_id: uuid.UUID | None
+    status: str
+    observed_at: datetime
+    ingested_at: datetime | None
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+# ── Audit Events ──────────────────────────────────────────────────────────────
+
+
+class AuditEventResponse(ApiModel):
+    event_id: uuid.UUID = Field(alias="id")
+    action: str
+    entity_type: str
+    entity_id: uuid.UUID
+    actor_user_id: uuid.UUID | None
+    provider_id: uuid.UUID | None
+    previous_state: dict[str, object] | None = Field(alias="previous_state_summary")
+    new_state: dict[str, object] | None = Field(alias="new_state_summary")
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+# ── Case Notes ────────────────────────────────────────────────────────────────
+
+
+class CreateCaseNoteRequest(BaseModel):
+    body: str = Field(min_length=1, max_length=2000)
+
+
 class EvidenceResponse(ApiModel):
     evidence_type: str
     payload: dict[str, object]

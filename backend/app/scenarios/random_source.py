@@ -1,6 +1,7 @@
 import random
 import re
 from decimal import Decimal
+from typing import TypeVar
 
 from app.scenarios.exceptions import UnsafeSyntheticIdentifierError
 
@@ -18,6 +19,9 @@ def validate_synthetic_identifier(value: str) -> str:
     return value
 
 
+T = TypeVar("T")
+
+
 class DeterministicRandom:
     def __init__(self, seed: str | int) -> None:
         self.seed = str(seed)
@@ -27,7 +31,7 @@ class DeterministicRandom:
         units = self._random.randrange(minimum // step, (maximum // step) + 1)
         return Decimal(units * step).quantize(Decimal("0.01"))
 
-    def choice[T](self, values: list[T]) -> T:
+    def choice(self, values: list[T]) -> T:
         return self._random.choice(values)
 
     def randint(self, minimum: int, maximum: int) -> int:

@@ -4,7 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.api.schemas import (
+    CaseNoteResponse,
     CaseResponse,
+    CreateCaseNoteRequest,
     CreateCaseRequest,
     EscalateCaseRequest,
     ResolveCaseRequest,
@@ -59,6 +61,27 @@ def create_case(
             title=payload.title,
             initial_note=payload.initial_note,
         )
+    except CaseNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except CaseAuthorizationError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except CaseConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.post("/{case_id}/notes", response_model=CaseNoteResponse, status_code=201)
+def add_case_note(
+    case_id: uuid.UUID,
+    payload: CreateCaseNoteRequest,
+    session: Session = SESSION,
+    scope: AccessScope = ACCESS,
+) -> object:
+    try:
+        result = CaseService(session).add_note(case_id, scope, payload.body)
+        latest = result.notes[-1] if result.notes else None
+        if latest is None:
+            raise HTTPException(status_code=500, detail="note was not persisted")
+        return latest
     except CaseNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except CaseAuthorizationError as exc:

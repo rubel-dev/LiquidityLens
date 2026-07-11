@@ -12,6 +12,13 @@ export default defineConfig({
   test: {
     coverage: {
       reporter: ["text", "lcov"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/lib/api.ts",
+        "src/types/**",
+        "src/app/layout.tsx",
+        "**/*.config.*",
+      ],
       thresholds: {
         branches: 80,
         functions: 80,

@@ -1,5 +1,6 @@
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
@@ -7,20 +8,41 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 from app.api.routes.alerts import router as alerts_router
+from app.api.routes.audit_events import router as audit_events_router
 from app.api.routes.cases import router as cases_router
+from app.api.routes.data_quality import router as data_quality_router
+from app.api.routes.findings import router as findings_router
+from app.api.routes.forecasts import router as forecasts_router
 from app.api.routes.health import router as health_router
 from app.api.routes.readiness import router as readiness_router
+from app.api.routes.scenarios import router as scenarios_router
+from app.api.routes.session import router as session_router
 from app.core.config import get_settings
 from app.core.errors import error_payload
 from app.core.logging import configure_logging
+from app.persistence.database import SessionLocal
+from app.persistence.seed import ensure_demo_seed
 
 logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    logger.info("Seeding demo reference data...")
+    try:
+        with SessionLocal() as session:
+            with session.begin():
+                ensure_demo_seed(session)
+        logger.info("Demo seed complete.")
+    except Exception:
+        logger.exception("Demo seed failed — backend may not function correctly")
+    yield
 
 
 def create_app() -> FastAPI:
     configure_logging()
     settings = get_settings()
-    app = FastAPI(title="LiquidityLens API", version=settings.app_version)
+    app = FastAPI(title="LiquidityLens API", version=settings.app_version, lifespan=lifespan)
 
     app.add_middleware(
         CORSMiddleware,
@@ -69,8 +91,14 @@ def create_app() -> FastAPI:
 
     app.include_router(health_router, prefix=settings.api_v1_prefix)
     app.include_router(readiness_router, prefix=settings.api_v1_prefix)
+    app.include_router(session_router, prefix=settings.api_v1_prefix)
+    app.include_router(scenarios_router, prefix=settings.api_v1_prefix)
     app.include_router(alerts_router, prefix=settings.api_v1_prefix)
     app.include_router(cases_router, prefix=settings.api_v1_prefix)
+    app.include_router(forecasts_router, prefix=settings.api_v1_prefix)
+    app.include_router(findings_router, prefix=settings.api_v1_prefix)
+    app.include_router(data_quality_router, prefix=settings.api_v1_prefix)
+    app.include_router(audit_events_router, prefix=settings.api_v1_prefix)
     return app
 
 

@@ -214,3 +214,38 @@ class EscalateCaseRequest(ApiModel):
 class ResolveCaseRequest(ApiModel):
     rationale: str = Field(min_length=1, max_length=500)
     expected_version: int | None = Field(default=None, ge=1)
+
+
+# ── Analysis Pipeline ─────────────────────────────────────────────────────────
+
+
+class ForecastSummary(BaseModel):
+    forecast_id: uuid.UUID
+    provider_id: uuid.UUID | None
+    scope: str
+    risk_level: str
+    runway_minutes: float | None
+    confidence: float
+    explanation_en: str
+    explanation_bn: str
+
+
+class FindingSummary(BaseModel):
+    finding_id: uuid.UUID
+    provider_id: uuid.UUID
+    severity: str
+    pattern: str
+    confidence: float
+    explanation_en: str
+    explanation_bn: str
+
+
+class AnalysisResponse(BaseModel):
+    run_ref: str
+    agent_id: uuid.UUID
+    forecasts_created: int
+    findings_created: int
+    alerts_created: int
+    forecasts: list[ForecastSummary]
+    findings: list[FindingSummary]
+    alert_ids: list[uuid.UUID]

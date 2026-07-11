@@ -5,9 +5,13 @@ import { useMemo, useState } from "react";
 import { FoundationStatus } from "@/features/foundation/FoundationStatus";
 import {
   DEMO_USERS,
+  analyzeRun,
+  listAlerts,
   replayScenarioRun,
   resetScenarioRun,
   runScenario,
+  type AnalysisResult,
+  type ApiAlert,
   type ScenarioRunResult,
 } from "@/lib/api";
 import {
@@ -330,32 +334,68 @@ function CaseWorkspace({ status, activeRole, onAdvance }: CaseWorkspaceProps) {
 function AlertWorkspace({
   language,
   setLanguage,
+  liveAlert,
+  liveAnalysis,
 }: {
   language: ExplanationLanguage;
   setLanguage: (language: ExplanationLanguage) => void;
+  liveAlert: ApiAlert | null;
+  liveAnalysis: AnalysisResult | null;
 }) {
+  const isLive = liveAlert !== null;
+
+  // Pick explanation text: live Bangla from analysis pipeline, else fixture
+  const liveExplanationEn =
+    liveAnalysis?.forecasts[0]?.explanation_en ??
+    liveAnalysis?.findings[0]?.explanation_en ??
+    null;
+  const liveExplanationBn =
+    liveAnalysis?.forecasts[0]?.explanation_bn ??
+    liveAnalysis?.findings[0]?.explanation_bn ??
+    null;
+
+  const explanationText =
+    language === "bn" && liveExplanationBn
+      ? liveExplanationBn
+      : language === "en" && liveExplanationEn
+        ? liveExplanationEn
+        : explanationCopy[language];
+
+  const alertId = liveAlert?.alert_id ?? alertDetail.alert_id;
+  const alertType = liveAlert?.alert_type ?? "liquidity_shortage";
+  const alertStatus = liveAlert?.status ?? alertDetail.status;
+  const alertSummary = liveAlert?.summary ?? alertDetail.reason;
+  const alertNextStep =
+    liveAlert?.recommended_next_step ?? alertDetail.recommended_next_step;
+  const confidencePct = liveAlert
+    ? Math.round(parseFloat(liveAlert.confidence) * 100)
+    : 81;
+
   const evidence = Object.values(alertDetail.evidence_fingerprint).flat();
+
   return (
     <article className="panel alert-panel">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">
-            {alertDetail.alert_id} · {alertDetail.provider_code}
+            {alertId.toString().slice(0, 8)}… · {isLive ? titleCase(alertType) : alertDetail.provider_code ?? ""}
           </p>
-          <h2>Review-oriented alert</h2>
+          <h2>Review-oriented alert{isLive ? " · Live" : ""}</h2>
         </div>
-        <span className="status-chip status-shortage_risk">High priority</span>
+        <span className="status-chip status-shortage_risk">
+          {liveAlert ? titleCase(liveAlert.severity) : "High"} priority
+        </span>
       </div>
-      <p className="lead-copy">{alertDetail.reason}</p>
+      <p className="lead-copy">{alertSummary}</p>
       <div className="alert-meta">
         <span>
-          Owner <strong>{alertDetail.owner_user_id}</strong>
+          Confidence <strong>{confidencePct}%</strong>
         </span>
         <span>
-          Confidence <strong>81% · High</strong>
+          Status <strong>{titleCase(alertStatus)}</strong>
         </span>
         <span>
-          Status <strong>{titleCase(alertDetail.status)}</strong>
+          Source <strong>{isLive ? "live backend" : "fixture"}</strong>
         </span>
       </div>
       <div className="language-control" aria-label="Explanation language">
@@ -366,34 +406,49 @@ function AlertWorkspace({
             onClick={() => setLanguage(item)}
             type="button"
           >
-            {item === "en"
-              ? "English"
-              : item === "banglish"
-                ? "Banglish"
-                : "বাংলা"}
+            {item === "en" ? "English" : item === "banglish" ? "Banglish" : "বাংলা"}
           </button>
         ))}
       </div>
       <div className="explanation-box">
-        <p>{explanationCopy[language]}</p>
+        <p>{explanationText}</p>
         <small>
-          Deterministic template fallback · safe if an LLM is unavailable
+          {isLive
+            ? "Deterministic template · generated from live engine output"
+            : "Deterministic template fallback · safe if an LLM is unavailable"}
         </small>
       </div>
-      <h3>Evidence fingerprint</h3>
-      <div className="evidence-grid">
-        {evidence.map((item) => (
-          <div className="evidence-item" key={item.evidence_id}>
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <div className="weight-track">
-              <span style={{ width: `${item.weight * 100}%` }} />
-            </div>
+      {!isLive && (
+        <>
+          <h3>Evidence fingerprint</h3>
+          <div className="evidence-grid">
+            {evidence.map((item) => (
+              <div className="evidence-item" key={item.evidence_id}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <div className="weight-track">
+                  <span style={{ width: `${item.weight * 100}%` }} />
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+      {isLive && liveAlert.evidence.length > 0 && (
+        <>
+          <h3>Evidence fingerprint · live</h3>
+          <div className="evidence-grid">
+            {liveAlert.evidence.slice(0, 5).map((item, idx) => (
+              <div className="evidence-item" key={idx}>
+                <span>{titleCase(item.evidence_type)}</span>
+                <strong>{JSON.stringify(item.payload).slice(0, 40)}</strong>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
       <div className="callout safe-callout">
-        Recommended next step: {alertDetail.recommended_next_step}
+        Recommended next step: {alertNextStep}
       </div>
     </article>
   );
@@ -474,6 +529,8 @@ export function DemoDashboard() {
   const [replayCount, setReplayCount] = useState(0);
   const [lastRun, setLastRun] = useState<ScenarioRunResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [liveAnalysis, setLiveAnalysis] = useState<AnalysisResult | null>(null);
+  const [liveAlerts, setLiveAlerts] = useState<ApiAlert[]>([]);
 
   const selectedScenario = useMemo(
     () =>
@@ -492,6 +549,8 @@ export function DemoDashboard() {
     setCaseStatus("open");
     setReplayCount(0);
     setLastRun(null);
+    setLiveAnalysis(null);
+    setLiveAlerts([]);
     setRunMessage("Fixture loaded · ready to run");
   }
 
@@ -503,21 +562,22 @@ export function DemoDashboard() {
         setIsRunning(true);
         try {
           await resetScenarioRun(lastRun.run_ref, userId);
-          setCaseStatus("open");
-          setReplayCount(0);
-          setLastRun(null);
-          setRunMessage("Selected run reset · reference data preserved");
         } catch {
+          // best-effort; reset local state regardless
+        } finally {
           setCaseStatus("open");
           setReplayCount(0);
           setLastRun(null);
-          setRunMessage("Reset complete (fixture mode — no backend run to reset)");
-        } finally {
+          setLiveAnalysis(null);
+          setLiveAlerts([]);
+          setRunMessage("Selected run reset · reference data preserved");
           setIsRunning(false);
         }
       } else {
         setCaseStatus("open");
         setReplayCount(0);
+        setLiveAnalysis(null);
+        setLiveAlerts([]);
         setRunMessage("Selected run reset · reference data preserved");
       }
       return;
@@ -526,12 +586,18 @@ export function DemoDashboard() {
     if (action === "replay") {
       if (lastRun) {
         setIsRunning(true);
+        setRunMessage("Replaying scenario…");
         try {
           const result = await replayScenarioRun(lastRun.run_ref, userId);
           setLastRun(result);
           setReplayCount((count) => count + 1);
+          // Re-run analysis on the replayed run
+          const analysis = await analyzeRun(result.run_ref, userId);
+          setLiveAnalysis(analysis);
+          const alerts = await listAlerts(userId);
+          setLiveAlerts(alerts);
           setRunMessage(
-            `Replay matched original seed · fingerprint ${result.fingerprint.slice(0, 8)}…`,
+            `Replay matched seed · fingerprint ${result.fingerprint.slice(0, 8)}… · ${analysis.alerts_created} alerts`,
           );
         } catch {
           setReplayCount((count) => count + 1);
@@ -546,19 +612,33 @@ export function DemoDashboard() {
       return;
     }
 
-    // Run
+    // Run: scenario → analyze → fetch live alerts
     setIsRunning(true);
+    setLiveAnalysis(null);
+    setLiveAlerts([]);
     setRunMessage("Running scenario…");
     try {
       const backendCode = BACKEND_SCENARIO_CODE[activeScenario];
       const result = await runScenario(backendCode, 5001, userId);
       setLastRun(result);
+      setRunMessage("Analyzing — running forecasting and anomaly detection…");
+
+      const analysis = await analyzeRun(result.run_ref, userId);
+      setLiveAnalysis(analysis);
+
+      const alerts = await listAlerts(userId);
+      setLiveAlerts(alerts);
+
       setRunMessage(
-        `Scenario complete · run ${result.run_ref} · fingerprint ${result.fingerprint.slice(0, 8)}…`,
+        `Live · run ${result.run_ref} · ${analysis.forecasts_created} forecasts · ${analysis.findings_created} findings · ${analysis.alerts_created} alerts`,
       );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      setRunMessage(`Scenario complete · ${msg.includes("409") ? "run exists — use replay" : "deterministic evidence ready (fixture mode)"}`);
+      setRunMessage(
+        msg.includes("409")
+          ? "Run already exists — use Replay to re-run with the same seed"
+          : `Scenario complete (fixture mode — ${msg.slice(0, 60)})`,
+      );
     } finally {
       setIsRunning(false);
     }
@@ -689,7 +769,9 @@ export function DemoDashboard() {
               <h2>{overview.display_name}</h2>
             </div>
             <span className="active-alerts">
-              {overview.active_alert_count} active alerts
+              {liveAlerts.length > 0
+                ? `${liveAlerts.length} live alerts`
+                : `${overview.active_alert_count} active alerts`}
             </span>
           </div>
           <div className="hero-stats">
@@ -762,12 +844,40 @@ export function DemoDashboard() {
         ))}
       </section>
 
+      {liveAnalysis && (liveAnalysis.forecasts?.length ?? 0) > 0 && (
+        <section className="feed-strip" aria-label="Live forecast runways" role="status">
+          {liveAnalysis.forecasts.map((f) => (
+            <div key={f.forecast_id}>
+              <span
+                className={`feed-dot feed-${f.risk_level === "critical" || f.risk_level === "warning" ? "missing" : f.risk_level === "watch" ? "delayed" : "live"}`}
+              />
+              <div>
+                <strong>
+                  {f.scope === "shared_cash" ? "Shared cash" : `Provider ${f.scope}`} ·{" "}
+                  {f.risk_level.toUpperCase()}
+                </strong>
+                <small>
+                  {f.runway_minutes !== null
+                    ? `${Math.round(f.runway_minutes)} min runway · ${Math.round(f.confidence * 100)}% confidence`
+                    : `Confidence ${Math.round(f.confidence * 100)}% · runway unknown`}
+                </small>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
       {activeRole === "agent" && <AgentWorkspace overview={overview} />}
 
       {(activeRole === "operations" || activeRole === "field_officer") &&
         (showAlert ? (
           <section className="workspace-grid">
-            <AlertWorkspace language={language} setLanguage={setLanguage} />
+            <AlertWorkspace
+              language={language}
+              setLanguage={setLanguage}
+              liveAlert={liveAlerts[0] ?? null}
+              liveAnalysis={liveAnalysis}
+            />
             <CaseWorkspace
               activeRole={activeRole}
               onAdvance={advanceCase}
@@ -790,7 +900,12 @@ export function DemoDashboard() {
 
       {activeRole === "risk_reviewer" && (
         <section className="workspace-grid risk-layout">
-          <AlertWorkspace language={language} setLanguage={setLanguage} />
+          <AlertWorkspace
+            language={language}
+            setLanguage={setLanguage}
+            liveAlert={liveAlerts[0] ?? null}
+            liveAnalysis={liveAnalysis}
+          />
           <div className="stacked-panels">
             <DataQualityPanel overview={overview} />
             <CaseWorkspace

@@ -66,6 +66,50 @@ export async function getSession(userId: string): Promise<SessionInfo> {
   return apiFetch<SessionInfo>("/session", { userId });
 }
 
+// ── Analysis Pipeline ─────────────────────────────────────────────────────────
+
+export type ForecastSummary = {
+  forecast_id: string;
+  provider_id: string | null;
+  scope: string;
+  risk_level: string;
+  runway_minutes: number | null;
+  confidence: number;
+  explanation_en: string;
+  explanation_bn: string;
+};
+
+export type FindingSummary = {
+  finding_id: string;
+  provider_id: string;
+  severity: string;
+  pattern: string;
+  confidence: number;
+  explanation_en: string;
+  explanation_bn: string;
+};
+
+export type AnalysisResult = {
+  run_ref: string;
+  agent_id: string;
+  forecasts_created: number;
+  findings_created: number;
+  alerts_created: number;
+  forecasts: ForecastSummary[];
+  findings: FindingSummary[];
+  alert_ids: string[];
+};
+
+export async function analyzeRun(
+  runRef: string,
+  userId: string,
+): Promise<AnalysisResult> {
+  return apiFetch<AnalysisResult>(`/analyze/${runRef}`, {
+    method: "POST",
+    userId,
+  });
+}
+
 // ── Scenarios ─────────────────────────────────────────────────────────────────
 
 export type ScenarioSummary = {

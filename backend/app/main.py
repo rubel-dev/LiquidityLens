@@ -3,13 +3,12 @@ from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from alembic import command as alembic_command
-from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 from app.api.routes.alerts import router as alerts_router
+from app.api.routes.analyze import router as analyze_router
 from app.api.routes.audit_events import router as audit_events_router
 from app.api.routes.cases import router as cases_router
 from app.api.routes.data_quality import router as data_quality_router
@@ -28,20 +27,10 @@ from app.persistence.seed import ensure_demo_seed
 logger = logging.getLogger(__name__)
 
 
-def _run_migrations() -> None:
-    """Run alembic upgrade head using the Python API.
-
-    alembic.ini is expected at the working-directory root (i.e. the backend/
-    directory, which FastAPI Cloud sets as the application directory).
-    """
-    cfg = AlembicConfig("alembic.ini")
-    alembic_command.upgrade(cfg, "head")
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    # Migrations are run out-of-band, not on startup.
-
+    # Migrations are NOT run here — they hang on Neon's PgBouncer pooler.
+    # Run `alembic upgrade head` before deploying (see DEPLOY.md).
     logger.info("Seeding demo reference data...")
     try:
         with SessionLocal() as session:
@@ -107,6 +96,7 @@ def create_app() -> FastAPI:
     app.include_router(readiness_router, prefix=settings.api_v1_prefix)
     app.include_router(session_router, prefix=settings.api_v1_prefix)
     app.include_router(scenarios_router, prefix=settings.api_v1_prefix)
+    app.include_router(analyze_router, prefix=settings.api_v1_prefix)
     app.include_router(alerts_router, prefix=settings.api_v1_prefix)
     app.include_router(cases_router, prefix=settings.api_v1_prefix)
     app.include_router(forecasts_router, prefix=settings.api_v1_prefix)

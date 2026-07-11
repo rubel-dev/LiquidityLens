@@ -10,6 +10,8 @@ __pycache__/
 *.pyd
 .Python
 .pytest_cache/
+pytest-cache-files-*/
+**/pytest-cache-files-*/
 .mypy_cache/
 .ruff_cache/
 .coverage

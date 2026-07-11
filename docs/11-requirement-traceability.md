@@ -23,10 +23,10 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | DATA-001 | Synthetic data only | PDF | scenario | /api/v1/scenarios planned | n/a | AC-009 | MET-005 | DEMO-001 | Approved |
 | DATA-002 | Synthetic non-phone-like IDs | Governance | scenario | /api/v1/transactions planned | Evidence UI | AC-004 | MET-003 | DEMO-001 | Approved |
 | DATA-003 | Shared cash is not provider feed | Governance | data model | /api/v1/agents/{agent_id}/cash-snapshots planned | Overview | AC-001 | MET-006 | DEMO-001 | Approved |
-| ARCH-001 | Modular monolith | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Approved |
-| ARCH-002 | No MVP microservices | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Approved |
-| API-001 | Versioned /api/v1 contracts | API design | api | all /api/v1 planned | n/a | contract tests planned | MET-007 | DEMO-001 | Approved |
-| DB-001 | PostgreSQL with SQLAlchemy/Alembic | DB design | persistence | n/a | n/a | migration tests planned | MET-012 | n/a | Approved |
+| ARCH-001 | Modular monolith | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
+| ARCH-002 | No MVP microservices | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
+| API-001 | Versioned /api/v1 contracts | API design | api | `/api/v1/health`, `/api/v1/readiness` implemented; feature APIs planned | Foundation page health status only | backend/frontend foundation tests | MET-007 | DEMO-001 | In Progress |
+| DB-001 | PostgreSQL with SQLAlchemy/Alembic | DB design | persistence | n/a | n/a | readiness/config tests; migration tests planned | MET-012 | n/a | In Progress |
 | SEC-001 | No credentials or real identities | PDF | security | all APIs planned | all UI | safety validation planned | MET-012 | n/a | Approved |
 | SAFE-001 | No real financial activity | PDF | all | no execution endpoint | no command UI | safety validation planned | MET-012 | DEMO-001 | Approved |
 | SAFE-002 | No wrongdoing declaration | PDF | explanation | alerts planned | alert UI | safety validation planned | MET-006 | DEMO-001 | Approved |
@@ -43,12 +43,12 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | MET-010 | Alert acknowledgement time | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-010 | DEMO-001 | Approved |
 | MET-011 | Resolution time | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-011 | DEMO-001 | Approved |
 | MET-012 | SonarQube Quality Gate status | Metrics | ci | GitHub Actions | n/a | CI check | MET-012 | n/a | Approved |
-| DOC-001 | Exact prompt history per commit | Governance | governance | n/a | n/a | traceability validator | MET-012 | n/a | Approved |
-| DOC-002 | Commit ledger | Governance | governance | n/a | n/a | traceability validator | MET-012 | n/a | Approved |
-| DOC-003 | Requirement traceability | Governance | governance | n/a | n/a | requirement ID validator | MET-012 | n/a | Approved |
-| QUALITY-001 | CI/Sonar before code | Governance | ci | n/a | n/a | CI | MET-012 | n/a | Approved |
-| QUALITY-002 | Commit metadata and prompt file validation | Governance | ci | n/a | n/a | traceability validator | MET-012 | n/a | Approved |
-| CI-001 | CI/Sonar on push and PR | Governance | ci | n/a | n/a | YAML validation | MET-012 | n/a | Approved |
-| CI-002 | Sonar secrets names only | Governance | ci | n/a | n/a | secret scan | MET-012 | n/a | Approved |
+| DOC-001 | Exact prompt history per commit | Governance | governance | n/a | n/a | traceability validator | MET-012 | n/a | Implemented |
+| DOC-002 | Commit ledger | Governance | governance | n/a | n/a | traceability validator | MET-012 | n/a | Implemented |
+| DOC-003 | Requirement traceability | Governance | governance | n/a | n/a | requirement ID validator | MET-012 | n/a | Implemented |
+| QUALITY-001 | CI/Sonar before code | Governance | ci | n/a | n/a | CI | MET-012 | n/a | Implemented |
+| QUALITY-002 | Commit metadata and prompt file validation | Governance | ci | n/a | n/a | traceability validator | MET-012 | n/a | Implemented |
+| CI-001 | CI/Sonar on push and PR | Governance | ci | n/a | n/a | YAML validation | MET-012 | n/a | Implemented |
+| CI-002 | Sonar secrets names only | Governance | ci | n/a | n/a | secret scan | MET-012 | n/a | Implemented |
 | DEMO-001 | Story-driven golden flow | Demo | demo | planned | demo UI | AC-010 | MET-001, MET-006, MET-009 | DEMO-001 | Approved |
 | DEMO-002 | Reset and replay | Demo | demo | /api/v1/scenario-runs/{run_id}/replay planned | demo UI | AC-009 | MET-009 | DEMO-002 | Approved |

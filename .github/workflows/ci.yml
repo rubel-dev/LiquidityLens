@@ -61,11 +61,12 @@ jobs:
           python scripts/check_ci_mode.py
           if [ -d backend ]; then
             python -m pip install --upgrade pip
-            if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-            if [ -f backend/pyproject.toml ]; then pip install -e backend; fi
+            pip install -e "backend[dev]"
             python -m ruff format --check backend
             python -m ruff check backend
-            if command -v mypy >/dev/null 2>&1; then mypy backend; else pyright backend; fi
+            python -m mypy backend/app
+            cd backend
+            python -m pytest
           else
             echo "Governance-only mode: backend source not scaffolded yet."
           fi
@@ -86,11 +87,12 @@ jobs:
         run: |
           python scripts/check_ci_mode.py
           if [ -d frontend ]; then
-            test -f frontend/package-lock.json
-            npm --prefix frontend ci
+            npm --prefix frontend install
             npm --prefix frontend run format:check
             npm --prefix frontend run lint
             npm --prefix frontend run typecheck
+            npm --prefix frontend test
+            npm --prefix frontend run build
           else
             echo "Governance-only mode: frontend source not scaffolded yet."
           fi
@@ -116,15 +118,17 @@ jobs:
         run: |
           if [ -d backend ]; then
             python -m pip install --upgrade pip
-            if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-            pytest backend/tests --cov=backend/app --cov-report=xml:backend/coverage.xml
+            pip install -e "backend[dev]"
+            cd backend
+            python -m pytest
+            cd ..
             test -f backend/coverage.xml
           else
             echo "Governance-only mode: no backend coverage report expected."
           fi
           if [ -d frontend ]; then
-            npm --prefix frontend ci
-            npm --prefix frontend test -- --coverage
+            npm --prefix frontend install
+            npm --prefix frontend test
             test -f frontend/coverage/lcov.info
             npm --prefix frontend run build
           else

@@ -15,10 +15,34 @@ The prototype is decision support only. It must not connect to production financ
 - LLM use: vendor-neutral LLM explanation provider for Bengali, Banglish, English summaries only.
 - LLM fallback: deterministic templates.
 
-## CI Mode
-The repository is currently in governance-only mode. CI validates documentation, prompt traceability, requirement IDs, Sonar configuration, and governance tests.
+## Local Development
+Prerequisites:
+- Docker Compose
+- Python 3.12
+- Node.js 22
 
-After repository foundation scaffolds `backend/` or `frontend/`, product-code mode begins and backend/frontend quality checks become mandatory.
+Start the local demo foundation:
+```bash
+docker compose up --build
+```
+
+Stop it:
+```bash
+docker compose down
+```
+
+Run backend tests from `backend/` after installing development dependencies:
+```bash
+pytest
+```
+
+Run frontend tests from `frontend/` after installing Node dependencies:
+```bash
+npm test
+```
+
+## CI Mode
+The repository is now in product-code mode because `backend/` and `frontend/` are scaffolded. CI keeps governance validation and now requires backend formatting, linting, typing, tests, coverage, frontend formatting, linting, type checking, tests, coverage, and production build.
 
 ## Documentation Reading Order
 1. `docs/00-project-context.md`
@@ -63,7 +87,7 @@ CI and SonarQube are configured before product code begins. Required secret name
 The authoritative project key is in `sonar-project.properties`. Do not commit secret values. SonarQube Quality Gate must not be claimed as passed until remote CI confirms it.
 
 ## Current Status
-Design, governance, prompt traceability, CI, and SonarQube foundation are prepared. Product business logic, ORM models, migrations, backend routes, frontend screens, and algorithms are intentionally not implemented yet.
+Design, governance, prompt traceability, CI, SonarQube configuration, and repository foundation are prepared. Only health/readiness endpoints, empty module boundaries, local Docker runtime, and the minimal synthetic-data frontend surface are implemented. Product business logic, domain ORM models, business migrations, dashboards, alerts, cases, authentication, and algorithms are intentionally not implemented yet.
 
 ## Recommended First Coding Module
 Repository foundation, followed by synthetic scenario fixtures.

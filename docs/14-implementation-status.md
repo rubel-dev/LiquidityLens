@@ -1,13 +1,13 @@
 # Implementation Status
 
 ## Current Status
-Canonical design/governance repository is prepared. Product code is not implemented in this step.
+Canonical design/governance repository is prepared. Repository foundation product code is implemented for backend/frontend scaffolding, local PostgreSQL runtime, health/readiness checks, SQLAlchemy/Alembic foundation, and mandatory product-code CI.
 
 ## Phase Status
 | Phase | Module | Status |
 |---|---|---|
 | 0 | Governance, prompt validation, CI, SonarQube | Documented/Configured |
-| 1 | Repository foundation | Not started |
+| 1 | Repository foundation | Implemented |
 | 2 | Database schema and migrations | Not started |
 | 3 | Synthetic scenario engine | Not started |
 | 4 | Provider ingestion and validation | Not started |
@@ -25,3 +25,13 @@ Canonical design/governance repository is prepared. Product code is not implemen
 | 16 | Integration and failure testing | Not started |
 | 17 | Demo packaging | Not started |
 | 18 | Release preparation | Not started |
+
+## Implemented in Repository Foundation
+- FastAPI app skeleton with `/api/v1/health` and `/api/v1/readiness`.
+- SQLAlchemy declarative base, engine/session factory, and Alembic foundation without domain tables.
+- Next.js TypeScript App Router foundation page with API health status and synthetic-data label.
+- Docker Compose topology for PostgreSQL, backend, and frontend.
+- Product-code CI checks for backend, frontend, coverage, governance, Sonar scan, and Quality Gate.
+
+## Explicitly Not Implemented
+Database domain schema, business migrations, synthetic scenarios, provider ingestion, liquidity forecasting, anomaly detection, confidence fusion, explanations, alerts, cases, authentication, provider-scope authorization, dashboards, metrics endpoints, reset/replay, and production deployment remain not started.

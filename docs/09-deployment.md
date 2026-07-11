@@ -22,11 +22,13 @@ browser -> Next.js dev server -> FastAPI app -> PostgreSQL
 - SONAR_HOST_URL
 
 ## Database Initialization
-Planned command after repository foundation:
+Repository foundation command:
 ```bash
 docker compose up -d postgres
 alembic upgrade head
 ```
+
+No business migrations exist yet, so `alembic upgrade head` currently validates the migration foundation only.
 
 ## Seed and Scenario Commands
 Planned commands after scenario engine exists:
@@ -37,9 +39,25 @@ python -m backend.app.scenarios.reset --run-id <run-id>
 ```
 
 ## Health and Readiness Checks
-Planned endpoints:
+Implemented foundation endpoints:
 - `GET /api/v1/health`
 - `GET /api/v1/readiness`
+
+Local stack commands:
+```bash
+docker compose up --build
+docker compose down
+```
+
+Backend test command from `backend/`:
+```bash
+pytest
+```
+
+Frontend test command from `frontend/`:
+```bash
+npm test
+```
 
 ## Backup Demo Procedure
 - Keep deterministic scenario seed files.
@@ -76,8 +94,9 @@ Failed Quality Gate blocks merge and accepted completion. Remote Quality Gate st
 
 ## Known Limitations
 - No product deployment exists yet.
-- No migrations, seed commands, health endpoint, or readiness endpoint exist yet.
-- Governance-only CI can pass without product source; product-code mode becomes mandatory after repository foundation.
+- No business migrations or seed commands exist yet.
+- Repository foundation implements health/readiness only; feature APIs remain planned.
+- Product-code CI is mandatory after repository foundation.
 
 ## README Completion Checklist
 Before release/demo packaging, README must include:

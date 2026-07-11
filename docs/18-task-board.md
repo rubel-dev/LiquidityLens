@@ -2,9 +2,9 @@
 
 | Phase | Task | Requirement IDs | Status |
 |---|---|---|---|
-| 0 | Review and merge governance commit | DOC-001,QUALITY-001 | Pending |
-| 1 | Scaffold repository foundation | ARCH-001 | Pending |
-| 1 | Add backend/frontend tooling | QUALITY-001 | Pending |
+| 0 | Review and merge governance commit | DOC-001,QUALITY-001 | Done |
+| 1 | Scaffold repository foundation | ARCH-001,ARCH-002,API-001,DB-001 | Done |
+| 1 | Add backend/frontend tooling | QUALITY-001,QUALITY-002,CI-001,CI-002 | Done |
 | 2 | Add SQLAlchemy models and Alembic migrations | DB-001 | Pending |
 | 3 | Add deterministic synthetic scenarios | DATA-001,FR-009 | Pending |
 | 4 | Add provider ingestion and validation | NFR-003 | Pending |
@@ -22,4 +22,3 @@
 | 16 | Add failure-mode tests | FAIL-001, FAIL-002, FAIL-003, FAIL-004, FAIL-005, FAIL-006, FAIL-007 | Pending |
 | 17 | Package demo | DEMO-001,DEMO-002 | Pending |
 | 18 | Release prep | QUALITY-002 | Pending |
-

@@ -153,7 +153,7 @@ def analyze_run(
 
     return AnalysisResponse(
         run_ref=run_ref,
-        agent_id=agent.id,
+        agent_id=agent_id,
         forecasts_created=len(forecast_results),
         findings_created=len(finding_results),
         alerts_created=len(alert_ids),

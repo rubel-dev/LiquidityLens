@@ -641,8 +641,11 @@ select:focus-visible {
 
 /* ── Feed Strip ───────────────────────────────────────────────────────────── */
 .feed-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  display: flex;
+  flex-wrap: wrap;
   overflow: hidden;
 }
 
@@ -650,8 +653,9 @@ select:focus-visible {
   align-items: center;
   border-left: 1px solid var(--border);
   display: flex;
+  flex: 1 1 250px;
   gap: 11px;
-  padding: 14px 18px;
+  padding: 18px 22px;
 }
 
 .feed-strip > div:first-child {

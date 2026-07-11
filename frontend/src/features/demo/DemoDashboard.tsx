@@ -853,13 +853,13 @@ export function DemoDashboard() {
               />
               <div>
                 <strong>
-                  {f.scope === "shared_cash" ? "Shared cash" : `Provider ${f.scope}`} ·{" "}
+                  {f.scope === "shared_cash" ? "Shared cash" : (f as any).provider_name || `Provider ${f.scope}`} ·{" "}
                   {f.risk_level.toUpperCase()}
                 </strong>
                 <small>
                   {f.runway_minutes !== null
                     ? `${Math.round(f.runway_minutes)} min runway · ${Math.round(f.confidence * 100)}% confidence`
-                    : `Confidence ${Math.round(f.confidence * 100)}% · runway unknown`}
+                    : `Confidence ${Math.round(f.confidence * 100)}% · ${f.risk_level === 'stable' || f.risk_level === 'healthy' ? 'Stable (>24h runway)' : 'runway unknown'}`}
                 </small>
               </div>
             </div>

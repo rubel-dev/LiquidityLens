@@ -222,6 +222,7 @@ class ResolveCaseRequest(ApiModel):
 class ForecastSummary(BaseModel):
     forecast_id: uuid.UUID
     provider_id: uuid.UUID | None
+    provider_name: str | None = None
     scope: str
     risk_level: str
     runway_minutes: float | None

@@ -126,6 +126,7 @@ def analyze_run(
             ForecastSummary(
                 forecast_id=f.forecast_id or uuid.uuid4(),
                 provider_id=f.provider_id,
+                provider_name=pname,
                 scope=f.scope.value,
                 risk_level=f.risk_level.value,
                 runway_minutes=None if f.runway_minutes is None else float(f.runway_minutes),

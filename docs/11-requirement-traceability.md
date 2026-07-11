@@ -12,17 +12,17 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | FR-006 | Evidence fingerprint | Challenger idea | evidence | /api/v1/alerts/{alert_id} planned | Alert detail | AC-004 | MET-006 | DEMO-001 | Approved |
 | FR-007 | Important alert fields | PDF | alerts | /api/v1/alerts/{alert_id} planned | Alert detail | AC-007 | MET-006 | DEMO-001 | Approved |
 | FR-008 | Case lifecycle | PDF | cases | /api/v1/cases/{case_id} planned | Case UI | AC-007 | MET-009, MET-010, MET-011 | DEMO-001 | Approved |
-| FR-009 | Reset/replay | Challenger idea | scenarios | /api/v1/scenario-runs/{run_id}/reset planned | Demo controls | AC-009 | MET-009 | DEMO-002 | Approved |
+| FR-009 | Reset/replay | Challenger idea | scenarios | CLI implemented; /api/v1/scenario-runs/{run_id}/reset planned | Demo controls planned | AC-009 | MET-009 | DEMO-002 | Implemented |
 | FR-010 | Vendor-neutral LLM explanation | Conflict fix | explanation | /api/v1/alerts/{alert_id} planned | Alerts | AC-008 | MET-006 | DEMO-001 | Approved |
 | FR-011 | Deterministic fallback | Conflict fix | explanation | /api/v1/alerts/{alert_id} planned | Alerts | AC-008 | MET-006 | DEMO-001 | Approved |
-| FR-012 | False-positive scenario | Challenger idea | scenarios | /api/v1/scenarios planned | Demo | AC-009 | MET-005 | DEMO-001 | Approved |
+| FR-012 | False-positive scenario | Challenger idea | scenarios | CLI implemented; /api/v1/scenarios planned | Demo planned | AC-009 | MET-005 | DEMO-001 | Implemented |
 | NFR-001 | Responsive demo interactions | PDF | platform | planned | All UI | AC-010 | MET-007 | DEMO-001 | Approved |
 | NFR-002 | Explainable/auditable alerts | PDF | alerts/audit | /api/v1/audit-events planned | Alert/case UI | AC-007 | MET-006, MET-009 | DEMO-001 | Approved |
 | NFR-003 | Bad data reduces confidence | PDF | validation/fusion | /api/v1/data-quality-statuses planned | Alerts | AC-006 | MET-008 | DEMO-001 | Approved |
 | NFR-004 | Provider isolation | PDF | auth | all scoped APIs planned | all scoped UI | AC-011 | MET-012 | DEMO-001 | Approved |
-| DATA-001 | Synthetic data only | PDF | scenario | /api/v1/scenarios planned | n/a | AC-009 | MET-005 | DEMO-001 | Approved |
-| DATA-002 | Synthetic non-phone-like IDs | Governance | scenario | /api/v1/transactions planned | Evidence UI | AC-004 | MET-003 | DEMO-001 | Approved |
-| DATA-003 | Shared cash is not provider feed | Governance | data model | /api/v1/agents/{agent_id}/cash-snapshots planned | Overview | AC-001 | MET-006 | DEMO-001 | Approved |
+| DATA-001 | Synthetic data only | PDF | scenario | CLI implemented; /api/v1/scenarios planned | n/a | AC-009 | MET-005 | DEMO-001 | Implemented |
+| DATA-002 | Synthetic non-phone-like IDs | Governance | scenario | CLI implemented; /api/v1/transactions planned | Evidence UI planned | AC-004 | MET-003 | DEMO-001 | Implemented |
+| DATA-003 | Shared cash is not provider feed | Governance | data model | CLI seed data implemented; /api/v1/agents/{agent_id}/cash-snapshots planned | Overview planned | AC-001 | MET-006 | DEMO-001 | Implemented |
 | ARCH-001 | Modular monolith | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
 | ARCH-002 | No MVP microservices | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
 | API-001 | Versioned /api/v1 contracts | API design | api | `/api/v1/health`, `/api/v1/readiness` implemented; feature APIs planned | Foundation page health status only | backend/frontend foundation tests | MET-007 | DEMO-001 | In Progress |

@@ -5,7 +5,7 @@
 | 0 | Governance, prompt validation, CI, SonarQube | Configured |
 | 1 | Repository foundation | Implemented |
 | 2 | Database schema and migrations | Implemented |
-| 3 | Synthetic scenario engine | Pending |
+| 3 | Synthetic scenario engine | Implemented |
 | 4 | Provider ingestion and validation | Pending |
 | 5 | Liquidity engine | Pending |
 | 6 | Anomaly engine | Pending |

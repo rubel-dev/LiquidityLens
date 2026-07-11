@@ -28,7 +28,7 @@ docker compose up -d postgres
 alembic upgrade head
 ```
 
-The initial domain schema migration exists. It creates schema only; seed/scenario data still belongs to the next module.
+The initial domain schema migration exists. Scenario data is created by the internal scenario CLI after migrations run.
 
 After the database schema module, the initial domain migration is:
 ```bash
@@ -41,12 +41,17 @@ alembic upgrade head
 Local PostgreSQL must be running before those commands execute. In GitHub Actions, backend jobs provide a PostgreSQL service for migration tests.
 
 ## Seed and Scenario Commands
-Planned commands after scenario engine exists:
+Implemented internal developer/demo commands from `backend/`:
 ```bash
-python -m backend.app.scenarios.seed_demo
-python -m backend.app.scenarios.run SCN-001
-python -m backend.app.scenarios.reset --run-id <run-id>
+python -m app.scenarios.cli list
+python -m app.scenarios.cli run normal_day --seed 1001 --profile small --start-timestamp 2026-07-11T09:00:00+00:00
+python -m app.scenarios.cli run hidden_provider_shortage --seed 3001 --profile small --start-timestamp 2026-07-11T09:00:00+00:00
+python -m app.scenarios.cli run liquidity_pressure_unusual_activity --seed 5001 --profile small --start-timestamp 2026-07-11T09:00:00+00:00
+python -m app.scenarios.cli replay --run-id SIM-RUN-000001
+python -m app.scenarios.cli reset --run-id SIM-RUN-000001
 ```
+
+Reset and replay are scoped to a single synthetic run ID and must not truncate reference data or unrelated runs.
 
 ## Health and Readiness Checks
 Implemented foundation endpoints:
@@ -79,7 +84,7 @@ npm test
 Planned locations:
 - FastAPI application logs: standard output in local Docker Compose.
 - Frontend logs: Next.js dev/build output.
-- Scenario and audit logs: PostgreSQL audit tables after implementation.
+- Scenario and audit logs: PostgreSQL `scenario_runs`, `provider_feed_statuses`, `data_quality_events`, and `audit_events`.
 
 ## Rollback Approach
 - Use Git commit rollback for code/config changes.
@@ -96,15 +101,15 @@ Project key is authoritative in `sonar-project.properties`.
 ## Branch Protection Recommendation
 - Require CI traceability job.
 - Require backend-quality, frontend-quality, and test-and-coverage jobs after repository foundation.
-- Require SonarQube analysis and Quality Gate before merge once secrets are configured.
+- Keep SonarQube analysis and Quality Gate configured as best-effort, non-blocking checks.
 - Protect `main` from direct pushes during implementation.
 
 ## Quality Gate Merge Protection
-Failed Quality Gate blocks merge and accepted completion. Remote Quality Gate status remains Pending until GitHub Actions runs.
+Failed, skipped, unavailable, or configuration-error Quality Gate results must be recorded honestly but do not block implementation, commits, merging, or demo preparation. Remote Quality Gate status remains Pending until GitHub Actions runs.
 
 ## Known Limitations
 - No product deployment exists yet.
-- No business migrations or seed commands exist yet.
+- Deterministic scenario commands exist; provider ingestion and downstream business engines remain planned.
 - Repository foundation implements health/readiness only; feature APIs remain planned.
 - Product-code CI is mandatory after repository foundation.
 

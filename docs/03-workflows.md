@@ -76,6 +76,25 @@ sequenceDiagram
 | WF-025 Demo reset | Demo operator | Reset requested | run exists | run_id | Reset scenario state | valid run? | clean state | missing run | abort | demo role | scenario_reset | DEMO-002 |
 | WF-026 Demo replay | Demo operator | Replay requested | seed exists | run_id | Replay same seed | deterministic? | repeated output | missing seed | abort | demo role | scenario_replayed | DEMO-002 |
 
+## Implemented Scenario CLI Workflow
+The scenario engine is internal developer/demo tooling. It does not expose public scenario APIs yet.
+
+```mermaid
+flowchart TD
+  L["List canonical scenarios"] --> R["Run scenario with seed, profile, and start timestamp"]
+  R --> P["Persist catalog, providers, agent accounts, transactions, balances, and feeds"]
+  P --> G["Persist audit-backed ground truth and fingerprint"]
+  G --> X["Reset selected run only"]
+  X --> Y["Replay using original seed, version, profile, and start timestamp"]
+  Y --> Z["Fingerprint must match original run"]
+```
+
+Accounting convention:
+- Cash-in increases shared physical cash and decreases the provider-specific e-money balance.
+- Cash-out decreases shared physical cash and increases the provider-specific e-money balance.
+- Shared physical cash is outlet scoped and never satisfies a provider-specific e-money balance.
+- Missing provider balance is stored as unknown/null, not zero.
+
 ## Alert And Case Lifecycle Separation
 Alerts and cases are separate entities. An alert can exist without a case when severity is low or confidence is insufficient for coordinated review.
 

@@ -36,6 +36,14 @@ Run backend tests from `backend/` after installing development dependencies:
 pytest
 ```
 
+Run deterministic scenarios from `backend/` after PostgreSQL is migrated:
+```bash
+python -m app.scenarios.cli list
+python -m app.scenarios.cli run normal_day --seed 1001 --profile small --start-timestamp 2026-07-11T09:00:00+00:00
+python -m app.scenarios.cli replay --run-id SIM-RUN-000001
+python -m app.scenarios.cli reset --run-id SIM-RUN-000001
+```
+
 Run frontend tests from `frontend/` after installing Node dependencies:
 ```bash
 npm test
@@ -91,7 +99,7 @@ Per judge instruction, SonarQube analysis and Quality Gate are best-effort and n
 Mandatory local fallback checks remain: formatter, linter, type checker, unit tests, integration tests, coverage, prompt traceability, requirement-ID validation, governance tests, and security/safety validation where applicable.
 
 ## Current Status
-Design, governance, prompt traceability, CI, SonarQube configuration, repository foundation, and the database schema module are prepared. Only health/readiness endpoints, empty module boundaries, local Docker runtime, the minimal synthetic-data frontend surface, SQLAlchemy domain models, and the initial Alembic schema migration are implemented. Product business logic, seed scenarios, dashboards, alerts/case services, authentication, and algorithms are intentionally not implemented yet.
+Design, governance, prompt traceability, CI, SonarQube configuration, repository foundation, database schema, and deterministic synthetic scenario engine are prepared. Implemented runtime scope includes health/readiness endpoints, local Docker runtime, the minimal synthetic-data frontend surface, SQLAlchemy domain models, the initial Alembic schema migration, scenario catalog generation, scenario persistence, reset/replay, synthetic identifier validation, and audit-backed ground truth. Provider ingestion, liquidity forecasting, anomaly detection, confidence scoring, alerts/cases, authentication, public feature APIs, dashboards, and production deployment are intentionally not implemented yet.
 
 ## Database Migrations
 Run migrations from `backend/` after PostgreSQL is available:
@@ -102,4 +110,4 @@ alembic upgrade head
 ```
 
 ## Recommended First Coding Module
-Repository foundation, followed by synthetic scenario fixtures.
+Provider ingestion and data validation.

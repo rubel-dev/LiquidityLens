@@ -19,6 +19,16 @@
 ## Required Difficult Tests
 Late data, missing data, stale data, conflicting balance, duplicate event, out-of-order transactions, invalid amount, zero activity, extreme demand, normal Eid spike, unauthorized cross-provider access, duplicate acknowledgement, concurrent assignment, LLM unavailable, malformed LLM output, reset/replay determinism.
 
+## Implemented Scenario Engine Tests
+Local PostgreSQL-backed tests cover deterministic generation, different-seed variation, timezone-aware start timestamps, synthetic identifier rejection, provider separation, shared-cash independence, positive transaction amounts, unique transaction IDs, legitimate Eid/salary false-positive fixtures, unusual repeated-amount/velocity/account-concentration labels, delayed/missing/conflicting feeds, transaction rollback, reset scope, replay fingerprint stability, duplicate run IDs, duplicate transaction IDs, and demo-profile generation timing.
+
+Latest local evidence:
+- Backend test suite from `backend/`: `39 passed`, coverage `90.23%`.
+- PostgreSQL database: `hacathon_db` using `postgresql+psycopg://postgres:12345@localhost:5432/hacathon_db`.
+- Scenario CLI smoke: list, run, replay, and reset succeeded for `SIM-RUN-990001`.
+- Demo profile generation threshold: integration test requires completion below 5 seconds in the local environment.
+- Ruff and MyPy were not available in the detected local Python environments during this implementation turn; they remain required in CI/local developer environments where installed.
+
 ## Confidence Fusion Algorithm
 The MVP confidence score starts at `1.00` for a forecast/finding with complete valid input and subtracts data-quality and evidence deductions. It is clamped to `[0.00, 1.00]`.
 

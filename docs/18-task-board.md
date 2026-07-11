@@ -6,7 +6,7 @@
 | 1 | Scaffold repository foundation | ARCH-001,ARCH-002,API-001,DB-001 | Done |
 | 1 | Add backend/frontend tooling | QUALITY-001,QUALITY-002,CI-001,CI-002 | Done |
 | 2 | Add SQLAlchemy models and Alembic migrations | DB-001,FR-001,FR-002,FR-008,NFR-002,NFR-003,NFR-004,DATA-001,DATA-002,DATA-003 | Done |
-| 3 | Add deterministic synthetic scenarios | DATA-001,FR-009 | Pending |
+| 3 | Add deterministic synthetic scenarios | DATA-001,DATA-002,DATA-003,FR-002,FR-009,FR-012,NFR-003,NFR-004,SEC-001,SAFE-001,SAFE-002,SAFE-003,DEMO-002 | Done |
 | 4 | Add provider ingestion and validation | NFR-003 | Pending |
 | 5 | Add liquidity runway engine | FR-004 | Pending |
 | 6 | Add primary anomaly engine | FR-005,FR-006 | Pending |

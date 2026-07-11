@@ -9,20 +9,31 @@
 ---
 
 ## Phase 0 — Project Setup
-**Goal:** Everyone can run the project locally in one command.
+**Goal:** Everyone can run the project locally and all cloud services are connected.
 **Target:** First 2–3 hours
 
+### 0A — Repo & Scaffolding
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 0.1 | Create GitHub repo, add all team members | ALL | 🔴 | [ ] |
-| 0.2 | Scaffold Next.js 14 frontend (`npx create-next-app`) | F | 🔴 | [ ] |
-| 0.3 | Scaffold FastAPI backend with folder structure | B | 🔴 | [ ] |
-| 0.4 | Write `docker-compose.yml` (frontend + backend + postgres + redis) | B | 🔴 | [ ] |
-| 0.5 | Write `.env.example` with all required variables | B | 🔴 | [ ] |
-| 0.6 | Install frontend deps: Tailwind, shadcn/ui, Recharts, axios | F | 🔴 | [ ] |
-| 0.7 | Install backend deps: fastapi, sqlalchemy, asyncpg, redis, openai, faker | B | 🔴 | [ ] |
-| 0.8 | Verify `docker compose up` starts all 4 services cleanly | ALL | 🔴 | [ ] |
-| 0.9 | Write base README with setup instructions | ALL | 🟡 | [ ] |
+| 0.1 | Create GitHub repo (public), add all team members | ALL | 🔴 | [ ] |
+| 0.2 | Scaffold Next.js 14 frontend (`npx create-next-app@latest`) | F | 🔴 | [ ] |
+| 0.3 | Scaffold FastAPI backend with full folder structure from IMPLEMENTATION_PLAN.md | B | 🔴 | [ ] |
+| 0.4 | Write `docker-compose.yml` — **backend + redis only** (no postgres container) | B | 🔴 | [ ] |
+| 0.5 | Install frontend deps: Tailwind, shadcn/ui, Recharts, axios | F | 🔴 | [ ] |
+| 0.6 | Install backend deps: `pip install "fastapi[standard]" sqlalchemy asyncpg alembic openai faker "redis[hiredis]"` | B | 🔴 | [ ] |
+
+### 0B — Cloud Services Setup (do this first, blocks everything)
+| # | Task | Owner | Priority | Done |
+|---|------|-------|----------|------|
+| 0.7 | Create **Neon** project at neon.tech — copy pooled + direct connection strings | B | 🔴 | [ ] |
+| 0.8 | Create **Upstash Redis** database at upstash.com — copy `rediss://` URL | B | 🔴 | [ ] |
+| 0.9 | Write `.env.example` and `.env.local` with all variables (Neon, Upstash, OpenAI, CORS) | B | 🔴 | [ ] |
+| 0.10 | Configure **Alembic** — set `DATABASE_SYNC_URL` (direct Neon URL, not pooled) in `alembic.ini` | B | 🔴 | [ ] |
+| 0.11 | Verify backend connects to Neon: `python -c "from core.database import engine; print('OK')"` | B | 🔴 | [ ] |
+| 0.12 | Verify backend connects to Upstash: `python -c "from core.redis import redis_client; print('OK')"` | B | 🔴 | [ ] |
+| 0.13 | Add **CORS middleware** to `main.py` — allow `localhost:3000` + Vercel domain | B | 🔴 | [ ] |
+| 0.14 | Verify `docker compose up` starts backend cleanly (DB + Redis = cloud, not local) | ALL | 🔴 | [ ] |
+| 0.15 | Write base README with setup steps + env var list | ALL | 🟡 | [ ] |
 
 ---
 
@@ -36,7 +47,7 @@
 | 1.1 | Write SQLAlchemy models: Agent, ProviderBalance, Transaction | B | 🔴 | [ ] |
 | 1.2 | Write SQLAlchemy models: Alert, Case, TransactionBaseline | B | 🔴 | [ ] |
 | 1.3 | Write Alembic migrations for all tables | B | 🔴 | [ ] |
-| 1.4 | Run migrations, verify schema in postgres | B | 🔴 | [ ] |
+| 1.4 | Run `alembic upgrade head` against **Neon** — verify all tables exist in Neon console | B | 🔴 | [ ] |
 
 ### 1B — Synthetic Data Generator
 | # | Task | Owner | Priority | Done |
@@ -266,12 +277,57 @@
 
 ---
 
+## Phase 9 — Production Deployment
+**Goal:** Live URLs for frontend (Vercel) + backend (Railway/Render) + Neon + Upstash all working together.
+**Target:** Hours 30–36 (before final polish)
+
+### 9A — Backend Deployment (FastAPI Cloud)
+| # | Task | Owner | Priority | Done |
+|---|------|-------|----------|------|
+| 9.1 | Install FastAPI Cloud CLI: `pip install "fastapi[standard]"` | B | 🔴 | [ ] |
+| 9.2 | From `/backend` directory run: `fastapi deploy` — browser opens for login automatically | B | 🔴 | [ ] |
+| 9.3 | Dashboard → App → Environment Variables → **Import** → paste full `.env` content | B | 🔴 | [ ] |
+| 9.4 | Mark these as **Secret** (do at creation — cannot change later): `OPENAI_API_KEY`, `DATABASE_URL`, `DATABASE_SYNC_URL`, `REDIS_URL` | B | 🔴 | [ ] |
+| 9.5 | Click "Save and Redeploy" — wait for deployment to complete | B | 🔴 | [ ] |
+| 9.6 | Note live URL: `https://<appname>.fastapicloud.dev` — add to frontend `.env.local` | B | 🔴 | [ ] |
+| 9.7 | Run `alembic upgrade head` against Neon (run locally pointing at Neon) | B | 🔴 | [ ] |
+| 9.8 | Run seed: `curl -X POST https://<appname>.fastapicloud.dev/api/seed` | B | 🔴 | [ ] |
+| 9.9 | Test: `GET https://<appname>.fastapicloud.dev/api/agents` returns data | B | 🔴 | [ ] |
+| 9.10 | Test: WebSocket `wss://<appname>.fastapicloud.dev/ws` connects (use Postman or wscat) | B | 🔴 | [ ] |
+| 9.11 | Check logs in FastAPI Cloud dashboard → Apps → [your app] → Logs tab | B | 🟡 | [ ] |
+
+### 9B — Frontend Deployment (Vercel)
+| # | Task | Owner | Priority | Done |
+|---|------|-------|----------|------|
+| 9.12 | Connect GitHub repo to Vercel — set root directory to `/frontend` | F | 🔴 | [ ] |
+| 9.13 | Add env vars in Vercel dashboard: `NEXT_PUBLIC_API_URL=https://<appname>.fastapicloud.dev` | F | 🔴 | [ ] |
+| 9.14 | Add env var in Vercel: `NEXT_PUBLIC_WS_URL=wss://<appname>.fastapicloud.dev/ws` | F | 🔴 | [ ] |
+| 9.15 | Deploy frontend → note the live Vercel URL (e.g. `https://sust-hackathon.vercel.app`) | F | 🔴 | [ ] |
+| 9.16 | Update `CORS_ORIGINS` on FastAPI Cloud to include the live Vercel URL | B | 🔴 | [ ] |
+| 9.17 | Dashboard → App → Environment Variables → update `CORS_ORIGINS` → Save and Redeploy | B | 🔴 | [ ] |
+| 9.18 | Test: open Vercel URL in browser → Agent Dashboard loads with real Neon data | ALL | 🔴 | [ ] |
+| 9.19 | Test: trigger a demo scenario → alert appears on Ops Dashboard in real time | ALL | 🔴 | [ ] |
+| 9.20 | Test: Bengali alert generates correctly via OpenAI on live deployment | A | 🔴 | [ ] |
+
+### 9C — Production Smoke Test
+| # | Task | Owner | Priority | Done |
+|---|------|-------|----------|------|
+| 9.21 | Run full demo script end-to-end on **live production URLs** (not localhost) | ALL | 🔴 | [ ] |
+| 9.22 | Verify Scenario C on production: update `NAGAD_DELAY_SECONDS=300` via dashboard → yellow badge appears | B | 🔴 | [ ] |
+| 9.23 | Reset `NAGAD_DELAY_SECONDS=0` after Scenario C test — Save and Redeploy | B | 🔴 | [ ] |
+| 9.24 | Check FastAPI Cloud logs during demo run — confirm no errors | B | 🟡 | [ ] |
+| 9.25 | Bookmark all live URLs for demo day: Vercel URL + `https://<appname>.fastapicloud.dev/docs` | ALL | 🔴 | [ ] |
+
+> **No cold-start risk on FastAPI Cloud** — instances are always running. No need to pre-warm before demo.
+
+---
+
 ## Parallel Work Map (Who Does What Simultaneously)
 
 ```
 Hours 0–8:
-  B: Setup + DB schema + mock providers
-  F: Setup + component stubs + layouts
+  B: Phase 0 setup — Neon + Upstash + CORS + DB schema + mock providers
+  F: Scaffold Next.js + install deps + component stubs + layouts
   A: Liquidity engine + anomaly detectors (unit tests)
   D: Synthetic data + seed scripts
 
@@ -291,8 +347,13 @@ Hours 24–32:
   ALL: Unique features (5.x tasks), polish, full demo run
   A: Collect + record all metrics
 
-Hours 32–40:
-  ALL: Demo rehearsal, slide building, submission prep
+Hours 30–36 (overlaps with above):
+  B+F: Phase 9 — deploy backend to Railway, frontend to Vercel
+       Run full demo on live production URLs
+       Fix any CORS / WebSocket / cold-start issues
+
+Hours 36–40:
+  ALL: Demo rehearsal on LIVE URLs, slide building, submission prep
 ```
 
 ---

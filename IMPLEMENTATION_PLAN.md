@@ -6,18 +6,38 @@
 
 ## Tech Stack (Final)
 
-| Layer | Technology | Model / Version |
-|-------|-----------|----------------|
-| Frontend | Next.js 14 + Tailwind CSS + shadcn/ui | App Router |
+| Layer | Technology | Hosting |
+|-------|-----------|---------|
+| Frontend | Next.js 14 + Tailwind CSS + shadcn/ui | **Vercel** |
 | Charts | Recharts + Tremor | — |
-| Backend | FastAPI (Python 3.11) | — |
-| Database | PostgreSQL 15 | — |
-| Cache + Pub/Sub | Redis 7 | — |
+| Backend | FastAPI (Python 3.11) | **FastAPI Cloud** (`fastapicloud.dev`) |
+| Database | **Neon** (Serverless PostgreSQL) | **Neon Cloud** |
+| Cache + Pub/Sub | **Upstash Redis** (serverless) | **Upstash Cloud** |
 | AI — Bengali Alerts | OpenAI API | `gpt-4o-mini` (fast, cheap) |
 | AI — Anomaly Narratives | OpenAI API | `gpt-4o` (better reasoning) |
 | Real-time | WebSocket (FastAPI native) | — |
-| Containers | Docker + Docker Compose | — |
+| Local Dev | Docker Compose (backend + redis only) | — |
 | Synthetic Data | Python + Faker | — |
+
+> **Why Upstash Redis?** It is serverless, has a free tier, and works perfectly with Neon + Vercel deployments. No Redis container needed in production.
+
+---
+
+## Hosting Architecture
+
+```
+User Browser
+     │
+     ├── Frontend (Next.js) ──────────────── Vercel
+     │        │ REST + WebSocket
+     │        ▼
+     ├── Backend (FastAPI) ───────────────── FastAPI Cloud (fastapicloud.dev)
+     │        │                              └─ No cold starts, always-on
+     │        ├── Neon PostgreSQL ─────────── Neon Cloud (serverless)
+     │        └── Upstash Redis ───────────── Upstash Cloud (serverless)
+     │
+     └── OpenAI API ──────────────────────── api.openai.com
+```
 
 ### OpenAI Cost Estimate (well within $50)
 | Use Case | Model | Est. Calls | Est. Cost |
@@ -539,62 +559,170 @@ WebSocket handler subscribes to Redis
 
 ## Environment Variables
 
+### Backend `.env` (FastAPI Cloud + local)
 ```env
 # OpenAI
 OPENAI_API_KEY=sk-...
 OPENAI_MODEL_FAST=gpt-4o-mini
 OPENAI_MODEL_SMART=gpt-4o
 
-# Database
-DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/hackathon
+# Neon PostgreSQL
+DATABASE_URL=postgresql+asyncpg://user:pass@ep-xxx.region.aws.neon.tech/hackathon?sslmode=require
+DATABASE_SYNC_URL=postgresql://user:pass@ep-xxx.region.aws.neon.tech/hackathon?sslmode=require
 
-# Redis
-REDIS_URL=redis://localhost:6379
+# Upstash Redis
+REDIS_URL=rediss://default:token@endpoint.upstash.io:6380
+
+# CORS — Vercel frontend URL
+CORS_ORIGINS=https://your-app.vercel.app,http://localhost:3000
 
 # Provider mock delays (for Scenario C demo)
-NAGAD_DELAY_SECONDS=0        # set to 300 to simulate stale
+NAGAD_DELAY_SECONDS=0        # set to 300 to simulate stale feed
 BKASH_FAILURE_MODE=false     # set to true to simulate outage
 ROCKET_DELAY_SECONDS=0
 ```
 
+> **FastAPI Cloud env var setup:**
+> Dashboard → App → Environment Variables → Import → paste your `.env` content → Save.
+> Toggle "Secret" on `OPENAI_API_KEY`, `DATABASE_URL`, `DATABASE_SYNC_URL`, `REDIS_URL` at creation time — secrets cannot be changed to non-secret later.
+
+### Frontend `.env.local` (Vercel + local)
+```env
+NEXT_PUBLIC_API_URL=https://<appname>.fastapicloud.dev
+NEXT_PUBLIC_WS_URL=wss://<appname>.fastapicloud.dev/ws
+```
+
+> On Vercel: set these in Project → Settings → Environment Variables.
+> On Railway/Render: set backend env vars in their dashboard.
+
 ---
 
-## Docker Compose Setup
+## Production Deployment Guide
+
+### Step 1 — Neon
+1. Create project at [neon.tech](https://neon.tech)
+2. Copy pooled + direct connection strings
+3. Run `alembic upgrade head` locally pointing at Neon
+4. Run `python -m data.seed` to seed demo data
+
+### Step 2 — Upstash Redis
+1. Create database at [upstash.com](https://upstash.com)
+2. Copy Redis URL (`rediss://...`)
+3. Add to backend env vars
+
+### Step 3 — Backend (FastAPI Cloud)
+1. Install the FastAPI Cloud CLI: `pip install "fastapi[standard]"`
+2. From your `/backend` directory: `fastapi deploy`
+   - Browser opens automatically for login on first deploy
+   - CLI auto-detects your FastAPI app — no Procfile needed
+3. Add env vars: Dashboard → App → Environment Variables → Import → paste `.env`
+   - Mark `OPENAI_API_KEY`, `DATABASE_URL`, `DATABASE_SYNC_URL`, `REDIS_URL` as **Secret**
+4. Click "Save and Redeploy"
+5. Note your backend URL: `https://<appname>.fastapicloud.dev`
+
+> **No cold starts on FastAPI Cloud** — instances are always running.
+> No need to "wake up" the backend before your demo. 🎯
+
+### Step 4 — Frontend (Vercel)
+1. Connect GitHub repo at [vercel.com](https://vercel.com)
+2. Set root directory to `/frontend`
+3. Add `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` in Vercel env vars
+4. Vercel auto-deploys on push to main
+
+### Step 5 — CORS (critical)
+```python
+# backend/main.py
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS.split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+---
+
+## Docker Compose Setup (Local Dev Only)
+
+> **Production uses Neon + Upstash — no containers needed for DB or Redis in prod.**
+> Docker Compose is only for local development.
 
 ```yaml
 version: '3.9'
 services:
-  frontend:
-    build: ./frontend
-    ports: ["3000:3000"]
-    environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8000
-      - NEXT_PUBLIC_WS_URL=ws://backend:8000/ws
-
   backend:
     build: ./backend
     ports: ["8000:8000"]
-    depends_on: [postgres, redis]
-    env_file: .env
+    env_file: .env.local          # points to Neon + Upstash even locally
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: hackathon
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-    volumes: [pgdata:/var/lib/postgresql/data]
-
+  # Optional: local Redis for offline dev (comment out to use Upstash always)
   redis:
     image: redis:7-alpine
     ports: ["6379:6379"]
-
-volumes:
-  pgdata:
 ```
 
-**Start everything:** `docker compose up --build`
-**Seed data:** `docker compose exec backend python -m data.seed`
+> **Frontend runs separately:** `cd frontend && npm run dev` (Next.js dev server on :3000)
+> No need to containerize frontend locally — Vercel CLI handles preview deploys.
+
+**Start backend:** `docker compose up --build`
+**Seed Neon DB:** `docker compose exec backend python -m data.seed`
+
+---
+
+## Neon Database Setup
+
+### Connection Strings
+```env
+# For runtime queries (pooled — use this in FastAPI)
+DATABASE_URL=postgresql+asyncpg://user:pass@ep-xxx-yyy.region.aws.neon.tech/hackathon?sslmode=require
+
+# For Alembic migrations (direct — pooled connection blocks DDL)
+DATABASE_SYNC_URL=postgresql://user:pass@ep-xxx-yyy.region.aws.neon.tech/hackathon?sslmode=require
+```
+
+> Get both URLs from the Neon dashboard → your project → Connection Details.
+> Toggle "Pooled connection" on/off to get both strings.
+
+### Running Migrations on Neon
+```bash
+# Set DATABASE_SYNC_URL in your local .env first, then:
+alembic upgrade head
+```
+
+### Neon Free Tier Limits (sufficient for hackathon)
+| Limit | Value |
+|-------|-------|
+| Storage | 0.5 GB |
+| Compute hours | 190 hr/month |
+| Branches | 10 |
+| Auto-suspend | After 5 min idle (cold start ~1s) |
+
+---
+
+## Upstash Redis Setup
+
+```env
+REDIS_URL=rediss://default:your-token@your-endpoint.upstash.io:6380
+```
+
+> Get from Upstash Console → Create Database → REST or Redis URL.
+> Use `rediss://` (with double s) for TLS — required by Upstash.
+
+### Python client setup
+```python
+# requirements.txt — use redis[hiredis] for best async performance
+redis[hiredis]==5.0.1
+
+# core/redis.py
+import redis.asyncio as aioredis
+redis_client = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+```
 
 ---
 

@@ -1,4 +1,4 @@
-﻿# Commit Ledger
+# Commit Ledger
 
 | Commit SHA | Prompt ID | Requirement IDs | Module | Tests | SonarQube Analysis | Quality Gate | Human Audit |
 |---|---|---|---|---|---|---|---|
@@ -11,4 +11,5 @@
 | 96d7cb0 | LEGACY | not recorded | frontend-removal | not recorded | not enforced | not enforced | Legacy pre-enforcement exception |
 | 2f1f545 | LEGACY | not recorded | prompt-removal | not recorded | not enforced | not enforced | Legacy pre-enforcement exception |
 | 6069a8d | PROMPT-0001 | DOC-001, QUALITY-001, CI-001, SAFE-001 | architecture-governance | documentation, YAML, Mermaid, and configuration validation completed | Configured, not executed remotely | Pending | Pending |
-| pending | PROMPT-0002 | QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001 | governance-hardening | traceability, YAML, requirement-ID, and configuration validation passed | Configured, pending remote run | Pending | Pending |
+| 0f816689d63315501fde383699dbd82549ba784b | PROMPT-0002 | QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001 | governance-hardening | traceability, YAML, requirement-ID, and configuration validation passed | Pending remote run | Pending | Pending |
+| pending | PROMPT-0003 | QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001 | governance-finalization | prompt-record, traceability, requirement-ID, YAML, governance tests, diff check, and secret scan passed | Pending remote run | Pending | Pending |

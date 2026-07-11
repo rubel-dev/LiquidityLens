@@ -1,4 +1,4 @@
-﻿# Demo Script
+# Demo Script
 
 ## Story-Driven Golden Flow
 1. Start with a normal Eid-eve outlet state.

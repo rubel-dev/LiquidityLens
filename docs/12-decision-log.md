@@ -1,4 +1,4 @@
-﻿# Decision Log
+# Decision Log
 
 | ID | Decision | Status | Rationale |
 |---|---|---|---|

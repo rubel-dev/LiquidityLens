@@ -1,4 +1,4 @@
-﻿# Requirements
+# Requirements
 
 ## Requirement Registry
 | ID | Requirement | Priority |

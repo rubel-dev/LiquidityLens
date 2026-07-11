@@ -1,4 +1,4 @@
-﻿# Implementation Status
+# Implementation Status
 
 ## Current Status
 Canonical design/governance repository is prepared. Product code is not implemented in this step.

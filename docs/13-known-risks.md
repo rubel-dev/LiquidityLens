@@ -1,4 +1,4 @@
-﻿# Known Risks
+# Known Risks
 
 | ID | Risk | Mitigation |
 |---|---|---|

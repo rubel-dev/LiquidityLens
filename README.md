@@ -1,4 +1,4 @@
-﻿# SUST Onsite Hackathon Repository
+# LiquidityLens
 
 This is the canonical implementation repository for the SUST onsite hackathon project: a safe, explainable, auditable multi-provider liquidity and alert-coordination prototype for simulated mobile financial service agents.
 

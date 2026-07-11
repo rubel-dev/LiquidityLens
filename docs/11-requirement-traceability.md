@@ -1,4 +1,4 @@
-﻿# Requirement Traceability
+# Requirement Traceability
 
 Status values: Documented, Approved, In Progress, Implemented, Verified, Deferred, Blocked.
 

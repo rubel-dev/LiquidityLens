@@ -1,4 +1,4 @@
-﻿# PROMPT-0002: Governance Hardening
+# PROMPT-0002: Governance Hardening
 
 ## Prompt ID
 PROMPT-0002
@@ -19,10 +19,10 @@ governance-hardening
 QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001
 
 ## Exact Prompt SHA-256
-d056314845f48ccc8268b1a4f4371bc03ad90e646254b47331d2f7fb252211b0
+8cbfff85d69ed5c84ffe634d7b84b165fb7ea12f46718c4ce39b3f6365795d62
 
 ## Exact Prompt
-``text
+`````text
 You are performing the final governance-hardening step before product implementation.
 
 Do not write product business logic.
@@ -116,8 +116,9 @@ Store the exact prompt verbatim inside a valid fenced block or raw text section.
 
 Do not use malformed syntax such as:
 
-```text
-`\text
+```
+text
+`	ext
 ```
 
 Add a SHA-256 checksum of the exact prompt text to the record.
@@ -218,6 +219,1131 @@ State that all commits after the governance-hardening commit are subject to mand
 Ensure SonarQube analysis runs only after required tests and coverage generation.
 
 Use either:
+
+## Preferred option
+
+One workflow where jobs execute in this order:
+
+```text
+traceability
+    â†“
+backend-quality
+    â†“
+frontend-quality
+    â†“
+test-and-coverage
+    â†“
+sonarqube
+    â†“
+quality-gate
+```
+
+or:
+
+## Acceptable option
+
+Reusable workflows with explicit dependencies and uploaded/downloaded coverage artifacts.
+
+The effective pipeline must:
+
+1. Checkout with full history.
+2. Validate all pushed commits.
+3. Install dependencies.
+4. Run formatting checks.
+5. Run linting.
+6. Run type checking.
+7. Run unit tests.
+8. Run integration tests when present.
+9. Generate backend `coverage.xml`.
+10. Generate frontend `lcov.info`.
+11. Run SonarQube scan.
+12. Wait for Quality Gate result.
+
+Do not run SonarQube before coverage generation.
+
+Do not silently claim coverage when reports do not exist.
+
+# 7. Handle the Pre-Code Repository Safely
+
+Product source code does not exist yet.
+
+For this final governance commit:
+
+* Documentation/configuration validation may pass without application code.
+* SonarQube must still run on the current repository when configured.
+* Clearly distinguish `governance-only mode` from `product-code mode`.
+
+In the next repository-foundation phase, CI must become mandatory for:
+
+Backend:
+
+* Ruff format check
+* Ruff lint
+* MyPy or Pyright
+* Pytest
+* coverage generation
+
+Frontend:
+
+* formatter check
+* ESLint
+* TypeScript type check
+* unit tests
+* production build
+* coverage generation
+
+Do not continue using `--if-present` after the repository foundation is scaffolded.
+
+Add an explicit CI mode check or documented transition gate.
+
+# 8. Correct SonarQube Configuration
+
+Choose one authoritative source for the project key.
+
+Preferred:
+
+* Keep `sonar.projectKey` in `sonar-project.properties`.
+* Use `SONAR_TOKEN` and `SONAR_HOST_URL` as secrets.
+* Do not require a second conflicting project-key secret unless the event rules mandate it.
+
+Set project identity to the actual SUST Onsite project.
+
+Do not scan the entire repository indefinitely.
+
+For governance-only mode, document the temporary source scope.
+
+For product-code mode, plan explicit paths such as:
+
+```text
+sonar.sources=backend/app,frontend/src
+sonar.tests=backend/tests,frontend/src
+```
+
+Use correct test inclusion rules and coverage report paths.
+
+Document when this transition occurs.
+
+Do not exclude files merely to hide issues.
+
+# 9. Complete Requirement Traceability
+
+Update `docs/11-requirement-traceability.md`.
+
+Ensure every approved mandatory requirement in `docs/01-requirements.md` has exactly one or more traceability rows.
+
+Do not use range syntax such as:
+
+```text
+MET-009..011
+```
+
+Use explicit IDs:
+
+```text
+MET-009, MET-010, MET-011
+```
+
+Validate:
+
+* every requirement ID exists
+* every referenced test ID exists
+* every metric ID exists
+* every demo ID exists
+* every API reference is valid or marked planned
+* status values are valid
+
+Add a machine-executable validation script for ID consistency if practical.
+
+# 10. Strengthen Architecture Contracts
+
+Update `docs/04-architecture.md`.
+
+Add:
+
+## Package Layout
+
+Define the intended structure, for example:
+
+```text
+backend/
+  app/
+    core/
+    auth/
+    providers/
+    scenarios/
+    validation/
+    liquidity/
+    anomaly/
+    confidence/
+    explanations/
+    alerts/
+    cases/
+    audit/
+    metrics/
+    api/
+    persistence/
+
+frontend/
+  src/
+    app/
+    features/
+    components/
+    lib/
+    types/
+```
+
+## Dependency Rules
+
+Specify:
+
+* API may call application services.
+* Application services may call domain logic and repository interfaces.
+* Domain logic must not depend on FastAPI, SQLAlchemy, or LLM vendors.
+* Persistence implementations may depend on SQLAlchemy.
+* UI must not implement financial decision logic.
+* Explanation provider must not create or modify core risk decisions.
+* Provider-scoped queries must receive an authorization context.
+
+## Transaction Boundaries
+
+Specify which service owns transactions for:
+
+* scenario execution
+* alert creation
+* assignment
+* acknowledgement
+* escalation
+* case resolution
+* audit event creation
+
+## Concurrency Policy
+
+Specify:
+
+* idempotency keys
+* optimistic concurrency/version fields
+* duplicate acknowledgement behavior
+* concurrent assignment behavior
+* append-only case history
+
+## Sync/Async Policy
+
+For MVP:
+
+* core request processing may be synchronous
+* long demo generation or explanation may use a simple background task only if necessary
+* no Kafka or distributed queue
+* deterministic fallback when explanation times out
+
+## Domain Event Policy
+
+Define internal events such as:
+
+* FeedValidated
+* LiquidityForecastCreated
+* AnomalyFindingCreated
+* AlertCreated
+* AlertAcknowledged
+* CaseEscalated
+* CaseResolved
+
+These may initially be in-process events.
+
+# 11. Resolve Immediate Open Decisions
+
+Update `docs/12-decision-log.md`.
+
+Lock:
+
+* Demo providers: synthetic labels representing three logically separate providers, or approved demonstration names if legally appropriate.
+* Frontend test runner: choose one and document it.
+* Canonical deployment for development/demo: local Docker Compose.
+* Optional cloud deployment: document one target as optional, not mandatory.
+
+The exact final hosting target may remain open only if local Docker Compose is fully canonical.
+
+# 12. Improve Deployment Documentation
+
+Expand `docs/09-deployment.md`.
+
+Include:
+
+* local Docker Compose topology
+* environment-variable names
+* database initialization
+* migration command
+* seed/scenario command
+* demo reset command
+* health check
+* readiness check
+* backup demo procedure
+* log locations
+* rollback approach
+* SonarQube secret setup
+* branch-protection recommendation
+* Quality Gate merge protection
+* known limitations
+
+Do not claim production readiness.
+
+# 13. Replace Brittle Safety Validation
+
+Keep simple grep checks only as supplemental checks.
+
+Add structured safety validation or tests for:
+
+* no financial-execution endpoints
+* no freeze/block action
+* no provider-balance transfer
+* no final wrongdoing classification
+* no real account or phone-number-like identifiers in seed data
+* missing balances do not default to zero
+* provider-scoped access requirements
+
+Document these as mandatory future tests.
+
+# 14. Validation
+
+Before finishing, run:
+
+* YAML validation
+* Markdown-link validation where practical
+* prompt-record format validation
+* commit traceability validator tests
+* requirement-ID consistency validation
+* Sonar properties validation
+* secret scanning
+* Git status review
+
+Report commands and results honestly.
+
+Do not claim remote SonarQube Quality Gate passed unless it actually ran and passed.
+
+# 15. Commit Preparation
+
+Prepare one focused commit using:
+
+```text
+chore(governance): enforce commit traceability and sonar evidence
+
+Requirement-IDs: QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001
+Prompt-ID: <NEW_PROMPT-ID>
+Module: governance-hardening
+Tests: traceability, YAML, requirement-ID, and configuration validation passed
+```
+
+After committing, the working tree must be clean.
+
+If pushing is possible:
+
+* push the commit
+* wait for CI and SonarQube
+* report the exact run result
+
+If pushing is not possible:
+
+* provide the exact push command
+* keep SonarQube and Quality Gate status as Pending
+
+# OUT OF SCOPE
+
+Do not implement:
+
+* ORM models
+* Alembic migrations
+* business algorithms
+* backend APIs
+* frontend screens
+* production authentication
+* real provider integrations
+
+# FINAL RESPONSE FORMAT
+
+Return only:
+
+## Prompt Record Created
+
+## Files Created
+
+## Files Updated
+
+## Commit Traceability Enforcement
+
+## CI and Coverage Flow
+
+## SonarQube Configuration
+
+## Architecture Contracts Added
+
+## Requirement Traceability Fixes
+
+## Legacy Commit Exceptions
+
+## Validation Performed
+
+## Commit Created
+
+## Git Status
+
+## Remote CI/Sonar Result
+
+## Remaining Blockers
+
+## Recommended Next Module
+
+Do not begin product implementation.
+
+````
+
+## Preferred option
+
+One workflow where jobs execute in this order:
+
+```text
+traceability
+    â†“
+backend-quality
+    â†“
+frontend-quality
+    â†“
+test-and-coverage
+    â†“
+sonarqube
+    â†“
+quality-gate
+```
+
+or:
+
+## Acceptable option
+
+Reusable workflows with explicit dependencies and uploaded/downloaded coverage artifacts.
+
+The effective pipeline must:
+
+1. Checkout with full history.
+2. Validate all pushed commits.
+3. Install dependencies.
+4. Run formatting checks.
+5. Run linting.
+6. Run type checking.
+7. Run unit tests.
+8. Run integration tests when present.
+9. Generate backend `coverage.xml`.
+10. Generate frontend `lcov.info`.
+11. Run SonarQube scan.
+12. Wait for Quality Gate result.
+
+Do not run SonarQube before coverage generation.
+
+Do not silently claim coverage when reports do not exist.
+
+# 7. Handle the Pre-Code Repository Safely
+
+Product source code does not exist yet.
+
+For this final governance commit:
+
+* Documentation/configuration validation may pass without application code.
+* SonarQube must still run on the current repository when configured.
+* Clearly distinguish `governance-only mode` from `product-code mode`.
+
+In the next repository-foundation phase, CI must become mandatory for:
+
+Backend:
+
+* Ruff format check
+* Ruff lint
+* MyPy or Pyright
+* Pytest
+* coverage generation
+
+Frontend:
+
+* formatter check
+* ESLint
+* TypeScript type check
+* unit tests
+* production build
+* coverage generation
+
+Do not continue using `--if-present` after the repository foundation is scaffolded.
+
+Add an explicit CI mode check or documented transition gate.
+
+# 8. Correct SonarQube Configuration
+
+Choose one authoritative source for the project key.
+
+Preferred:
+
+* Keep `sonar.projectKey` in `sonar-project.properties`.
+* Use `SONAR_TOKEN` and `SONAR_HOST_URL` as secrets.
+* Do not require a second conflicting project-key secret unless the event rules mandate it.
+
+Set project identity to the actual SUST Onsite project.
+
+Do not scan the entire repository indefinitely.
+
+For governance-only mode, document the temporary source scope.
+
+For product-code mode, plan explicit paths such as:
+
+```text
+sonar.sources=backend/app,frontend/src
+sonar.tests=backend/tests,frontend/src
+```
+
+Use correct test inclusion rules and coverage report paths.
+
+Document when this transition occurs.
+
+Do not exclude files merely to hide issues.
+
+# 9. Complete Requirement Traceability
+
+Update `docs/11-requirement-traceability.md`.
+
+Ensure every approved mandatory requirement in `docs/01-requirements.md` has exactly one or more traceability rows.
+
+Do not use range syntax such as:
+
+```text
+MET-009..011
+```
+
+Use explicit IDs:
+
+```text
+MET-009, MET-010, MET-011
+```
+
+Validate:
+
+* every requirement ID exists
+* every referenced test ID exists
+* every metric ID exists
+* every demo ID exists
+* every API reference is valid or marked planned
+* status values are valid
+
+Add a machine-executable validation script for ID consistency if practical.
+
+# 10. Strengthen Architecture Contracts
+
+Update `docs/04-architecture.md`.
+
+Add:
+
+## Package Layout
+
+Define the intended structure, for example:
+
+```text
+backend/
+  app/
+    core/
+    auth/
+    providers/
+    scenarios/
+    validation/
+    liquidity/
+    anomaly/
+    confidence/
+    explanations/
+    alerts/
+    cases/
+    audit/
+    metrics/
+    api/
+    persistence/
+
+frontend/
+  src/
+    app/
+    features/
+    components/
+    lib/
+    types/
+```
+
+## Dependency Rules
+
+Specify:
+
+* API may call application services.
+* Application services may call domain logic and repository interfaces.
+* Domain logic must not depend on FastAPI, SQLAlchemy, or LLM vendors.
+* Persistence implementations may depend on SQLAlchemy.
+* UI must not implement financial decision logic.
+* Explanation provider must not create or modify core risk decisions.
+* Provider-scoped queries must receive an authorization context.
+
+## Transaction Boundaries
+
+Specify which service owns transactions for:
+
+* scenario execution
+* alert creation
+* assignment
+* acknowledgement
+* escalation
+* case resolution
+* audit event creation
+
+## Concurrency Policy
+
+Specify:
+
+* idempotency keys
+* optimistic concurrency/version fields
+* duplicate acknowledgement behavior
+* concurrent assignment behavior
+* append-only case history
+
+## Sync/Async Policy
+
+For MVP:
+
+* core request processing may be synchronous
+* long demo generation or explanation may use a simple background task only if necessary
+* no Kafka or distributed queue
+* deterministic fallback when explanation times out
+
+## Domain Event Policy
+
+Define internal events such as:
+
+* FeedValidated
+* LiquidityForecastCreated
+* AnomalyFindingCreated
+* AlertCreated
+* AlertAcknowledged
+* CaseEscalated
+* CaseResolved
+
+These may initially be in-process events.
+
+# 11. Resolve Immediate Open Decisions
+
+Update `docs/12-decision-log.md`.
+
+Lock:
+
+* Demo providers: synthetic labels representing three logically separate providers, or approved demonstration names if legally appropriate.
+* Frontend test runner: choose one and document it.
+* Canonical deployment for development/demo: local Docker Compose.
+* Optional cloud deployment: document one target as optional, not mandatory.
+
+The exact final hosting target may remain open only if local Docker Compose is fully canonical.
+
+# 12. Improve Deployment Documentation
+
+Expand `docs/09-deployment.md`.
+
+Include:
+
+* local Docker Compose topology
+* environment-variable names
+* database initialization
+* migration command
+* seed/scenario command
+* demo reset command
+* health check
+* readiness check
+* backup demo procedure
+* log locations
+* rollback approach
+* SonarQube secret setup
+* branch-protection recommendation
+* Quality Gate merge protection
+* known limitations
+
+Do not claim production readiness.
+
+# 13. Replace Brittle Safety Validation
+
+Keep simple grep checks only as supplemental checks.
+
+Add structured safety validation or tests for:
+
+* no financial-execution endpoints
+* no freeze/block action
+* no provider-balance transfer
+* no final wrongdoing classification
+* no real account or phone-number-like identifiers in seed data
+* missing balances do not default to zero
+* provider-scoped access requirements
+
+Document these as mandatory future tests.
+
+# 14. Validation
+
+Before finishing, run:
+
+* YAML validation
+* Markdown-link validation where practical
+* prompt-record format validation
+* commit traceability validator tests
+* requirement-ID consistency validation
+* Sonar properties validation
+* secret scanning
+* Git status review
+
+Report commands and results honestly.
+
+Do not claim remote SonarQube Quality Gate passed unless it actually ran and passed.
+
+# 15. Commit Preparation
+
+Prepare one focused commit using:
+
+```text
+chore(governance): enforce commit traceability and sonar evidence
+
+Requirement-IDs: QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001
+Prompt-ID: <NEW_PROMPT-ID>
+Module: governance-hardening
+Tests: traceability, YAML, requirement-ID, and configuration validation passed
+```
+
+After committing, the working tree must be clean.
+
+If pushing is possible:
+
+* push the commit
+* wait for CI and SonarQube
+* report the exact run result
+
+If pushing is not possible:
+
+* provide the exact push command
+* keep SonarQube and Quality Gate status as Pending
+
+# OUT OF SCOPE
+
+Do not implement:
+
+* ORM models
+* Alembic migrations
+* business algorithms
+* backend APIs
+* frontend screens
+* production authentication
+* real provider integrations
+
+# FINAL RESPONSE FORMAT
+
+Return only:
+
+## Prompt Record Created
+
+## Files Created
+
+## Files Updated
+
+## Commit Traceability Enforcement
+
+## CI and Coverage Flow
+
+## SonarQube Configuration
+
+## Architecture Contracts Added
+
+## Requirement Traceability Fixes
+
+## Legacy Commit Exceptions
+
+## Validation Performed
+
+## Commit Created
+
+## Git Status
+
+## Remote CI/Sonar Result
+
+## Remaining Blockers
+
+## Recommended Next Module
+
+Do not begin product implementation.
+
+`````
+
+## Preferred option
+
+One workflow where jobs execute in this order:
+
+```text
+traceability
+    â†“
+backend-quality
+    â†“
+frontend-quality
+    â†“
+test-and-coverage
+    â†“
+sonarqube
+    â†“
+quality-gate
+```
+
+or:
+
+## Acceptable option
+
+Reusable workflows with explicit dependencies and uploaded/downloaded coverage artifacts.
+
+The effective pipeline must:
+
+1. Checkout with full history.
+2. Validate all pushed commits.
+3. Install dependencies.
+4. Run formatting checks.
+5. Run linting.
+6. Run type checking.
+7. Run unit tests.
+8. Run integration tests when present.
+9. Generate backend `coverage.xml`.
+10. Generate frontend `lcov.info`.
+11. Run SonarQube scan.
+12. Wait for Quality Gate result.
+
+Do not run SonarQube before coverage generation.
+
+Do not silently claim coverage when reports do not exist.
+
+# 7. Handle the Pre-Code Repository Safely
+
+Product source code does not exist yet.
+
+For this final governance commit:
+
+* Documentation/configuration validation may pass without application code.
+* SonarQube must still run on the current repository when configured.
+* Clearly distinguish `governance-only mode` from `product-code mode`.
+
+In the next repository-foundation phase, CI must become mandatory for:
+
+Backend:
+
+* Ruff format check
+* Ruff lint
+* MyPy or Pyright
+* Pytest
+* coverage generation
+
+Frontend:
+
+* formatter check
+* ESLint
+* TypeScript type check
+* unit tests
+* production build
+* coverage generation
+
+Do not continue using `--if-present` after the repository foundation is scaffolded.
+
+Add an explicit CI mode check or documented transition gate.
+
+# 8. Correct SonarQube Configuration
+
+Choose one authoritative source for the project key.
+
+Preferred:
+
+* Keep `sonar.projectKey` in `sonar-project.properties`.
+* Use `SONAR_TOKEN` and `SONAR_HOST_URL` as secrets.
+* Do not require a second conflicting project-key secret unless the event rules mandate it.
+
+Set project identity to the actual SUST Onsite project.
+
+Do not scan the entire repository indefinitely.
+
+For governance-only mode, document the temporary source scope.
+
+For product-code mode, plan explicit paths such as:
+
+```text
+sonar.sources=backend/app,frontend/src
+sonar.tests=backend/tests,frontend/src
+```
+
+Use correct test inclusion rules and coverage report paths.
+
+Document when this transition occurs.
+
+Do not exclude files merely to hide issues.
+
+# 9. Complete Requirement Traceability
+
+Update `docs/11-requirement-traceability.md`.
+
+Ensure every approved mandatory requirement in `docs/01-requirements.md` has exactly one or more traceability rows.
+
+Do not use range syntax such as:
+
+```text
+MET-009..011
+```
+
+Use explicit IDs:
+
+```text
+MET-009, MET-010, MET-011
+```
+
+Validate:
+
+* every requirement ID exists
+* every referenced test ID exists
+* every metric ID exists
+* every demo ID exists
+* every API reference is valid or marked planned
+* status values are valid
+
+Add a machine-executable validation script for ID consistency if practical.
+
+# 10. Strengthen Architecture Contracts
+
+Update `docs/04-architecture.md`.
+
+Add:
+
+## Package Layout
+
+Define the intended structure, for example:
+
+```text
+backend/
+  app/
+    core/
+    auth/
+    providers/
+    scenarios/
+    validation/
+    liquidity/
+    anomaly/
+    confidence/
+    explanations/
+    alerts/
+    cases/
+    audit/
+    metrics/
+    api/
+    persistence/
+
+frontend/
+  src/
+    app/
+    features/
+    components/
+    lib/
+    types/
+```
+
+## Dependency Rules
+
+Specify:
+
+* API may call application services.
+* Application services may call domain logic and repository interfaces.
+* Domain logic must not depend on FastAPI, SQLAlchemy, or LLM vendors.
+* Persistence implementations may depend on SQLAlchemy.
+* UI must not implement financial decision logic.
+* Explanation provider must not create or modify core risk decisions.
+* Provider-scoped queries must receive an authorization context.
+
+## Transaction Boundaries
+
+Specify which service owns transactions for:
+
+* scenario execution
+* alert creation
+* assignment
+* acknowledgement
+* escalation
+* case resolution
+* audit event creation
+
+## Concurrency Policy
+
+Specify:
+
+* idempotency keys
+* optimistic concurrency/version fields
+* duplicate acknowledgement behavior
+* concurrent assignment behavior
+* append-only case history
+
+## Sync/Async Policy
+
+For MVP:
+
+* core request processing may be synchronous
+* long demo generation or explanation may use a simple background task only if necessary
+* no Kafka or distributed queue
+* deterministic fallback when explanation times out
+
+## Domain Event Policy
+
+Define internal events such as:
+
+* FeedValidated
+* LiquidityForecastCreated
+* AnomalyFindingCreated
+* AlertCreated
+* AlertAcknowledged
+* CaseEscalated
+* CaseResolved
+
+These may initially be in-process events.
+
+# 11. Resolve Immediate Open Decisions
+
+Update `docs/12-decision-log.md`.
+
+Lock:
+
+* Demo providers: synthetic labels representing three logically separate providers, or approved demonstration names if legally appropriate.
+* Frontend test runner: choose one and document it.
+* Canonical deployment for development/demo: local Docker Compose.
+* Optional cloud deployment: document one target as optional, not mandatory.
+
+The exact final hosting target may remain open only if local Docker Compose is fully canonical.
+
+# 12. Improve Deployment Documentation
+
+Expand `docs/09-deployment.md`.
+
+Include:
+
+* local Docker Compose topology
+* environment-variable names
+* database initialization
+* migration command
+* seed/scenario command
+* demo reset command
+* health check
+* readiness check
+* backup demo procedure
+* log locations
+* rollback approach
+* SonarQube secret setup
+* branch-protection recommendation
+* Quality Gate merge protection
+* known limitations
+
+Do not claim production readiness.
+
+# 13. Replace Brittle Safety Validation
+
+Keep simple grep checks only as supplemental checks.
+
+Add structured safety validation or tests for:
+
+* no financial-execution endpoints
+* no freeze/block action
+* no provider-balance transfer
+* no final wrongdoing classification
+* no real account or phone-number-like identifiers in seed data
+* missing balances do not default to zero
+* provider-scoped access requirements
+
+Document these as mandatory future tests.
+
+# 14. Validation
+
+Before finishing, run:
+
+* YAML validation
+* Markdown-link validation where practical
+* prompt-record format validation
+* commit traceability validator tests
+* requirement-ID consistency validation
+* Sonar properties validation
+* secret scanning
+* Git status review
+
+Report commands and results honestly.
+
+Do not claim remote SonarQube Quality Gate passed unless it actually ran and passed.
+
+# 15. Commit Preparation
+
+Prepare one focused commit using:
+
+```text
+chore(governance): enforce commit traceability and sonar evidence
+
+Requirement-IDs: QUALITY-001, QUALITY-002, CI-001, CI-002, DOC-001
+Prompt-ID: <NEW_PROMPT-ID>
+Module: governance-hardening
+Tests: traceability, YAML, requirement-ID, and configuration validation passed
+```
+
+After committing, the working tree must be clean.
+
+If pushing is possible:
+
+* push the commit
+* wait for CI and SonarQube
+* report the exact run result
+
+If pushing is not possible:
+
+* provide the exact push command
+* keep SonarQube and Quality Gate status as Pending
+
+# OUT OF SCOPE
+
+Do not implement:
+
+* ORM models
+* Alembic migrations
+* business algorithms
+* backend APIs
+* frontend screens
+* production authentication
+* real provider integrations
+
+# FINAL RESPONSE FORMAT
+
+Return only:
+
+## Prompt Record Created
+
+## Files Created
+
+## Files Updated
+
+## Commit Traceability Enforcement
+
+## CI and Coverage Flow
+
+## SonarQube Configuration
+
+## Architecture Contracts Added
+
+## Requirement Traceability Fixes
+
+## Legacy Commit Exceptions
+
+## Validation Performed
+
+## Commit Created
+
+## Git Status
+
+## Remote CI/Sonar Result
+
+## Remaining Blockers
+
+## Recommended Next Module
+
+Do not begin product implementation.
+
+````
 
 ## Preferred option
 

@@ -1,4 +1,4 @@
-﻿# Architecture
+# Architecture
 
 ## Decision
 Use a modular monolith. Microservices, Kafka, Redis/Upstash, separate provider deployments, and mandatory WebSockets are deferred.

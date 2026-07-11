@@ -1,4 +1,4 @@
-﻿# Task Board
+# Task Board
 
 | Phase | Task | Requirement IDs | Status |
 |---|---|---|---|

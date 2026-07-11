@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Distinguish governance-only mode from product-code mode."""
 
 from __future__ import annotations

@@ -1,14 +1,20 @@
-# ── Secrets ──────────────────────────────────────────────────────────────────
+# Secrets
 .env
 .env.local
 .env.*.local
 
-# ── Python ───────────────────────────────────────────────────────────────────
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 .Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 venv/
 .venv/
 env/
@@ -16,17 +22,28 @@ env/
 dist/
 build/
 
-# ── Next.js / Node ───────────────────────────────────────────────────────────
+# Next.js / Node
+node_modules/
 frontend/node_modules/
 frontend/.next/
 frontend/out/
 frontend/coverage/
+frontend/.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# ── Database / local data ─────────────────────────────────────────────────────
+# Coverage and test artifacts
+coverage/
+*.lcov
+junit.xml
+.pytest_cache/
+
+# Database / local data
 *.db
 *.sqlite3
 
-# ── OS / Editor ───────────────────────────────────────────────────────────────
+# OS / editor
 .DS_Store
 Thumbs.db
 .idea/
@@ -34,6 +51,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# ── Logs ─────────────────────────────────────────────────────────────────────
+# Logs
 *.log
 logs/

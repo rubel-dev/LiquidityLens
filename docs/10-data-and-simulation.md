@@ -1,4 +1,4 @@
-﻿# Data and Simulation
+# Data and Simulation
 
 ## Scenarios
 - SCN-001: Hidden provider shortage and deceptive total.

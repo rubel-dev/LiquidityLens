@@ -1,4 +1,4 @@
-﻿# <PROMPT-ID>: <Title>
+# <PROMPT-ID>: <Title>
 
 ## Prompt ID
 <PROMPT-ID>

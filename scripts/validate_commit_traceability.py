@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Validate prompt-to-commit traceability for every introduced commit."""
 
 from __future__ import annotations

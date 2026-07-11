@@ -1,4 +1,4 @@
-﻿# Workflows
+# Workflows
 
 ## Flow Overview
 ```mermaid

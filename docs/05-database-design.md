@@ -1,4 +1,4 @@
-﻿# PostgreSQL Database Design
+# PostgreSQL Database Design
 
 No ORM models or migrations are created in this step.
 

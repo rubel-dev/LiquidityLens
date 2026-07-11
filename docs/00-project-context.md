@@ -1,4 +1,4 @@
-﻿# Project Context
+# Project Context
 
 ## Problem Summary
 Multi-provider mobile financial service agents serve customers through separate providers while using one shared physical cash pool. The agent may appear healthy in total value while one provider e-money balance or the shared cash reserve is near shortage.

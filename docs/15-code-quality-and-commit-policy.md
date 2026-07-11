@@ -1,4 +1,4 @@
-﻿# Code Quality and Commit Policy
+# Code Quality and Commit Policy
 
 ## Mandatory Commit Format
 ```text

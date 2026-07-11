@@ -1,4 +1,4 @@
-﻿# API Contracts
+# API Contracts
 
 All paths use `/api/v1`. Contracts only; no routes are implemented in this step.
 

@@ -1,4 +1,4 @@
-﻿# Testing and Metrics
+# Testing and Metrics
 
 ## Metrics Registry
 | ID | Name | Formula | Dataset | Ground Truth | Target | Evidence Source | Limitation |

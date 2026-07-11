@@ -1,4 +1,4 @@
-﻿# Product Requirements Document
+# Product Requirements Document
 
 ## Product Vision
 Make a complex multi-provider agent situation simple to understand by connecting liquidity insight, unusual-activity evidence, confidence, and clear coordination without unsafe integration or accusations.

@@ -1,4 +1,4 @@
-﻿# Deployment
+# Deployment
 
 Deployment is demo-only. Do not claim production readiness.
 

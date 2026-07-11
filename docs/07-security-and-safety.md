@@ -1,4 +1,4 @@
-﻿# Security and Safety
+# Security and Safety
 
 ## Guardrails
 - Synthetic data only.

@@ -1,4 +1,4 @@
-﻿# Implementation Plan
+# Implementation Plan
 
 | Phase | Module |
 |---|---|

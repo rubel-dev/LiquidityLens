@@ -31,9 +31,33 @@ class Settings(BaseSettings):
         default=False,
         validation_alias="LLM_EXPLANATION_ENABLED",
     )
+    validation_feed_delay_minutes: int = Field(
+        default=5,
+        validation_alias="VALIDATION_FEED_DELAY_MINUTES",
+    )
+    validation_stale_minutes: int = Field(default=15, validation_alias="VALIDATION_STALE_MINUTES")
+    validation_future_tolerance_minutes: int = Field(
+        default=5,
+        validation_alias="VALIDATION_FUTURE_TOLERANCE_MINUTES",
+    )
+    validation_timestamp_skew_minutes: int = Field(
+        default=2,
+        validation_alias="VALIDATION_TIMESTAMP_SKEW_MINUTES",
+    )
+    validation_max_metadata_keys: int = Field(
+        default=12,
+        validation_alias="VALIDATION_MAX_METADATA_KEYS",
+    )
+    validation_max_metadata_value_length: int = Field(
+        default=120,
+        validation_alias="VALIDATION_MAX_METADATA_VALUE_LENGTH",
+    )
+    validation_supported_currencies: str = Field(
+        default="BDT",
+        validation_alias="VALIDATION_SUPPORTED_CURRENCIES",
+    )
 
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

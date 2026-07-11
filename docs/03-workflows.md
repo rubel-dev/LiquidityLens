@@ -95,6 +95,21 @@ Accounting convention:
 - Shared physical cash is outlet scoped and never satisfies a provider-specific e-money balance.
 - Missing provider balance is stored as unknown/null, not zero.
 
+## Implemented Validation Workflow
+Provider ingestion and validation are internal-only service workflows. They normalize simulated provider records into canonical transaction, provider-balance, shared-cash, and feed-status inputs before later analytics modules consume them.
+
+```mermaid
+flowchart TD
+  A["Simulated provider adapter"] --> B["Canonical ingestion schema"]
+  B --> C["Validation rules"]
+  C --> D["Disposition: accepted, warning, quarantined, rejected, duplicate ignored"]
+  D --> E["Persist trusted normalized records when usable"]
+  D --> F["Persist data-quality evidence and audit events"]
+  F --> G["Future confidence multiplier input"]
+```
+
+Validation does not forecast liquidity, detect anomalies, create alerts, open cases, or make operational decisions.
+
 ## Alert And Case Lifecycle Separation
 Alerts and cases are separate entities. An alert can exist without a case when severity is low or confidence is insufficient for coordinated review.
 

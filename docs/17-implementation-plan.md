@@ -6,7 +6,7 @@
 | 1 | Repository foundation | Implemented |
 | 2 | Database schema and migrations | Implemented |
 | 3 | Synthetic scenario engine | Implemented |
-| 4 | Provider ingestion and validation | Pending |
+| 4 | Provider ingestion and validation | Implemented |
 | 5 | Liquidity engine | Pending |
 | 6 | Anomaly engine | Pending |
 | 7 | Confidence and decision fusion | Pending |

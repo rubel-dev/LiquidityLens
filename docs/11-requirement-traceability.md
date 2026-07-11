@@ -18,8 +18,8 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | FR-012 | False-positive scenario | Challenger idea | scenarios | CLI implemented; /api/v1/scenarios planned | Demo planned | AC-009 | MET-005 | DEMO-001 | Implemented |
 | NFR-001 | Responsive demo interactions | PDF | platform | planned | All UI | AC-010 | MET-007 | DEMO-001 | Approved |
 | NFR-002 | Explainable/auditable alerts | PDF | alerts/audit | /api/v1/audit-events planned | Alert/case UI | AC-007 | MET-006, MET-009 | DEMO-001 | Approved |
-| NFR-003 | Bad data reduces confidence | PDF | validation/fusion | /api/v1/data-quality-statuses planned | Alerts | AC-006 | MET-008 | DEMO-001 | Approved |
-| NFR-004 | Provider isolation | PDF | auth | all scoped APIs planned | all scoped UI | AC-011 | MET-012 | DEMO-001 | Approved |
+| NFR-003 | Bad data reduces confidence | PDF | validation/fusion | Internal validation service implemented; /api/v1/data-quality-statuses planned | Alerts planned | AC-006 | MET-008 | DEMO-001 | Implemented |
+| NFR-004 | Provider isolation | PDF | auth | Internal provider-scoped validation implemented; all scoped APIs planned | all scoped UI planned | AC-011 | MET-012 | DEMO-001 | In Progress |
 | DATA-001 | Synthetic data only | PDF | scenario | CLI implemented; /api/v1/scenarios planned | n/a | AC-009 | MET-005 | DEMO-001 | Implemented |
 | DATA-002 | Synthetic non-phone-like IDs | Governance | scenario | CLI implemented; /api/v1/transactions planned | Evidence UI planned | AC-004 | MET-003 | DEMO-001 | Implemented |
 | DATA-003 | Shared cash is not provider feed | Governance | data model | CLI seed data implemented; /api/v1/agents/{agent_id}/cash-snapshots planned | Overview planned | AC-001 | MET-006 | DEMO-001 | Implemented |
@@ -27,9 +27,9 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | ARCH-002 | No MVP microservices | Decision | architecture | n/a | n/a | governance validation | MET-012 | n/a | Implemented |
 | API-001 | Versioned /api/v1 contracts | API design | api | `/api/v1/health`, `/api/v1/readiness` implemented; feature APIs planned | Foundation page health status only | backend/frontend foundation tests | MET-007 | DEMO-001 | In Progress |
 | DB-001 | PostgreSQL with SQLAlchemy/Alembic | DB design | persistence | n/a | n/a | metadata tests and local PostgreSQL migration tests passed; remote CI pending | MET-012 | n/a | Implemented |
-| SEC-001 | No credentials or real identities | PDF | security | all APIs planned | all UI | safety validation planned | MET-012 | n/a | Approved |
-| SAFE-001 | No real financial activity | PDF | all | no execution endpoint | no command UI | safety validation planned | MET-012 | DEMO-001 | Approved |
-| SAFE-002 | No wrongdoing declaration | PDF | explanation | alerts planned | alert UI | safety validation planned | MET-006 | DEMO-001 | Approved |
+| SEC-001 | No credentials or real identities | PDF | security | Internal validation safety checks implemented; all APIs planned | all UI planned | safety tests | MET-012 | n/a | Implemented |
+| SAFE-001 | No real financial activity | PDF | all | no execution endpoint | no command UI | safety tests | MET-012 | DEMO-001 | Implemented |
+| SAFE-002 | No wrongdoing declaration | PDF | explanation | alerts planned | alert UI planned | safety tests | MET-006 | DEMO-001 | Implemented |
 | SAFE-003 | Advisory recommendations only | Governance | explanation | alerts planned | alert UI | safety validation planned | MET-006 | DEMO-001 | Approved |
 | MET-001 | Shortage detection lead time | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-001 | DEMO-001 | Approved |
 | MET-002 | Forecast error | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-002 | DEMO-001 | Approved |

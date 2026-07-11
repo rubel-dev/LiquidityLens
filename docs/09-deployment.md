@@ -20,6 +20,13 @@ browser -> Next.js dev server -> FastAPI app -> PostgreSQL
 - LLM_EXPLANATION_ENABLED
 - SONAR_TOKEN
 - SONAR_HOST_URL
+- VALIDATION_FEED_DELAY_MINUTES
+- VALIDATION_STALE_MINUTES
+- VALIDATION_FUTURE_TOLERANCE_MINUTES
+- VALIDATION_TIMESTAMP_SKEW_MINUTES
+- VALIDATION_MAX_METADATA_KEYS
+- VALIDATION_MAX_METADATA_VALUE_LENGTH
+- VALIDATION_SUPPORTED_CURRENCIES
 
 ## Database Initialization
 Repository foundation command:
@@ -109,7 +116,7 @@ Failed, skipped, unavailable, or configuration-error Quality Gate results must b
 
 ## Known Limitations
 - No product deployment exists yet.
-- Deterministic scenario commands exist; provider ingestion and downstream business engines remain planned.
+- Deterministic scenario commands and internal provider validation services exist; downstream business engines remain planned.
 - Repository foundation implements health/readiness only; feature APIs remain planned.
 - Product-code CI is mandatory after repository foundation.
 

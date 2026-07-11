@@ -22,6 +22,7 @@
 | DEC-018 | Final demo hosting is onsite/local Docker Compose unless organizers explicitly require remote access. | Accepted | The event is onsite; deterministic local demo is the canonical target and cloud remains optional. |
 | DEC-019 | SonarQube analysis and Quality Gate are best-effort, non-blocking checks. | Accepted | Latest judge instruction explicitly allows teams to continue when SonarQube or CI analysis fails because of tool, environment, configuration, or integration problems. Prompt traceability and local quality checks remain mandatory, and Sonar results must be recorded honestly. |
 | DEC-020 | Scenario generator metadata and ground truth are persisted through approved scenario, feed, and audit tables instead of adding public scenario APIs in this module. | Accepted | The approved database already includes `scenario_runs`, scenario-owned records, `provider_feed_statuses`, `data_quality_events`, and `audit_events`; using them keeps the module internal, auditable, and within the prompt boundary. |
+| DEC-021 | Provider ingestion and validation remain internal service interfaces until the backend API module. | Accepted | The module must normalize, validate, score, persist evidence, and audit safely without exposing public ingestion endpoints or mixing in liquidity/anomaly decisions. |
 
 ## Remaining Open Item
 No remaining open governance decision blocks implementation. Optional cloud hosting can be revisited after the local Docker Compose demo is working.

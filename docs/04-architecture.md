@@ -41,10 +41,13 @@ frontend/
 - Explanation provider must not create or modify core risk decisions.
 - Provider-scoped queries must receive an authorization context.
 
+Provider adapters are simulated-only in the MVP. They map provider-scoped demo records into canonical validation schemas and must not contain liquidity, anomaly, alert, case, authorization, or financial-execution logic.
+
 ## Transaction Boundaries
 | Service | Transaction Owner |
 |---|---|
 | Scenario execution | Scenario service owns scenario_run, generated synthetic records, and reset/replay state. |
+| Provider ingestion and validation | Validation service owns normalized accepted records, quality events, rejection/quarantine evidence, duplicate handling, and audit events. |
 | Alert creation | Alert service owns alert, evidence links, confidence snapshot, explanation record, and audit event. |
 | Assignment | Case service owns assignment update, version increment, and audit event. |
 | Acknowledgement | Case service owns idempotency check, acknowledgement event, version increment, and audit event. |

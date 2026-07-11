@@ -35,3 +35,5 @@ All paths use `/api/v1`. Contracts only; no routes are implemented in this step.
 
 ## Response Schema Reference
 Detailed response shapes are defined in `docs/06b-api-schemas.md`. Endpoint implementation must keep `/api/v1` responses compatible with those schemas or update the schema document in a traceable governance commit before frontend/backend parallel work begins.
+
+Provider ingestion and validation currently expose internal Python service interfaces only. Public REST ingestion endpoints remain out of scope until the approved backend API module begins.

@@ -83,3 +83,13 @@ Demo reset is scoped to a scenario run. It must never delete static reference da
 Clean state means replaying the same scenario ID and seed generates the same synthetic inputs, expected findings, metrics, and story checkpoints.
 
 Implemented reset/replay currently applies to scenario-owned inputs and ground-truth audit records only. Downstream findings, alerts, cases, explanations, and metrics remain out of scope until those modules exist.
+
+## Validation Disposition and Evidence
+Provider ingestion validation supports these dispositions:
+- `accepted`: trusted normalized record persisted.
+- `accepted_with_warning`: usable record persisted with data-quality evidence.
+- `quarantined`: inspectable evidence persisted, but the source is not trusted downstream.
+- `rejected`: evidence/audit persisted, no trusted business row created.
+- `duplicate_ignored`: idempotent retry, no duplicate business row or duplicate quality event.
+
+Validation findings include rule ID, category, severity, provider scope, agent scope, source record ID, affected fields, expected/observed condition, evidence, safe next step, and usability. Evidence must remain synthetic and must not include secrets, real identities, or wrongdoing claims.

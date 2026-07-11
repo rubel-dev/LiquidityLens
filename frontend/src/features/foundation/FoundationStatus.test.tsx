@@ -9,18 +9,28 @@ describe("foundation page", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({ status: "ok", service: "liquiditylens-api", version: "0.1.0" }),
+        json: async () => ({
+          status: "ok",
+          service: "liquiditylens-api",
+          version: "0.1.0",
+        }),
       }),
     );
 
     render(<Home />);
 
-    expect(screen.getByRole("heading", { name: "LiquidityLens" })).toBeInTheDocument();
     expect(
-      screen.getByText("Safe multi-provider liquidity decision-support prototype"),
+      screen.getByRole("heading", { name: "LiquidityLens" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Safe multi-provider liquidity decision-support prototype",
+      ),
     ).toBeInTheDocument();
     expect(screen.getByText("Synthetic data only")).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("OK"));
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("OK"),
+    );
   });
 
   it("renders an unavailable API state", async () => {
@@ -28,7 +38,8 @@ describe("foundation page", () => {
 
     render(<Home />);
 
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Unavailable"));
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("Unavailable"),
+    );
   });
 });
-

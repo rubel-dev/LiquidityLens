@@ -13,9 +13,10 @@ export default function Home() {
           </p>
         </div>
         <FoundationStatus />
-        <div className="foundation-panel synthetic-label">Synthetic data only</div>
+        <div className="foundation-panel synthetic-label">
+          Synthetic data only
+        </div>
       </section>
     </main>
   );
 }
-

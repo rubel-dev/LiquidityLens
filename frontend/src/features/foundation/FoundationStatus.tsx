@@ -29,7 +29,8 @@ export function FoundationStatus() {
     };
   }, []);
 
-  const label = status === "ok" ? "OK" : status === "checking" ? "Checking" : "Unavailable";
+  const label =
+    status === "ok" ? "OK" : status === "checking" ? "Checking" : "Unavailable";
 
   return (
     <div className="foundation-panel status-row">
@@ -43,4 +44,3 @@ export function FoundationStatus() {
     </div>
   );
 }
-

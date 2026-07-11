@@ -87,7 +87,7 @@ jobs:
         run: |
           python scripts/check_ci_mode.py
           if [ -d frontend ]; then
-            npm --prefix frontend install
+            npm --prefix frontend ci
             npm --prefix frontend run format:check
             npm --prefix frontend run lint
             npm --prefix frontend run typecheck
@@ -127,7 +127,7 @@ jobs:
             echo "Governance-only mode: no backend coverage report expected."
           fi
           if [ -d frontend ]; then
-            npm --prefix frontend install
+            npm --prefix frontend ci
             npm --prefix frontend test
             test -f frontend/coverage/lcov.info
             npm --prefix frontend run build

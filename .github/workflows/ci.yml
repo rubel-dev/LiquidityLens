@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  validate:
-    name: Governance, docs, and placeholder stack validation
+  traceability:
+    name: Traceability and governance validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout with full history
@@ -23,77 +23,151 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Validate commit range traceability
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python scripts/validate_commit_traceability.py
+
+      - name: Validate requirement IDs
+        run: python scripts/validate_requirement_ids.py
+
+      - name: Run governance unit tests
+        run: python -m unittest discover tests/governance
+
+      - name: Check CI mode
+        run: python scripts/check_ci_mode.py
+
+  backend-quality:
+    name: Backend quality
+    runs-on: ubuntu-latest
+    needs: traceability
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Backend governance-only or mandatory product checks
+        shell: bash
+        run: |
+          python scripts/check_ci_mode.py
+          if [ -d backend ]; then
+            python -m pip install --upgrade pip
+            if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+            if [ -f backend/pyproject.toml ]; then pip install -e backend; fi
+            python -m ruff format --check backend
+            python -m ruff check backend
+            if command -v mypy >/dev/null 2>&1; then mypy backend; else pyright backend; fi
+          else
+            echo "Governance-only mode: backend source not scaffolded yet."
+          fi
+
+  frontend-quality:
+    name: Frontend quality
+    runs-on: ubuntu-latest
+    needs: backend-quality
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
         with:
           node-version: "22"
-
-      - name: Install backend dependencies when present
+      - name: Frontend governance-only or mandatory product checks
         shell: bash
         run: |
-          python -m pip install --upgrade pip
-          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-          if [ -f backend/pyproject.toml ]; then pip install -e backend; fi
-          if [ ! -d backend ]; then echo "No backend source yet; placeholder validation continues."; fi
+          python scripts/check_ci_mode.py
+          if [ -d frontend ]; then
+            test -f frontend/package-lock.json
+            npm --prefix frontend ci
+            npm --prefix frontend run format:check
+            npm --prefix frontend run lint
+            npm --prefix frontend run typecheck
+          else
+            echo "Governance-only mode: frontend source not scaffolded yet."
+          fi
 
-      - name: Install frontend dependencies when present
+  test-and-coverage:
+    name: Tests and coverage
+    runs-on: ubuntu-latest
+    needs: frontend-quality
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Governance tests
+        run: python -m unittest discover tests/governance
+      - name: Product tests and coverage when scaffolded
         shell: bash
         run: |
-          if [ -f frontend/package-lock.json ]; then npm --prefix frontend ci; else echo "No frontend lockfile yet."; fi
+          if [ -d backend ]; then
+            python -m pip install --upgrade pip
+            if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+            pytest backend/tests --cov=backend/app --cov-report=xml:backend/coverage.xml
+            test -f backend/coverage.xml
+          else
+            echo "Governance-only mode: no backend coverage report expected."
+          fi
+          if [ -d frontend ]; then
+            npm --prefix frontend ci
+            npm --prefix frontend test -- --coverage
+            test -f frontend/coverage/lcov.info
+            npm --prefix frontend run build
+          else
+            echo "Governance-only mode: no frontend coverage report expected."
+          fi
+      - name: Upload coverage artifacts when present
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            backend/coverage.xml
+            frontend/coverage/lcov.info
+          if-no-files-found: ignore
 
-      - name: Format check placeholder
+  sonarqube:
+    name: SonarQube analysis
+    runs-on: ubuntu-latest
+    needs: test-and-coverage
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: .
+        continue-on-error: true
+      - name: Validate required SonarQube secrets
         shell: bash
         run: |
-          if [ -f frontend/package.json ]; then npm --prefix frontend run format:check --if-present; fi
-          echo "Backend format check becomes mandatory when backend tooling is scaffolded."
+          test -n "${{ secrets.SONAR_TOKEN }}"
+          test -n "${{ secrets.SONAR_HOST_URL }}"
+      - name: SonarQube scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: Lint placeholder
-        shell: bash
-        run: |
-          if [ -f frontend/package.json ]; then npm --prefix frontend run lint --if-present; fi
-          echo "Backend lint becomes mandatory when backend tooling is scaffolded."
-
-      - name: Type check placeholder
-        shell: bash
-        run: |
-          if [ -f frontend/package.json ]; then npm --prefix frontend run typecheck --if-present; fi
-          echo "Python type check becomes mandatory when backend tooling is scaffolded."
-
-      - name: Unit tests placeholder
-        shell: bash
-        run: |
-          if [ -d backend/tests ]; then pytest backend/tests --cov=backend --cov-report=xml:backend/coverage.xml; else echo "No backend unit tests yet."; fi
-          if [ -f frontend/package.json ]; then npm --prefix frontend run test:unit --if-present; fi
-
-      - name: Integration tests placeholder
-        shell: bash
-        run: |
-          if [ -d tests/integration ]; then pytest tests/integration; else echo "No integration tests yet."; fi
-
-      - name: Build placeholder
-        shell: bash
-        run: |
-          if [ -f frontend/package.json ]; then npm --prefix frontend run build --if-present; fi
-          echo "No product build required until source directories exist."
-
-      - name: Prompt traceability check
-        shell: bash
-        run: |
-          msg="$(git log -1 --pretty=%B)"
-          echo "$msg" | grep -Eq '^Requirement-IDs: .+'
-          echo "$msg" | grep -Eq '^Prompt-ID: PROMPT-[0-9]{4}'
-          echo "$msg" | grep -Eq '^Module: .+'
-          echo "$msg" | grep -Eq '^Tests: .+'
-          prompt_id="$(echo "$msg" | sed -n 's/^Prompt-ID: \(PROMPT-[0-9][0-9][0-9][0-9]\).*/\1/p' | head -n 1)"
-          test -n "$prompt_id"
-          ls prompts/history/${prompt_id}-*.md >/dev/null
-
-      - name: Documentation safety checks
-        shell: bash
-        run: |
-          test -f README.md
-          test -f docs/11-requirement-traceability.md
-          test -f sonar-project.properties
-          ! grep -RInE "c[o]nfirmed wrongdoing|p[e]rform wallet transfer|fr[e]eze funds now|bl[o]ck account now|s[e]ttle real wallet|pr[o]duction wallet secret|No fr[a]ud indicators|Arrange 20[,]000 taka" docs README.md prompts
-
-
+  quality-gate:
+    name: SonarQube Quality Gate
+    runs-on: ubuntu-latest
+    needs: sonarqube
+    steps:
+      - name: Wait for Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

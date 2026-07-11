@@ -12,14 +12,17 @@ fix-audit
 ## Objective
 Transform the teammate repository into the single canonical implementation-ready repository by selectively merging approved design ideas, correcting conflicts, and preparing documentation, prompt traceability, CI, and SonarQube.
 
-## Module or Phase
+## Module
 architecture-governance
 
 ## Requirement IDs
 DOC-001, QUALITY-001, CI-001, SAFE-001
 
+## Exact Prompt SHA-256
+ecae5ce59d0f470c83bb8894e7d5a30b2f3783fa575b4bafc92e4f9c51f99300
+
 ## Exact Prompt
-`	ext
+``text
 You are working inside the teammate repository that will become the final implementation repository for the SUST onsite hackathon project.
 
 Do not clone another repository.
@@ -617,7 +620,7 @@ Return only:
 
 Do not begin implementation.
 
-`
+``
 
 ## In Scope
 - Final selective merge
@@ -661,7 +664,7 @@ Do not begin implementation.
 - prompts/templates/*
 - prompts/history/PROMPT-0001-finalize-selective-merge.md
 
-## Tests or Validations
+## Validation Performed
 - Documentation validation
 - YAML validation
 - Mermaid presence validation
@@ -670,6 +673,9 @@ Do not begin implementation.
 - Secret scan
 - Safety language scan
 - Prompt traceability check
+
+## Tests/Checks Run
+- documentation, YAML, Mermaid, and configuration validation completed
 
 ## SonarQube Status
 Configured. Quality Gate not claimed as passed until remote CI confirms it.

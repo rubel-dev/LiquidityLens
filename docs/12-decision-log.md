@@ -14,8 +14,10 @@
 | DEC-010 | Redis/Upstash/Kafka/WebSockets not mandatory. | Deferred | Avoid excessive dependencies. |
 | DEC-011 | CI and SonarQube before product code. | Accepted | Quality foundation. |
 | DEC-012 | Prompt traceability per implementation/fix commit. | Accepted | Auditability. |
+| DEC-013 | Demo providers use synthetic labels representing three logically separate providers; real-style names may appear only in narrative if legally appropriate. | Accepted | Preserves provider separation and avoids unsupported affiliation claims. |
+| DEC-014 | Frontend test runner target is Vitest with React Testing Library after Next.js scaffold. | Accepted | Common TypeScript/Next.js testing path. |
+| DEC-015 | Canonical development/demo deployment is local Docker Compose. | Accepted | Removes cloud dependency from MVP readiness. |
+| DEC-016 | Optional cloud deployment target may be selected later; it is not mandatory for MVP. | Accepted | Keeps implementation feasible. |
 
-## Unresolved
-- OPEN-001: Demo provider labels.
-- OPEN-002: Hosting target.
-- OPEN-003: Exact frontend test runner.
+## Remaining Open Item
+- Final public demo hosting provider remains open; local Docker Compose is canonical until this is decided.

@@ -15,6 +15,11 @@ The prototype is decision support only. It must not connect to production financ
 - LLM use: vendor-neutral LLM explanation provider for Bengali, Banglish, English summaries only.
 - LLM fallback: deterministic templates.
 
+## CI Mode
+The repository is currently in governance-only mode. CI validates documentation, prompt traceability, requirement IDs, Sonar configuration, and governance tests.
+
+After repository foundation scaffolds `backend/` or `frontend/`, product-code mode begins and backend/frontend quality checks become mandatory.
+
 ## Documentation Reading Order
 1. `docs/00-project-context.md`
 2. `docs/01-requirements.md`
@@ -29,19 +34,6 @@ The prototype is decision support only. It must not connect to production financ
 11. `docs/12-decision-log.md`
 12. `docs/17-implementation-plan.md`
 13. `docs/18-task-board.md`
-
-## Repository Structure
-```text
-.
-â”œâ”€â”€ .github/workflows/
-â”œâ”€â”€ docs/
-â”œâ”€â”€ prompts/
-â”‚   â”œâ”€â”€ templates/
-â”‚   â””â”€â”€ history/
-â”œâ”€â”€ .env.example
-â”œâ”€â”€ sonar-project.properties
-â””â”€â”€ README.md
-```
 
 ## Prompt and Commit Traceability
 Every implementation or fix commit must include:
@@ -65,9 +57,8 @@ Tests: <result>
 CI and SonarQube are configured before product code begins. Required secret names are:
 - `SONAR_TOKEN`
 - `SONAR_HOST_URL`
-- `SONAR_PROJECT_KEY`
 
-Do not commit secret values. SonarQube Quality Gate must not be claimed as passed until remote CI confirms it.
+The authoritative project key is in `sonar-project.properties`. Do not commit secret values. SonarQube Quality Gate must not be claimed as passed until remote CI confirms it.
 
 ## Current Status
 Design, governance, prompt traceability, CI, and SonarQube foundation are prepared. Product business logic, ORM models, migrations, backend routes, frontend screens, and algorithms are intentionally not implemented yet.

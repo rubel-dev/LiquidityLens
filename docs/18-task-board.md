@@ -18,7 +18,8 @@
 | 12 | Build agent UI | FR-001,FR-003,FR-004 | Pending |
 | 13 | Build operations UI | FR-007,FR-008 | Pending |
 | 14 | Build risk UI | FR-006,SAFE-002 | Pending |
-| 15 | Add metrics and observability | MET-001..MET-012 | Pending |
-| 16 | Add failure-mode tests | FAIL-001..FAIL-007 | Pending |
+| 15 | Add metrics and observability | MET-001, MET-002, MET-003, MET-004, MET-005, MET-006, MET-007, MET-008, MET-009, MET-010, MET-011, MET-012 | Pending |
+| 16 | Add failure-mode tests | FAIL-001, FAIL-002, FAIL-003, FAIL-004, FAIL-005, FAIL-006, FAIL-007 | Pending |
 | 17 | Package demo | DEMO-001,DEMO-002 | Pending |
 | 18 | Release prep | QUALITY-002 | Pending |
+

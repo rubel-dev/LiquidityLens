@@ -27,7 +27,7 @@ Agents have one shared cash drawer and separate provider e-money balances. Total
 | AC-007 | FR-007,FR-008 | Important alert exists. | Routing runs. | Receiver, owner, next step, status, assignment, acknowledgement, escalation, notes, and final status are auditable. |
 | AC-008 | FR-010,FR-011 | LLM is unavailable or malformed. | Explanation is requested. | Deterministic Bengali/Banglish/English template fallback is used. |
 | AC-009 | FR-012 | Normal Eid/salary-day spike is replayed. | Detection runs. | The pattern is consistent with expected demand; no additional review is currently recommended. |
-| AC-010 | MET-001..MET-012 | Demo scenarios run. | Metrics report opens. | Formulas, targets, and evidence sources are shown. |
+| AC-010 | MET-001, MET-002, MET-003, MET-004, MET-005, MET-006, MET-007, MET-008, MET-009, MET-010, MET-011, MET-012 | Demo scenarios run. | Metrics report opens. | Formulas, targets, and evidence sources are shown. |
 | AC-011 | NFR-004 | User requests another provider's restricted data. | API/service/query/UI checks run. | Access is denied and audited. |
 
 ## Demo Scope
@@ -38,3 +38,4 @@ Redis/Upstash, Kafka, microservices, mandatory WebSockets, separate provider dep
 
 ## Known Limitations
 Metrics are based on synthetic scenarios. The prototype is not production risk tooling and does not integrate with real provider systems.
+

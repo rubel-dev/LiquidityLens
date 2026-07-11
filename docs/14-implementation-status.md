@@ -15,9 +15,9 @@ Canonical design/governance repository is prepared. Repository foundation produc
 | 6 | Anomaly engine | Implemented/Verified with unit and Neon PostgreSQL tests |
 | 7 | Confidence and decision fusion | Implemented/Verified |
 | 8 | Explanation service and fallback | Not started |
-| 9 | Alerts and cases | Not started |
-| 10 | Backend APIs | Not started |
-| 11 | Authentication and provider-scope authorization | Not started |
+| 9 | Alerts and cases | Implemented/Neon PostgreSQL verified |
+| 10 | Backend APIs | Implemented for operations routes |
+| 11 | Authentication and provider-scope authorization | Provider/area scope implemented; authentication pending |
 | 12 | Agent UI | Implemented with contract-aligned demo fixtures; API integration pending |
 | 13 | Operations UI | Implemented with contract-aligned demo fixtures; API integration pending |
 | 14 | Risk UI | Implemented with contract-aligned demo fixtures; API integration pending |
@@ -34,7 +34,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 - Product-code CI checks for backend, frontend, coverage, governance, Sonar scan, and Quality Gate.
 
 ## Explicitly Not Implemented
-Explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until those APIs exist; frontend controls do not execute financial activity or persist backend state.
+Explanation services, identity authentication, non-operations feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until their APIs exist; frontend controls do not execute financial activity.
 
 ## Frontend Demo Surface Status
 The role-based Next.js demo surface is implemented for agent, provider operations, field officer, risk reviewer, manager/judge, and demo operator views. It includes separate shared-cash/provider balances, deceptive-total visibility, provider runway, feed-quality degradation, safe multilingual explanation previews, evidence fingerprints, a local case-lifecycle preview, metrics/audit evidence, and run/replay/reset controls. Local frontend evidence: formatter, ESLint, TypeScript, seven Vitest interaction tests, coverage thresholds, and the optimized production build pass. Public feature API integration remains pending Phase 11.
@@ -61,3 +61,23 @@ Local evidence includes 17 core unit/safety tests, 2 measured metric tests, and 
 Implemented the one approved provider-scoped anomaly rule with repeated-amount, velocity, concentration, time-window, and baseline evidence. Deterministic confidence assessment incorporates evidence coverage and feed-quality multipliers, then fuses liquidity and anomaly signals using a weakest-signal cap. Recommendations remain advisory and no alerts, cases, APIs, LLM decisions, or financial actions are created.
 
 Local evidence includes `18` new unit/metric/safety tests and `4` Neon PostgreSQL persistence/rollback tests. Controlled four-fixture evaluation measured precision `1.0000`, recall `1.0000`, false-positive rate `0.0000`, and deterministic anomaly-plus-confidence latency of `0.1542 ms` average / `0.3454 ms` p95 over 250 runs. These limited synthetic metrics are not production calibration.
+
+## Operations Layer Status
+Implemented advisory alert generation from liquidity forecasts, anomaly findings, and
+provider feed-quality states. Alerts copy source evidence and confidence, require human
+review, preserve shared-cash/provider boundaries, support assignment and acknowledgement,
+and append state-aware audit events. Case services persist owners, notes, status history,
+escalation history, resolution information, optimistic versions, and audit events through
+resolution and closure.
+
+The nine requested alert/case REST operations are exposed through FastAPI with generated
+OpenAPI contracts and persisted role/provider/area scope checks. No authentication
+credential mechanism, alert-generation API, automatic blocking, transfer/refill action,
+or wrongdoing declaration was added.
+
+Local evidence: the focused operations suite passed `12` tests with `84.82%` coverage,
+including `7` Neon PostgreSQL tests for all three alert sources, lifecycle persistence,
+provider/shared-cash scope isolation, audit history, and rollback. The complete backend
+unit suite passed `86` tests; governance passed `18` tests. Ruff formatting/lint,
+strict MyPy across `100` source files, compilation, prompt validation, and requirement
+traceability validation passed.

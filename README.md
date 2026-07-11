@@ -49,6 +49,46 @@ Run frontend tests from `frontend/` after installing Node dependencies:
 npm test
 ```
 
+## Operations API
+The operations layer exposes provider-scoped advisory alerts and traceable case workflows
+under `/api/v1`. Send the synthetic/demo actor UUID in `X-User-ID`; persisted role,
+provider, and area assignments restrict every query. OpenAPI is available at `/docs` and
+`/openapi.json`.
+
+Implemented routes:
+- `GET /api/v1/alerts`
+- `GET /api/v1/alerts/{id}`
+- `POST /api/v1/alerts/{id}/acknowledge`
+- `POST /api/v1/alerts/{id}/assign`
+- `GET /api/v1/cases`
+- `GET /api/v1/cases/{id}`
+- `POST /api/v1/cases`
+- `POST /api/v1/cases/{id}/escalate`
+- `POST /api/v1/cases/{id}/resolve`
+
+Alerts and recommendations require human review. These endpoints cannot block users or
+initiate transfers/refills, and anomaly alerts never declare wrongdoing.
+
+## Operations API
+The operations layer exposes provider-scoped advisory alerts and traceable case workflows
+under `/api/v1`. Send the synthetic/demo actor UUID in `X-User-ID`; database-backed role,
+provider, and area assignments restrict every query. OpenAPI is available at `/docs` and
+`/openapi.json`.
+
+Implemented routes:
+- `GET /api/v1/alerts`
+- `GET /api/v1/alerts/{id}`
+- `POST /api/v1/alerts/{id}/acknowledge`
+- `POST /api/v1/alerts/{id}/assign`
+- `GET /api/v1/cases`
+- `GET /api/v1/cases/{id}`
+- `POST /api/v1/cases`
+- `POST /api/v1/cases/{id}/escalate`
+- `POST /api/v1/cases/{id}/resolve`
+
+Alerts and recommendations require human review. These endpoints cannot block users or
+initiate transfers/refills, and anomaly alerts never declare wrongdoing.
+
 ## CI Mode
 The repository is now in product-code mode because `backend/` and `frontend/` are scaffolded. CI keeps governance validation and now requires backend formatting, linting, typing, tests, coverage, frontend formatting, linting, type checking, tests, coverage, and production build.
 

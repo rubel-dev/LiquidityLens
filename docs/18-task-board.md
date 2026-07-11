@@ -12,9 +12,9 @@
 | 6 | Add primary anomaly engine | FR-005,FR-006,MET-003,MET-004,MET-005 | Done; unit metrics and Neon persistence verified |
 | 7 | Add confidence fusion | NFR-003,SAFE-002,SAFE-003 | Done; deterministic weakest-signal fusion and advisory recommendations verified |
 | 8 | Add explanation provider and fallback | FR-010,FR-011 | Not Started |
-| 9 | Add alerts and cases | FR-007,FR-008 | Not Started |
-| 10 | Add RBAC/provider-scope auth and AuthContext middleware contract | NFR-004 | Not Started |
-| 11 | Add `/api/v1` endpoints using AuthContext | API-001,NFR-004 | Not Started |
+| 9 | Add alerts and cases | FR-007,FR-008,NFR-002,SAFE-003 | Done; advisory lifecycle, evidence, confidence, and audit persistence verified |
+| 10 | Add RBAC/provider-scope auth and AuthContext middleware contract | NFR-004 | Provider/area scope checks done; identity authentication remains |
+| 11 | Add `/api/v1` endpoints using AuthContext | API-001,NFR-004 | Requested alert and case routes done; OpenAPI and validation tested |
 | 12 | Build agent UI | FR-001,FR-003,FR-004 | Done with contract-aligned demo fixtures; API integration pending |
 | 13 | Build operations UI | FR-007,FR-008 | Done with local lifecycle preview; API integration pending |
 | 14 | Build risk UI | FR-006,SAFE-002 | Done with evidence, uncertainty, and safe language previews |

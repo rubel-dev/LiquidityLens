@@ -6,10 +6,10 @@ These schemas are documentation contracts only. They define minimum shared respo
 ```typescript
 type ISODateTime = string;
 type ProviderCode = "BKASH-SIM" | "NAGAD-SIM" | "ROCKET-SIM";
-type Severity = "low" | "medium" | "high";
+type Severity = "low" | "medium" | "high" | "critical";
 type ConfidenceTier = "low" | "medium" | "high";
-type AlertStatus = "new" | "routed" | "assigned" | "acknowledged" | "escalated" | "resolved" | "closed";
-type CaseStatus = "open" | "assigned" | "acknowledged" | "escalated" | "risk_review" | "resolved" | "closed";
+type AlertStatus = "open" | "acknowledged" | "escalated" | "resolved" | "closed";
+type CaseStatus = "open" | "assigned" | "acknowledged" | "escalated" | "resolved" | "closed";
 
 interface MoneyAmount {
   amount: string;
@@ -62,27 +62,22 @@ interface AgentOverview {
 ```typescript
 interface Alert {
   alert_id: string;
-  provider_code: ProviderCode | null;
-  agent_id: string | null;
+  alert_type: "liquidity_shortage" | "anomaly_finding" | "data_quality";
+  provider_id: string | null;
+  agent_id: string;
   severity: Severity;
   status: AlertStatus;
-  reason: string;
+  summary: string;
   recommended_next_step: string;
   owner_user_id: string | null;
   created_at: ISODateTime;
-  confidence: ConfidenceAssessment;
+  confidence: string;
 }
 
 interface AlertDetail extends Alert {
-  uncertainty: string[];
-  evidence_fingerprint: EvidenceFingerprint;
-  explanation: {
-    language: "bn" | "banglish" | "en";
-    text: string;
-    generated_by: "llm" | "deterministic_template";
-  };
-  linked_case_id: string | null;
-  audit_event_ids: string[];
+  evidence: Array<{ evidence_type: string; payload: Record<string, unknown> }>;
+  audit_trail: Array<{ action: string; actor_user_id: string | null; created_at: ISODateTime }>;
+  human_review_required: true;
 }
 ```
 
@@ -90,20 +85,21 @@ interface AlertDetail extends Alert {
 ```typescript
 interface Case {
   case_id: string;
-  alert_id: string;
-  provider_code: ProviderCode | null;
+  origin_alert_id: string;
+  provider_id: string | null;
+  agent_id: string;
   status: CaseStatus;
-  severity: Severity;
   owner_user_id: string | null;
   version: number;
-  opened_at: ISODateTime;
-  resolved_at: ISODateTime | null;
+  created_at: ISODateTime;
+  updated_at: ISODateTime;
 }
 
 interface CaseDetail extends Case {
   notes: Array<{ note_id: string; author_user_id: string; body: string; created_at: ISODateTime }>;
-  status_history: Array<{ from_status: CaseStatus | null; to_status: CaseStatus; actor_user_id: string; at: ISODateTime }>;
-  escalations: Array<{ escalation_id: string; target_role: string; reason: string; created_at: ISODateTime }>;
+  status_history: Array<{ from_status: CaseStatus | null; to_status: CaseStatus; actor_user_id: string; created_at: ISODateTime }>;
+  escalation_history: Array<{ escalation_id: string; from_role: string; to_role: string; reason: string; created_at: ISODateTime }>;
+  resolution_information: string | null;
   audit_event_ids: string[];
 }
 ```

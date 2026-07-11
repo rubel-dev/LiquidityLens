@@ -11,9 +11,9 @@
 | 6 | Anomaly engine | Implemented/Verified |
 | 7 | Confidence and decision fusion | Implemented/Verified |
 | 8 | Explanation service and fallback | Not Started |
-| 9 | Alerts and cases | Not Started |
-| 10 | Authentication and provider-scope authorization | Not Started |
-| 11 | Backend APIs | Not Started |
+| 9 | Alerts and cases | Implemented/Verified |
+| 10 | Authentication and provider-scope authorization | Scope authorization implemented; authentication pending |
+| 11 | Backend APIs | Operations routes implemented |
 | 12 | Agent UI | Implemented with demo fixtures; API integration pending |
 | 13 | Operations UI | Implemented with demo fixtures; API integration pending |
 | 14 | Risk UI | Implemented with demo fixtures; API integration pending |

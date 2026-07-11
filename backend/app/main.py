@@ -6,6 +6,8 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
+from app.api.routes.alerts import router as alerts_router
+from app.api.routes.cases import router as cases_router
 from app.api.routes.health import router as health_router
 from app.api.routes.readiness import router as readiness_router
 from app.core.config import get_settings
@@ -24,7 +26,7 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=["http://localhost:3000"],
         allow_credentials=False,
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
 
@@ -67,6 +69,8 @@ def create_app() -> FastAPI:
 
     app.include_router(health_router, prefix=settings.api_v1_prefix)
     app.include_router(readiness_router, prefix=settings.api_v1_prefix)
+    app.include_router(alerts_router, prefix=settings.api_v1_prefix)
+    app.include_router(cases_router, prefix=settings.api_v1_prefix)
     return app
 
 

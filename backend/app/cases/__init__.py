@@ -1,1 +1,5 @@
-"""Case module boundary. Business logic is intentionally not implemented yet."""
+"""Traceable case-management workflow."""
+
+from app.cases.service import CaseService
+
+__all__ = ["CaseService"]

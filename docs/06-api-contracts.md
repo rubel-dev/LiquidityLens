@@ -1,5 +1,31 @@
 # API Contracts
 
+## Implemented Operations Surface
+The generated FastAPI OpenAPI document at `/openapi.json` is authoritative for the
+implemented operations surface. The implemented routes are alert list/detail/assign/
+acknowledge and case list/detail/create/escalate/resolve. `X-User-ID` identifies a
+synthetic actor whose persisted role/provider/area assignments are enforced at API,
+service, and repository query layers. Provider-scoped actors cannot read other-provider
+alerts or cases; provider-independent shared-cash records require global or area scope.
+
+All outputs are advisory and include human-review context. No alert or case endpoint
+executes blocking, transfers, or refills. Alert escalation and case notes/closure are
+implemented as internal lifecycle services but intentionally have no public endpoint in
+this module.
+
+## Implemented Operations Surface
+The generated FastAPI OpenAPI document at `/openapi.json` is authoritative for the
+implemented operations surface. The implemented routes are alert list/detail/assign/
+acknowledge and case list/detail/create/escalate/resolve. `X-User-ID` identifies a
+synthetic actor whose persisted role/provider/area assignments are enforced at API,
+service, and repository query layers. Provider-scoped actors cannot read other-provider
+alerts or cases; provider-independent shared-cash records require global or area scope.
+
+All outputs are advisory and include human-review context. No alert or case endpoint
+executes blocking, transfers, or refills. Alert escalation and case notes/closure are
+implemented as internal lifecycle services but intentionally have no public endpoint in
+this module.
+
 All paths use `/api/v1`. Contracts only; no routes are implemented in this step.
 
 | Method | Path | Actor | Authorization | Provider Scope | Request | Validation | Response | Status Codes | Errors | Business Rules | Idempotency | Pagination | Concurrency |

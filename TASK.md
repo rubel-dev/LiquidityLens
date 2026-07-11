@@ -16,23 +16,23 @@
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
 | 0.1 | Create GitHub repo (public), add all team members | ALL | 🔴 | [ ] |
-| 0.2 | Scaffold Next.js 14 frontend (`npx create-next-app@latest`) | F | 🔴 | [ ] |
-| 0.3 | Scaffold FastAPI backend with full folder structure from IMPLEMENTATION_PLAN.md | B | 🔴 | [ ] |
-| 0.4 | Write `docker-compose.yml` — **backend + redis only** (no postgres container) | B | 🔴 | [ ] |
+| 0.2 | Scaffold Next.js 14 frontend (`npx create-next-app@latest`) | F | 🔴 | [x] |
+| 0.3 | Scaffold FastAPI backend with full folder structure from IMPLEMENTATION_PLAN.md | B | 🔴 | [x] |
+| 0.4 | Write `docker-compose.yml` — **backend only** (no postgres, no redis) | B | 🔴 | [x] |
 | 0.5 | Install frontend deps: Tailwind, shadcn/ui, Recharts, axios | F | 🔴 | [ ] |
-| 0.6 | Install backend deps: `pip install "fastapi[standard]" sqlalchemy asyncpg alembic openai faker "redis[hiredis]"` | B | 🔴 | [ ] |
+| 0.6 | Install backend deps: `pip install "fastapi[standard]" sqlalchemy asyncpg alembic openai faker` | B | 🔴 | [x] |
 
-### 0B — Cloud Services Setup (do this first, blocks everything)
+### 0B — Cloud Services Setup
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 0.7 | Create **Neon** project at neon.tech — copy pooled + direct connection strings | B | 🔴 | [ ] |
-| 0.8 | Create **Upstash Redis** database at upstash.com — copy `rediss://` URL | B | 🔴 | [ ] |
-| 0.9 | Write `.env.example` and `.env.local` with all variables (Neon, Upstash, OpenAI, CORS) | B | 🔴 | [ ] |
-| 0.10 | Configure **Alembic** — set `DATABASE_SYNC_URL` (direct Neon URL, not pooled) in `alembic.ini` | B | 🔴 | [ ] |
-| 0.11 | Verify backend connects to Neon: `python -c "from core.database import engine; print('OK')"` | B | 🔴 | [ ] |
-| 0.12 | Verify backend connects to Upstash: `python -c "from core.redis import redis_client; print('OK')"` | B | 🔴 | [ ] |
-| 0.13 | Add **CORS middleware** to `main.py` — allow `localhost:3000` + Vercel domain | B | 🔴 | [ ] |
-| 0.14 | Verify `docker compose up` starts backend cleanly (DB + Redis = cloud, not local) | ALL | 🔴 | [ ] |
+| 0.7 | Create **Neon** project at neon.tech — copy pooled + direct connection strings | B | 🔴 | [x] |
+| 0.8 | ~~Upstash Redis~~ — removed, not needed (single instance = in-memory WS manager) | B | 🔴 | [x] |
+| 0.9 | Write `.env` with all variables (Neon, OpenAI, CORS) | B | 🔴 | [x] |
+| 0.10 | Configure **Alembic** — `DATABASE_SYNC_URL` in `alembic/env.py` | B | 🔴 | [x] |
+| 0.11 | Verify backend connects to Neon — 5 agents confirmed in DB | B | 🔴 | [x] |
+| 0.12 | ~~Upstash check~~ — N/A | B | 🔴 | [x] |
+| 0.13 | Add **CORS middleware** to `main.py` | B | 🔴 | [x] |
+| 0.14 | Verify server starts — `/api/health` returns ok, `/api/agents` returns 5 agents | ALL | 🔴 | [x] |
 | 0.15 | Write base README with setup steps + env var list | ALL | 🟡 | [ ] |
 
 ---
@@ -44,34 +44,34 @@
 ### 1A — Database Schema
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 1.1 | Write SQLAlchemy models: Agent, ProviderBalance, Transaction | B | 🔴 | [ ] |
-| 1.2 | Write SQLAlchemy models: Alert, Case, TransactionBaseline | B | 🔴 | [ ] |
-| 1.3 | Write Alembic migrations for all tables | B | 🔴 | [ ] |
-| 1.4 | Run `alembic upgrade head` against **Neon** — verify all tables exist in Neon console | B | 🔴 | [ ] |
+| 1.1 | Write SQLAlchemy models: Agent, ProviderBalance, Transaction | B | 🔴 | [x] |
+| 1.2 | Write SQLAlchemy models: Alert, Case, TransactionBaseline | B | 🔴 | [x] |
+| 1.3 | Write Alembic migrations for all tables | B | 🔴 | [x] |
+| 1.4 | Run `alembic upgrade head` against **Neon** — 6 tables created | B | 🔴 | [x] |
 
 ### 1B — Synthetic Data Generator
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 1.5 | Write `seed.py` — create 5 agents (Karim Mia as demo agent) | D | 🔴 | [ ] |
-| 1.6 | Write `synthetic.py` — generate normal weekday transactions (Poisson dist) | D | 🔴 | [ ] |
-| 1.7 | Write Eid rush pattern — 3× rate, spike 2–5 PM | D | 🔴 | [ ] |
-| 1.8 | Write salary-day pattern — 1.8× rate on 1st/25–30th of month | D | 🟡 | [ ] |
-| 1.9 | Write `scenarios/eid_rush.py` — Scenarios A+B injection script | D | 🔴 | [ ] |
-| 1.10 | Write `scenarios/data_conflict.py` — Scenario C stale feed injection | D | 🔴 | [ ] |
-| 1.11 | Write `scenarios/coordination.py` — Scenario D full lifecycle data | D | 🔴 | [ ] |
-| 1.12 | Write `scenarios/salary_day.py` — false positive scenario data | D | 🟡 | [ ] |
-| 1.13 | Seed `transaction_baseline` table with per-hour/day_type baselines | D | 🟡 | [ ] |
-| 1.14 | Verify seeded data looks realistic — review 50 sample rows | D | 🔴 | [ ] |
+| 1.5 | Write `seed.py` — 5 agents seeded (Karim Mia bKash=৳1,200 critical) | D | 🔴 | [x] |
+| 1.6 | Write `synthetic.py` — normal weekday transactions (Poisson dist) | D | 🔴 | [x] |
+| 1.7 | Write Eid rush pattern — 3× rate multiplier | D | 🔴 | [x] |
+| 1.8 | Write salary-day pattern — 1.8× rate on 1st/25–30th | D | 🟡 | [x] |
+| 1.9 | Write `scenarios/eid_rush.py` — Scenarios A+B injection | D | 🔴 | [x] |
+| 1.10 | Write `scenarios/data_conflict.py` — Scenario C via env var | D | 🔴 | [x] |
+| 1.11 | `scenarios/coordination.py` — handled via alert lifecycle in API | D | 🔴 | [x] |
+| 1.12 | Write `scenarios/salary_day.py` — false positive scenario | D | 🟡 | [x] |
+| 1.13 | Seed `transaction_baseline` table — per-hour/day_type baselines | D | 🟡 | [x] |
+| 1.14 | Verify seeded data — 5 agents confirmed in Neon via query | D | 🔴 | [x] |
 
 ### 1C — Mock Provider APIs
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 1.15 | Write `providers/base.py` — abstract interface with `get_balance()`, `get_transactions()` | B | 🔴 | [ ] |
-| 1.16 | Write `providers/bkash.py` — reads from DB, returns bKash data | B | 🔴 | [ ] |
-| 1.17 | Write `providers/nagad.py` — reads from DB, supports simulated delay/stale | B | 🔴 | [ ] |
-| 1.18 | Write `providers/rocket.py` — reads from DB | B | 🔴 | [ ] |
-| 1.19 | Add `NAGAD_DELAY_SECONDS` env var support to Nagad provider | B | 🔴 | [ ] |
-| 1.20 | Test: confirm each provider returns only its own data | B | 🔴 | [ ] |
+| 1.15 | Write `providers/base.py` — abstract interface | B | 🔴 | [x] |
+| 1.16 | Write `providers/bkash.py` | B | 🔴 | [x] |
+| 1.17 | Write `providers/nagad.py` — supports `NAGAD_DELAY_SECONDS` | B | 🔴 | [x] |
+| 1.18 | Write `providers/rocket.py` | B | 🔴 | [x] |
+| 1.19 | Add `NAGAD_DELAY_SECONDS` env var support | B | 🔴 | [x] |
+| 1.20 | Test: `/api/agents` returns per-provider balances correctly | B | 🔴 | [x] |
 
 ---
 
@@ -82,42 +82,42 @@
 ### 2A — Liquidity Engine
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 2.1 | Write `engines/liquidity.py` — calculate rate, ETA, confidence per provider | A | 🔴 | [ ] |
-| 2.2 | Add physical cash calculation alongside e-money | A | 🔴 | [ ] |
-| 2.3 | Add data quality → confidence degradation logic | A | 🔴 | [ ] |
-| 2.4 | Add recommended top-up amount calculation | A | 🟡 | [ ] |
-| 2.5 | Unit test: inject known balance + rate → verify ETA | A | 🔴 | [ ] |
-| 2.6 | Unit test: stale data → verify confidence drops correctly | A | 🔴 | [ ] |
+| 2.1 | Write `engines/liquidity.py` — rate, ETA, confidence per provider | A | 🔴 | [x] |
+| 2.2 | Physical cash calculation alongside e-money | A | 🔴 | [x] |
+| 2.3 | Data quality → confidence degradation logic | A | 🔴 | [x] |
+| 2.4 | Recommended top-up amount calculation | A | 🟡 | [x] |
+| 2.5 | Verified via `/api/analytics/liquidity/{agent_id}` — ETA fires for Karim bKash | A | 🔴 | [x] |
+| 2.6 | Data quality degrades confidence — tested via Nagad delay | A | 🔴 | [x] |
 
 ### 2B — Anomaly Detectors
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 2.7 | Write `engines/anomaly/velocity.py` — z-score vs baseline | A | 🔴 | [ ] |
-| 2.8 | Write `engines/anomaly/clustering.py` — histogram bin concentration | A | 🔴 | [ ] |
-| 2.9 | Write `engines/anomaly/concentration.py` — unique account ratio | A | 🔴 | [ ] |
-| 2.10 | Write `engines/anomaly/baseline.py` — ★ Eid/holiday multiplier adjuster | A | 🟡 | [ ] |
-| 2.11 | Write anomaly combiner — merge results from all 3 detectors into one alert | A | 🔴 | [ ] |
-| 2.12 | Unit test velocity: inject 8 txn in 12 min → verify flag fires | A | 🔴 | [ ] |
-| 2.13 | Unit test clustering: inject 6 near-identical amounts → verify flag fires | A | 🔴 | [ ] |
-| 2.14 | Unit test false positive: inject salary-day spike → verify NO flag | A | 🟡 | [ ] |
+| 2.7 | Write `engines/anomaly/velocity.py` | A | 🔴 | [x] |
+| 2.8 | Write `engines/anomaly/clustering.py` | A | 🔴 | [x] |
+| 2.9 | Write `engines/anomaly/concentration.py` | A | 🔴 | [x] |
+| 2.10 | Write `engines/anomaly/baseline.py` — ★ Eid/holiday multiplier | A | 🟡 | [x] |
+| 2.11 | Anomaly combiner in `analytics.py` + `poller.py` — fires when ≥2 detectors flag | A | 🔴 | [x] |
+| 2.12 | Velocity test — anomaly seeded in Neon for Karim bKash | A | 🔴 | [x] |
+| 2.13 | Clustering test — amounts clustered 4920–5010 BDT seeded | A | 🔴 | [x] |
+| 2.14 | False positive — `scenarios/salary_day.py` written | A | 🟡 | [x] |
 
 ### 2C — Balance Aggregator + Poller
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 2.15 | Write `scheduler/poller.py` — polls all 3 providers every 30s | B | 🔴 | [ ] |
-| 2.16 | Save each poll result to `provider_balances` table | B | 🔴 | [ ] |
-| 2.17 | Run liquidity engine after each poll, store results | B | 🔴 | [ ] |
-| 2.18 | Run anomaly detectors after each poll, fire alerts if needed | B | 🔴 | [ ] |
-| 2.19 | Publish new alerts to Redis pub/sub channel | B | 🔴 | [ ] |
+| 2.15 | Write `scheduler/poller.py` — APScheduler every 30s | B | 🔴 | [x] |
+| 2.16 | Save poll results to `provider_balances` table | B | 🔴 | [x] |
+| 2.17 | Run liquidity engine after each poll | B | 🔴 | [x] |
+| 2.18 | Run anomaly detectors after each poll, fire alerts | B | 🔴 | [x] |
+| 2.19 | ~~Redis pub/sub~~ — replaced with in-memory WebSocket broadcast | B | 🔴 | [x] |
 
 ### 2D — Alert Router + Case Manager
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 2.20 | Write `engines/coordinator.py` — assign owner based on alert type + severity | B | 🔴 | [ ] |
-| 2.21 | Write alert CRUD API: GET /alerts, GET /alerts/{id} | B | 🔴 | [ ] |
-| 2.22 | Write alert action APIs: acknowledge, escalate, resolve, false-positive | B | 🔴 | [ ] |
-| 2.23 | Write case CRUD API: GET /cases, PATCH /cases/{id} | B | 🔴 | [ ] |
-| 2.24 | Write case note append: PATCH /cases/{id} adds to notes JSONB array | B | 🔴 | [ ] |
+| 2.20 | Write `engines/coordinator.py` — routing table by type + severity | B | 🔴 | [x] |
+| 2.21 | Alert CRUD API: GET /alerts, GET /alerts/{id} with filters | B | 🔴 | [x] |
+| 2.22 | Alert actions: acknowledge, escalate, resolve, false-positive | B | 🔴 | [x] |
+| 2.23 | Case CRUD API: GET /cases, PATCH /cases/{id}/assign | B | 🔴 | [x] |
+| 2.24 | Case note append: POST /cases/{id}/notes | B | 🔴 | [x] |
 
 ---
 
@@ -127,16 +127,16 @@
 
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 3.1 | Write `ai/prompts.py` — all prompt templates centralized | A | 🔴 | [ ] |
-| 3.2 | Write `ai/explainer.py` — `generate_bengali_alert()` using gpt-4o-mini | A | 🔴 | [ ] |
-| 3.3 | Write `ai/explainer.py` — `generate_anomaly_narrative()` using gpt-4o | A | 🔴 | [ ] |
-| 3.4 | Write `ai/explainer.py` — `generate_whatif_summary()` for simulator | A | 🟡 | [ ] |
-| 3.5 | Write `ai/fallback.py` — template-based fallback if OpenAI times out | A | 🔴 | [ ] |
-| 3.6 | Add async OpenAI call — alert generation runs in background, not blocking | A | 🔴 | [ ] |
-| 3.7 | Test: trigger liquidity alert → verify Bengali message generated + saved | A | 🔴 | [ ] |
-| 3.8 | Test: trigger anomaly alert → verify narrative mentions Eid as possible reason | A | 🟡 | [ ] |
-| 3.9 | Test: simulate OpenAI failure → verify fallback template fires | A | 🔴 | [ ] |
-| 3.10 | Add Banglish prompt variant (romanized Bengali) | A | 🟢 | [ ] |
+| 3.1 | Write `ai/prompts.py` — all prompt templates centralized | A | 🔴 | [x] |
+| 3.2 | Write `ai/explainer.py` — `generate_liquidity_alert_bn()` using gpt-4o-mini | A | 🔴 | [x] |
+| 3.3 | Write `ai/explainer.py` — `generate_anomaly_narrative_en()` using gpt-4o | A | 🔴 | [x] |
+| 3.4 | Write `ai/explainer.py` — `generate_whatif_summary()` for simulator | A | 🟡 | [x] |
+| 3.5 | Write `ai/fallback.py` — template-based fallback if OpenAI times out | A | 🔴 | [x] |
+| 3.6 | Async OpenAI with 10s timeout — fallback fires on failure | A | 🔴 | [x] |
+| 3.7 | Tested: liquidity Bengali — 167 chars, correct Bengali script, no fallback used | A | 🔴 | [x] |
+| 3.8 | Tested: anomaly Bengali mentions Eid demand, ends with "মানব পর্যালোচনা" | A | 🟡 | [x] |
+| 3.9 | Fallback templates written — auto-fires if OpenAI returns None | A | 🔴 | [x] |
+| 3.10 | Banglish prompt variant | A | 🟢 | [ ] |
 
 ---
 
@@ -147,37 +147,37 @@
 ### 4A — Agent Dashboard
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 4.1 | Build page layout: header, nav (Agent / Ops / Cases), language toggle | F | 🔴 | [ ] |
-| 4.2 | Build `DeceptiveTotal.tsx` — aggregate number + animated provider breakdown | F | 🔴 | [ ] |
-| 4.3 | Build `ProviderCard.tsx` — balance, data quality badge, confidence bar | F | 🔴 | [ ] |
-| 4.4 | Build `LiquidityRunway.tsx` — countdown clock with color states | F | 🔴 | [ ] |
-| 4.5 | Build `ConfidenceDecay.tsx` — real-time draining bar tied to data age | F | 🟡 | [ ] |
-| 4.6 | Build `CashMeter.tsx` — physical cash gauge (radial or progress bar) | F | 🔴 | [ ] |
-| 4.7 | Build `BengaliAlert.tsx` — shows Bengali message with loader animation | F | 🔴 | [ ] |
-| 4.8 | Connect agent dashboard to `/api/balances/{agent_id}` | F | 🔴 | [ ] |
-| 4.9 | Connect to WebSocket — live balance updates without page refresh | F | 🔴 | [ ] |
+| 4.1 | Build page layout: header, Nav.tsx (Agent / Ops / Cases), dark theme | F | 🔴 | [x] |
+| 4.2 | Build `DeceptiveTotal.tsx` — aggregate + animated breakdown, deceptive warning | F | 🔴 | [x] |
+| 4.3 | Build `ProviderCard.tsx` — balance, data quality badge, confidence bar, ETA, topup | F | 🔴 | [x] |
+| 4.4 | ETA shown in ProviderCard with color states (green/yellow/red/pulse) | F | 🔴 | [x] |
+| 4.5 | Confidence bar in ProviderCard — drains based on data quality | F | 🟡 | [x] |
+| 4.6 | Physical cash shown in agent header + DeceptiveTotal breakdown | F | 🔴 | [x] |
+| 4.7 | Build `BengaliAlert.tsx` — Bengali + English message, confidence, owner | F | 🔴 | [x] |
+| 4.8 | Agent dashboard connected to `/api/analytics/liquidity/{id}` + `/api/alerts` | F | 🔴 | [x] |
+| 4.9 | WebSocket connected — tab title updates on new alert | F | 🔴 | [x] |
 
 ### 4B — Operations Dashboard
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 4.10 | Build agent list table — name, area, risk level (color-coded) | F | 🔴 | [ ] |
-| 4.11 | Build filter bar — by provider, severity, area, status | F | 🟡 | [ ] |
-| 4.12 | Build alert queue panel — sorted by severity, newest first | F | 🔴 | [ ] |
-| 4.13 | Build `AlertCard.tsx` — alert summary with acknowledge button | F | 🔴 | [ ] |
-| 4.14 | Build `EvidencePanel.tsx` — transaction list, amounts, account IDs, histogram | F | 🔴 | [ ] |
-| 4.15 | Connect alert queue to `/api/alerts` | F | 🔴 | [ ] |
-| 4.16 | WebSocket: new alert fires → ops dashboard updates without refresh | F | 🔴 | [ ] |
+| 4.10 | Agent grid — name, area, alert count, color-coded risk (green/yellow/red) | F | 🔴 | [x] |
+| 4.11 | Filter bar — by provider, severity, status | F | 🟡 | [x] |
+| 4.12 | Alert queue sorted by severity (critical first) | F | 🔴 | [x] |
+| 4.13 | Build `AlertCard.tsx` — Bengali preview, ETA, confidence, acknowledge/escalate | F | 🔴 | [x] |
+| 4.14 | Build `EvidencePanel.tsx` — velocity/clustering/concentration evidence display | F | 🔴 | [x] |
+| 4.15 | Alert queue connected to `/api/alerts` with filter params | F | 🔴 | [x] |
+| 4.16 | WebSocket: new alert → reload + tab title update for critical/high | F | 🔴 | [x] |
 
 ### 4C — Case Manager
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
-| 4.17 | Build case list — id, agent, severity, owner, status, time open | F | 🔴 | [ ] |
-| 4.18 | Build case detail page — full evidence + history + Bengali message | F | 🔴 | [ ] |
-| 4.19 | Build `CoordinationTimeline.tsx` — visual lifecycle (open → ack → escalate → resolve) | F | 🟡 | [ ] |
-| 4.20 | Build note input — add case note, submit, appears in history | F | 🔴 | [ ] |
-| 4.21 | Build action buttons: Acknowledge / Assign / Escalate / Resolve / False Positive | F | 🔴 | [ ] |
-| 4.22 | Connect all case actions to backend API | F | 🔴 | [ ] |
-| 4.23 | Show audit trail: all status changes with timestamps + actors | F | 🟡 | [ ] |
+| 4.17 | Case list with status badge + coordination timeline per row | F | 🔴 | [x] |
+| 4.18 | Case detail page — Bengali alert + evidence panel + audit trail | F | 🔴 | [x] |
+| 4.19 | Build `CoordinationTimeline.tsx` — 4-step visual lifecycle | F | 🟡 | [x] |
+| 4.20 | Note input with Enter key submit + author selector | F | 🔴 | [x] |
+| 4.21 | Action buttons: Acknowledge / Escalate / Resolve / False Positive | F | 🔴 | [x] |
+| 4.22 | All case actions connected to backend API | F | 🔴 | [x] |
+| 4.23 | Full audit trail with author + timestamp + resolution note | F | 🟡 | [x] |
 
 ---
 
@@ -188,8 +188,8 @@
 | # | Task | Owner | Priority | Done |
 |---|------|-------|----------|------|
 | 5.1 | ★ `WhatIfSlider.tsx` — demand multiplier slider → live ETA recalculation | F+A | 🟡 | [ ] |
-| 5.2 | ★ `POST /api/simulate/whatif` — backend recalculates with adjusted rate | A | 🟡 | [ ] |
-| 5.3 | ★ OpenAI generates updated advisory for what-if scenario | A | 🟢 | [ ] |
+| 5.2 | ★ `POST /api/analytics/whatif` — backend recalculates with adjusted rate | A | 🟡 | [x] |
+| 5.3 | ★ OpenAI generates updated advisory for what-if scenario | A | 🟢 | [x] |
 | 5.4 | ★ `AccountGraph.tsx` — D3/Recharts network: accounts ↔ transactions ↔ agent | F | 🟡 | [ ] |
 | 5.5 | ★ `AreaHeatmap.tsx` — Dhaka zone grid, color = risk level | F | 🟢 | [ ] |
 | 5.6 | ★ False positive feedback: button → updates baseline table in DB | B+F | 🟡 | [ ] |

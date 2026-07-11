@@ -16,7 +16,10 @@ Tests: <result>
 - Prompt record must be committed with the related changes.
 - Every pushed commit runs CI and SonarQube.
 - Every non-exempt commit after the governance-hardening commit must include Requirement-IDs, Prompt-ID, Module, Tests, and a matching prompt file.
-- Failed Quality Gate blocks accepted completion.
+- SonarQube analysis and Quality Gate are best-effort and non-blocking under DEC-019.
+- A SonarQube error or failed Quality Gate must not block implementation, commits, merging, or demo preparation.
+- SonarQube results must be recorded honestly as Passed, Failed, Skipped, Unavailable, or Configuration Error.
+- Never claim SonarQube or Quality Gate passed unless the remote result actually passed.
 - Security Hotspots require human review.
 - `NOSONAR` and Sonar exclusions require documented approval.
 - Sonar rules must not be disabled to hide issues.
@@ -51,3 +54,24 @@ Frontend:
 - coverage generation
 
 Do not continue using optional `--if-present` checks after repository foundation is scaffolded.
+
+## SonarQube Best-Effort Policy
+Do not delete existing SonarQube configuration. Continue attempting SonarQube analysis when practical, but do not stop implementation or demo preparation because of tool, environment, configuration, hosted service, or integration failures.
+
+When SonarQube fails or is unavailable, record:
+- error summary
+- likely cause
+- attempts made
+- known code-quality risk
+- local fallback checks used
+
+Local fallback checks must include, where applicable:
+- formatter
+- linter
+- type checker
+- unit tests
+- integration tests
+- coverage
+- security/safety validation
+- prompt traceability
+- requirement-ID validation

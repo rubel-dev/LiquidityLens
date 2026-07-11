@@ -84,7 +84,11 @@ CI and SonarQube are configured before product code begins. Required secret name
 - `SONAR_TOKEN`
 - `SONAR_HOST_URL`
 
-The authoritative project key is in `sonar-project.properties`. Do not commit secret values. SonarQube Quality Gate must not be claimed as passed until remote CI confirms it.
+The authoritative project key is in `sonar-project.properties`. Do not commit secret values.
+
+Per judge instruction, SonarQube analysis and Quality Gate are best-effort and non-blocking. A SonarQube error, unavailable service, configuration issue, or failed Quality Gate must not block implementation, commits, merging, or demo preparation. Continue attempting SonarQube when practical, but record the result honestly as Passed, Failed, Skipped, Unavailable, or Configuration Error. Never claim SonarQube or Quality Gate passed unless remote CI actually reports a pass.
+
+Mandatory local fallback checks remain: formatter, linter, type checker, unit tests, integration tests, coverage, prompt traceability, requirement-ID validation, governance tests, and security/safety validation where applicable.
 
 ## Current Status
 Design, governance, prompt traceability, CI, SonarQube configuration, repository foundation, and the database schema module are prepared. Only health/readiness endpoints, empty module boundaries, local Docker runtime, the minimal synthetic-data frontend surface, SQLAlchemy domain models, and the initial Alembic schema migration are implemented. Product business logic, seed scenarios, dashboards, alerts/case services, authentication, and algorithms are intentionally not implemented yet.

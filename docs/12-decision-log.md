@@ -20,6 +20,7 @@
 | DEC-016 | Optional cloud deployment target may be selected later; it is not mandatory for MVP. | Accepted | Keeps implementation feasible. |
 | DEC-017 | Demo provider codes are `BKASH-SIM`, `NAGAD-SIM`, and `ROCKET-SIM`; UI may display `bKash (simulated)`, `Nagad (simulated)`, and `Rocket (simulated)`. | Accepted | Judges recognize the problem context while the system avoids affiliation or production-data claims. |
 | DEC-018 | Final demo hosting is onsite/local Docker Compose unless organizers explicitly require remote access. | Accepted | The event is onsite; deterministic local demo is the canonical target and cloud remains optional. |
+| DEC-019 | SonarQube analysis and Quality Gate are best-effort, non-blocking checks. | Accepted | Latest judge instruction explicitly allows teams to continue when SonarQube or CI analysis fails because of tool, environment, configuration, or integration problems. Prompt traceability and local quality checks remain mandatory, and Sonar results must be recorded honestly. |
 
 ## Remaining Open Item
-No remaining open governance decision blocks repository foundation. Optional cloud hosting can be revisited after the local Docker Compose demo is working.
+No remaining open governance decision blocks implementation. Optional cloud hosting can be revisited after the local Docker Compose demo is working.

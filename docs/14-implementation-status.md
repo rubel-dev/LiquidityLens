@@ -18,11 +18,11 @@ Canonical design/governance repository is prepared. Repository foundation produc
 | 9 | Alerts and cases | Not started |
 | 10 | Backend APIs | Not started |
 | 11 | Authentication and provider-scope authorization | Not started |
-| 12 | Agent UI | Not started |
-| 13 | Operations UI | Not started |
-| 14 | Risk UI | Not started |
-| 15 | Metrics and observability | Not started |
-| 16 | Integration and failure testing | Not started |
+| 12 | Agent UI | Implemented with contract-aligned demo fixtures; API integration pending |
+| 13 | Operations UI | Implemented with contract-aligned demo fixtures; API integration pending |
+| 14 | Risk UI | Implemented with contract-aligned demo fixtures; API integration pending |
+| 15 | Metrics and observability | Frontend evidence surface implemented; backend metrics pending |
+| 16 | Integration and failure testing | Frontend interactions verified; backend integration pending |
 | 17 | Demo packaging | Not started |
 | 18 | Release preparation | Not started |
 
@@ -34,7 +34,10 @@ Canonical design/governance repository is prepared. Repository foundation produc
 - Product-code CI checks for backend, frontend, coverage, governance, Sonar scan, and Quality Gate.
 
 ## Explicitly Not Implemented
-Liquidity forecasting, anomaly detection services, confidence fusion services, explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, dashboards, metrics endpoints, and production deployment remain not started.
+Liquidity forecasting, anomaly detection services, confidence fusion services, explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until those APIs exist; frontend controls do not execute financial activity or persist backend state.
+
+## Frontend Demo Surface Status
+The role-based Next.js demo surface is implemented for agent, provider operations, field officer, risk reviewer, manager/judge, and demo operator views. It includes separate shared-cash/provider balances, deceptive-total visibility, provider runway, feed-quality degradation, safe multilingual explanation previews, evidence fingerprints, a local case-lifecycle preview, metrics/audit evidence, and run/replay/reset controls. Local frontend evidence: formatter, ESLint, TypeScript, seven Vitest interaction tests, coverage thresholds, and the optimized production build pass. Public feature API integration remains pending Phase 11.
 
 ## Database Schema Status
 SQLAlchemy models and an initial Alembic schema migration exist for the documented MVP tables. Local metadata tests pass. PostgreSQL migration tests passed against the local PostgreSQL database `hacathon_db` using `postgresql+psycopg` connectivity. Remote CI/Sonar results must still be reported honestly for each pushed commit.

@@ -14,11 +14,11 @@
 | 9 | Alerts and cases | Not Started |
 | 10 | Authentication and provider-scope authorization | Not Started |
 | 11 | Backend APIs | Not Started |
-| 12 | Agent UI | Not Started |
-| 13 | Operations UI | Not Started |
-| 14 | Risk UI | Not Started |
-| 15 | Metrics and observability | Not Started |
-| 16 | Integration and failure testing | Not Started |
+| 12 | Agent UI | Implemented with demo fixtures; API integration pending |
+| 13 | Operations UI | Implemented with demo fixtures; API integration pending |
+| 14 | Risk UI | Implemented with demo fixtures; API integration pending |
+| 15 | Metrics and observability | Frontend surface implemented; backend pending |
+| 16 | Integration and failure testing | Frontend verified; backend pending |
 | 17 | Demo packaging | Not Started |
 | 18 | Release preparation | Not Started |
 

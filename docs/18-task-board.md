@@ -15,10 +15,10 @@
 | 9 | Add alerts and cases | FR-007,FR-008 | Not Started |
 | 10 | Add RBAC/provider-scope auth and AuthContext middleware contract | NFR-004 | Not Started |
 | 11 | Add `/api/v1` endpoints using AuthContext | API-001,NFR-004 | Not Started |
-| 12 | Build agent UI | FR-001,FR-003,FR-004 | Not Started |
-| 13 | Build operations UI | FR-007,FR-008 | Not Started |
-| 14 | Build risk UI | FR-006,SAFE-002 | Not Started |
-| 15 | Add metrics and observability | MET-001, MET-002, MET-003, MET-004, MET-005, MET-006, MET-007, MET-008, MET-009, MET-010, MET-011, MET-012 | Not Started |
-| 16 | Add failure-mode tests | FAIL-001, FAIL-002, FAIL-003, FAIL-004, FAIL-005, FAIL-006, FAIL-007 | Not Started |
+| 12 | Build agent UI | FR-001,FR-003,FR-004 | Done with contract-aligned demo fixtures; API integration pending |
+| 13 | Build operations UI | FR-007,FR-008 | Done with local lifecycle preview; API integration pending |
+| 14 | Build risk UI | FR-006,SAFE-002 | Done with evidence, uncertainty, and safe language previews |
+| 15 | Add metrics and observability | MET-001, MET-002, MET-003, MET-004, MET-005, MET-006, MET-007, MET-008, MET-009, MET-010, MET-011, MET-012 | Frontend evidence surface done; backend metrics pending |
+| 16 | Add failure-mode tests | FAIL-001, FAIL-002, FAIL-003, FAIL-004, FAIL-005, FAIL-006, FAIL-007 | Frontend missing-feed, offline-health, safe-language, and lifecycle interactions verified; backend pending |
 | 17 | Package demo | DEMO-001,DEMO-002 | Not Started |
 | 18 | Release prep | QUALITY-002 | Not Started |

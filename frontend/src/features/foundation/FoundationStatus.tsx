@@ -33,7 +33,7 @@ export function FoundationStatus() {
     status === "ok" ? "OK" : status === "checking" ? "Checking" : "Unavailable";
 
   return (
-    <div className="foundation-panel status-row">
+    <div className="status-row">
       <span className="status-label">API connectivity</span>
       <span
         className={`status-value ${status === "ok" ? "status-ok" : "status-unavailable"}`}

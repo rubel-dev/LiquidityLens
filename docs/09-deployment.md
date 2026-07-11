@@ -78,3 +78,17 @@ Failed Quality Gate blocks merge and accepted completion. Remote Quality Gate st
 - No product deployment exists yet.
 - No migrations, seed commands, health endpoint, or readiness endpoint exist yet.
 - Governance-only CI can pass without product source; product-code mode becomes mandatory after repository foundation.
+
+## README Completion Checklist
+Before release/demo packaging, README must include:
+- One-paragraph project overview.
+- Safety boundary and synthetic-data statement.
+- Prerequisites: Docker, Node.js target version, Python target version.
+- Environment setup: copy `.env.example` to `.env` and fill local placeholders.
+- `docker compose up` steps for local demo.
+- Alembic migration command after backend scaffold exists.
+- Seed, scenario run, reset, and replay commands after scenario engine exists.
+- Links to `docs/16-demo-script.md`, `docs/04-architecture.md`, and `docs/19-presentation-outline.md`.
+
+## Sonar Project Key Policy
+`SONAR_TOKEN` and `SONAR_HOST_URL` are GitHub secrets. `SONAR_PROJECT_KEY` is intentionally not required as a secret because `sonar.projectKey` is authoritative in `sonar-project.properties`. If a future CI provider requires the project key as an environment value, update this document, `sonar-project.properties`, and CI in one traceable commit.

@@ -18,6 +18,8 @@
 | DEC-014 | Frontend test runner target is Vitest with React Testing Library after Next.js scaffold. | Accepted | Common TypeScript/Next.js testing path. |
 | DEC-015 | Canonical development/demo deployment is local Docker Compose. | Accepted | Removes cloud dependency from MVP readiness. |
 | DEC-016 | Optional cloud deployment target may be selected later; it is not mandatory for MVP. | Accepted | Keeps implementation feasible. |
+| DEC-017 | Demo provider codes are `BKASH-SIM`, `NAGAD-SIM`, and `ROCKET-SIM`; UI may display `bKash (simulated)`, `Nagad (simulated)`, and `Rocket (simulated)`. | Accepted | Judges recognize the problem context while the system avoids affiliation or production-data claims. |
+| DEC-018 | Final demo hosting is onsite/local Docker Compose unless organizers explicitly require remote access. | Accepted | The event is onsite; deterministic local demo is the canonical target and cloud remains optional. |
 
 ## Remaining Open Item
-- Final public demo hosting provider remains open; local Docker Compose is canonical until this is decided.
+No remaining open governance decision blocks repository foundation. Optional cloud hosting can be revisited after the local Docker Compose demo is working.

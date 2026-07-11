@@ -28,12 +28,14 @@ After repository foundation scaffolds `backend/` or `frontend/`, product-code mo
 5. `docs/04-architecture.md`
 6. `docs/05-database-design.md`
 7. `docs/06-api-contracts.md`
-8. `docs/07-security-and-safety.md`
-9. `docs/08-testing-and-metrics.md`
-10. `docs/11-requirement-traceability.md`
-11. `docs/12-decision-log.md`
-12. `docs/17-implementation-plan.md`
-13. `docs/18-task-board.md`
+8. `docs/06b-api-schemas.md`
+9. `docs/07-security-and-safety.md`
+10. `docs/08-testing-and-metrics.md`
+11. `docs/11-requirement-traceability.md`
+12. `docs/12-decision-log.md`
+13. `docs/17-implementation-plan.md`
+14. `docs/18-task-board.md`
+15. `docs/19-presentation-outline.md`
 
 ## Prompt and Commit Traceability
 Every implementation or fix commit must include:

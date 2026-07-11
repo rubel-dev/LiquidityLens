@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import re
-import tempfile
+import shutil
 import unittest
+import uuid
 from pathlib import Path
 
 from scripts.validate_prompt_records import PromptRecord, validate_record
@@ -65,10 +66,22 @@ Prompt validation completed.
 """
 
 
+class RepoTemp:
+    def __init__(self):
+        self.root = Path("tests/.tmp-governance") / uuid.uuid4().hex
+
+    def __enter__(self):
+        self.root.mkdir(parents=True, exist_ok=True)
+        return self.root
+
+    def __exit__(self, exc_type, exc, tb):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+
 class PromptRecordValidatorTests(unittest.TestCase):
     def validate(self, name: str, text: str):
-        with tempfile.TemporaryDirectory() as tmp:
-            path = Path(tmp) / name
+        with RepoTemp() as tmp:
+            path = tmp / name
             path.write_text(text, encoding="utf-8")
             return validate_record(PromptRecord(path=path, text=text))
 

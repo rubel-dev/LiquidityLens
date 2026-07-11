@@ -73,8 +73,8 @@
 | FAIL-007 | LLM unavailable or malformed output. |
 
 ## Open Decisions
-| ID | Question |
-|---|---|
-| OPEN-001 | Final demo provider labels: real-style names or Provider A/B/C. |
-| OPEN-002 | Final hosting target. |
-| OPEN-003 | Exact frontend test runner after scaffold. |
+| ID | Question | Resolution |
+|---|---|---|
+| OPEN-001 | Final demo provider labels: real-style names or Provider A/B/C. | Closed by DEC-017: use synthetic provider codes with simulated contextual display names. |
+| OPEN-002 | Final hosting target. | Closed by DEC-018: onsite/local Docker Compose is canonical; optional cloud remains deferred. |
+| OPEN-003 | Exact frontend test runner after scaffold. | Closed by DEC-014: Vitest with React Testing Library. |

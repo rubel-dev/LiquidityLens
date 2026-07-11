@@ -183,3 +183,34 @@ sequenceDiagram
 
 ## Safe LLM Boundary
 The LLM explanation provider is vendor-neutral and cannot make core decisions. Deterministic rules produce forecasts/findings; deterministic templates handle LLM failure.
+
+## Explanation Provider Interface
+The explanation provider cannot create or modify forecasts, anomaly findings, severity, confidence, owner, or case state. It receives structured evidence after deterministic engines finish and returns advisory text only.
+
+```python
+class ExplanationProvider:
+    def explain(self, request: ExplanationRequest) -> ExplanationResult: ...
+
+class ExplanationRequest(TypedDict):
+    language: Literal["bn", "banglish", "en"]
+    alert_type: Literal["liquidity_shortage", "unusual_activity", "data_quality_degraded"]
+    provider_code: str
+    provider_display_name: str
+    structured_evidence: dict[str, object]
+    confidence_score: float
+    uncertainty: list[str]
+    safe_next_step: str
+
+class ExplanationResult(TypedDict):
+    text: str
+    generated_by: Literal["llm", "deterministic_template"]
+    provider_name: str
+    timed_out: bool
+```
+
+Provider selection is controlled by `LLM_EXPLANATION_PROVIDER`:
+- `none`: deterministic templates only.
+- `openai`: OpenAI-compatible adapter, if a future secret is explicitly approved.
+- `anthropic`: Anthropic-compatible adapter, if a future secret is explicitly approved.
+
+MVP timeout policy: one attempt, maximum 3 seconds. No retry is required for MVP. Timeout, malformed output, unsafe wording, unsupported language, or disabled provider must trigger deterministic fallback (FR-011).

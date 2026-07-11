@@ -75,3 +75,22 @@ sequenceDiagram
 | WF-024 Unauthorized provider access | Any user | Scoped request | scopes known | provider_id | Check scope | allowed? | data or 403 | cross-provider | deny | API/service/query/UI | access_denied | FAIL-006 |
 | WF-025 Demo reset | Demo operator | Reset requested | run exists | run_id | Reset scenario state | valid run? | clean state | missing run | abort | demo role | scenario_reset | DEMO-002 |
 | WF-026 Demo replay | Demo operator | Replay requested | seed exists | run_id | Replay same seed | deterministic? | repeated output | missing seed | abort | demo role | scenario_replayed | DEMO-002 |
+
+## Alert And Case Lifecycle Separation
+Alerts and cases are separate entities. An alert can exist without a case when severity is low or confidence is insufficient for coordinated review.
+
+Alert statuses:
+```mermaid
+stateDiagram-v2
+  [*] --> New
+  New --> Routed
+  Routed --> Assigned
+  Assigned --> Acknowledged
+  Acknowledged --> Escalated
+  Acknowledged --> Resolved
+  Escalated --> Resolved
+  Resolved --> Closed
+  Closed --> [*]
+```
+
+Case creation rule: create a case when alert severity is `high`, or when severity is `medium` and confidence score is at least `0.50`. Low-severity alerts remain alert-only unless a manager manually promotes them during the demo. Case lifecycle remains `Open -> Assigned -> Acknowledged -> Escalated/RiskReview -> Resolved -> Closed` and must reference the source alert.

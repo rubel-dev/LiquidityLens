@@ -13,8 +13,8 @@
 | 7 | Add confidence fusion | NFR-003 | Pending |
 | 8 | Add explanation provider and fallback | FR-010,FR-011 | Pending |
 | 9 | Add alerts and cases | FR-007,FR-008 | Pending |
-| 10 | Add `/api/v1` endpoints | API-001 | Pending |
-| 11 | Add RBAC/provider-scope auth | NFR-004 | Pending |
+| 10 | Add RBAC/provider-scope auth and AuthContext middleware contract | NFR-004 | Pending |
+| 11 | Add `/api/v1` endpoints using AuthContext | API-001,NFR-004 | Pending |
 | 12 | Build agent UI | FR-001,FR-003,FR-004 | Pending |
 | 13 | Build operations UI | FR-007,FR-008 | Pending |
 | 14 | Build risk UI | FR-006,SAFE-002 | Pending |

@@ -32,3 +32,6 @@ All paths use `/api/v1`. Contracts only; no routes are implemented in this step.
 | GET | /api/v1/metrics | manager/judge | RBAC | aggregate/scoped | run_id | role valid | metrics[] | 200,403 | error | formulas documented | n/a | yes | n/a |
 | GET | /api/v1/health | system | none | none | none | none | status | 200 | error | liveness | n/a | n/a | n/a |
 | GET | /api/v1/readiness | system | none | none | none | checks | status,checks | 200,503 | error | readiness | n/a | n/a | n/a |
+
+## Response Schema Reference
+Detailed response shapes are defined in `docs/06b-api-schemas.md`. Endpoint implementation must keep `/api/v1` responses compatible with those schemas or update the schema document in a traceable governance commit before frontend/backend parallel work begins.

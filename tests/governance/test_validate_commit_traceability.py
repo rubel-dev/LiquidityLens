@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import tempfile
+import shutil
 import unittest
+import uuid
 from pathlib import Path
 
 from scripts.validate_commit_traceability import (
@@ -21,10 +22,22 @@ Tests: unit
 """
 
 
+class RepoTemp:
+    def __init__(self):
+        self.root = Path("tests/.tmp-governance") / uuid.uuid4().hex
+
+    def __enter__(self):
+        self.root.mkdir(parents=True, exist_ok=True)
+        return self.root
+
+    def __exit__(self, exc_type, exc, tb):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+
 class TraceabilityValidatorTests(unittest.TestCase):
     def repo(self):
-        tmp = tempfile.TemporaryDirectory()
-        root = Path(tmp.name)
+        tmp = RepoTemp()
+        root = tmp.__enter__()
         (root / "prompts" / "history").mkdir(parents=True)
         (root / "prompts" / "history" / "PROMPT-9999-test.md").write_text("ok", encoding="utf-8")
         return tmp, root

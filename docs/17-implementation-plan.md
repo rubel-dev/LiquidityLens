@@ -12,8 +12,8 @@
 | 7 | Confidence and decision fusion |
 | 8 | Explanation service and fallback |
 | 9 | Alerts and cases |
-| 10 | Backend APIs |
-| 11 | Authentication and provider-scope authorization |
+| 10 | Authentication and provider-scope authorization |
+| 11 | Backend APIs |
 | 12 | Agent UI |
 | 13 | Operations UI |
 | 14 | Risk UI |
@@ -34,8 +34,8 @@ flowchart TD
   P6 --> P7
   P7 --> P8["8 Explanation/fallback"]
   P8 --> P9["9 Alerts/cases"]
-  P9 --> P10["10 APIs"]
-  P10 --> P11["11 Auth/provider scope"]
+  P9 --> P10["10 Auth/provider scope"]
+  P10 --> P11["11 APIs"]
   P11 --> P12["12 Agent UI"]
   P11 --> P13["13 Ops UI"]
   P11 --> P14["14 Risk UI"]

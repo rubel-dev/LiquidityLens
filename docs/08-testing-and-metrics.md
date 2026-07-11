@@ -18,3 +18,22 @@
 
 ## Required Difficult Tests
 Late data, missing data, stale data, conflicting balance, duplicate event, out-of-order transactions, invalid amount, zero activity, extreme demand, normal Eid spike, unauthorized cross-provider access, duplicate acknowledgement, concurrent assignment, LLM unavailable, malformed LLM output, reset/replay determinism.
+
+## Confidence Fusion Algorithm
+The MVP confidence score starts at `1.00` for a forecast/finding with complete valid input and subtracts data-quality and evidence deductions. It is clamped to `[0.00, 1.00]`.
+
+| Signal | Deduction |
+|---|---:|
+| Missing provider feed | 0.40 |
+| Stale provider feed older than 10 minutes | 0.20 |
+| Conflicting provider balance snapshots | 0.30 |
+| Duplicate or invalid records in active window | 0.10 |
+| Missing baseline for comparison | 0.15 |
+| LLM unavailable but deterministic template used | 0.00 |
+
+Display tiers:
+- HIGH: score >= 0.75
+- MEDIUM: 0.50 <= score < 0.75
+- LOW: score < 0.50
+
+If confidence is below `0.40`, UI and API responses must show `Insufficient data - no confident forecast` and must not create a high-confidence alert from that signal alone.

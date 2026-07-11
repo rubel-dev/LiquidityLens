@@ -64,3 +64,16 @@ Display tiers:
 - LOW: score < 0.50
 
 If confidence is below `0.40`, UI and API responses must show `Insufficient data - no confident forecast` and must not create a high-confidence alert from that signal alone.
+
+## Implemented Liquidity Forecasting Evidence
+The deterministic liquidity module has unit coverage for provider/shared-cash directionality, provider isolation, Decimal calculations, shortage risk tiers, missing balances, no activity, insufficient history, delayed/missing/conflicting feeds, low confidence, volatility, Eid context, timezone-aware shortage time, deterministic output, and safety boundaries. Neon PostgreSQL integration covers forecast/evidence/confidence/rule/audit persistence, shared-cash provider independence, canonical scenario inputs, unknown fallback, Eid context, transactional rollback, and measured persistence processing.
+
+Latest measured evidence on 2026-07-11:
+- Liquidity unit/metric tests: `19 passed`.
+- Neon PostgreSQL liquidity integration: `6 passed` in `247.33s`; tests use outer transaction rollback and do not downgrade or drop the Neon schema.
+- Combined liquidity closeout: `25 passed` in `133.79s` with `96.01%` module coverage.
+- Controlled synthetic constant-demand fixture forecast error: `0.0000 minutes`.
+- Controlled synthetic shortage detection lead time: `40.0000 minutes`.
+- Deterministic calculation latency over 250 runs: average `0.1401 ms`, p95 `0.3069 ms`.
+
+The accuracy fixture is intentionally controlled and synthetic; it demonstrates arithmetic correctness, not production calibration. Neon persistence timings include remote network and pooled-database latency and are not presented as local API latency.

@@ -11,7 +11,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 | 2 | Database schema and migrations | Verified locally |
 | 3 | Synthetic scenario engine | Implemented/Locally Verified |
 | 4 | Provider ingestion and validation | Implemented/Locally Verified |
-| 5 | Liquidity engine | Not started |
+| 5 | Liquidity engine | Implemented/Verified with unit and Neon PostgreSQL tests |
 | 6 | Anomaly engine | Not started |
 | 7 | Confidence and decision fusion | Not started |
 | 8 | Explanation service and fallback | Not started |
@@ -34,7 +34,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 - Product-code CI checks for backend, frontend, coverage, governance, Sonar scan, and Quality Gate.
 
 ## Explicitly Not Implemented
-Liquidity forecasting, anomaly detection services, confidence fusion services, explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until those APIs exist; frontend controls do not execute financial activity or persist backend state.
+Anomaly detection services, cross-engine confidence fusion, explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until those APIs exist; frontend controls do not execute financial activity or persist backend state.
 
 ## Frontend Demo Surface Status
 The role-based Next.js demo surface is implemented for agent, provider operations, field officer, risk reviewer, manager/judge, and demo operator views. It includes separate shared-cash/provider balances, deceptive-total visibility, provider runway, feed-quality degradation, safe multilingual explanation previews, evidence fingerprints, a local case-lifecycle preview, metrics/audit evidence, and run/replay/reset controls. Local frontend evidence: formatter, ESLint, TypeScript, seven Vitest interaction tests, coverage thresholds, and the optimized production build pass. Public feature API integration remains pending Phase 11.
@@ -51,3 +51,8 @@ Local evidence: backend Pytest from `backend/` passed with `39 passed` and `90.2
 Implemented internal provider adapter and validation service modules. The implementation includes canonical transaction, provider-balance, shared-cash, and feed-status schemas; provider-owned simulated adapters; validation categories; deterministic rule-based data-quality scoring; dispositions; trusted persistence for accepted records; evidence/audit persistence for warnings, rejections, quarantine, and feed-quality issues; true source-sequence gap detection; and idempotent duplicate transaction handling.
 
 Local evidence: required Git Bash closeout chain from `backend/` passed with Ruff format check, Ruff lint, strict MyPy, Pytest, and coverage XML generation. Backend Pytest passed with `70 passed` and `89.49%` coverage against local PostgreSQL `hacathon_db`. Validation-specific tests collected: `31`. Measured validation latency over 100 accepted ingestions averaged `12.376 ms`; p95 was `20.776 ms`. Governance, commit-traceability, and remote CI/Sonar evidence must be recorded after the closeout commit.
+
+## Liquidity Forecasting Status
+Implemented deterministic provider e-money and provider-independent shared-cash runway forecasting with Decimal arithmetic, rolling windows, bounded volatility adjustment, configurable horizons, Eid/salary context, confidence degradation, safe unknown fallbacks, explainable evidence, risk tiers, and atomic persistence across forecasts, evidence, confidence assessments, rule versions, and audit events. The module creates no alerts and performs no financial action.
+
+Local evidence includes 17 core unit/safety tests, 2 measured metric tests, and 6 Neon PostgreSQL integration tests. The combined liquidity closeout passed `25` tests with `96.01%` module coverage. Controlled synthetic evaluation measured `0.0000` minutes forecast error, `40.0000` minutes shortage lead time, and `0.1401 ms` average / `0.3069 ms` p95 deterministic calculation latency over 250 runs. Neon integration passed in `247.33s`; remote persistence latency is recorded separately from calculation latency.

@@ -7,7 +7,7 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | FR-001 | Shared cash separate from provider balances | PDF | overview/validation | Internal shared-cash ingestion implemented; /api/v1/agents/{agent_id}/overview planned | Agent/Ops overview planned | AC-001 | MET-006 | DEMO-001 | Implemented |
 | FR-002 | At least two providers, three where practical | PDF | scenario | /api/v1/providers planned | Overview | AC-001 | MET-006 | DEMO-001 | Approved |
 | FR-003 | Deceptive-total visualization | Challenger idea | frontend | /api/v1/agents/{agent_id}/overview planned | Agent overview | AC-002 | MET-006 | DEMO-001 | Approved |
-| FR-004 | Provider/shared runway clock | Challenger idea | liquidity | /api/v1/liquidity-forecasts planned | Overview/alerts | AC-003 | MET-001, MET-002 | DEMO-001 | Approved |
+| FR-004 | Provider/shared runway clock | Challenger idea | liquidity | Internal deterministic forecast service implemented; /api/v1/liquidity-forecasts planned | Contract-aligned fixture UI; API integration pending | Unit and Neon PostgreSQL forecast tests | MET-001, MET-002 | DEMO-001 | Implemented |
 | FR-005 | Primary anomaly pattern | Locked MVP | anomaly | /api/v1/anomaly-findings planned | Alert detail | AC-004 | MET-003, MET-004 | DEMO-001 | Approved |
 | FR-006 | Evidence fingerprint | Challenger idea | evidence | /api/v1/alerts/{alert_id} planned | Alert detail | AC-004 | MET-006 | DEMO-001 | Approved |
 | FR-007 | Important alert fields | PDF | alerts | /api/v1/alerts/{alert_id} planned | Alert detail | AC-007 | MET-006 | DEMO-001 | Approved |
@@ -18,8 +18,8 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | FR-012 | False-positive scenario | Challenger idea | scenarios | CLI implemented; /api/v1/scenarios planned | Demo planned | AC-009 | MET-005 | DEMO-001 | Implemented |
 | NFR-001 | Responsive demo interactions | PDF | platform | planned | All UI | AC-010 | MET-007 | DEMO-001 | Approved |
 | NFR-002 | Explainable/auditable alerts | PDF | alerts/audit | /api/v1/audit-events planned | Alert/case UI | AC-007 | MET-006, MET-009 | DEMO-001 | Approved |
-| NFR-003 | Bad data reduces confidence | PDF | validation/fusion | Internal validation service implemented; /api/v1/data-quality-statuses planned | Alerts planned | AC-006 | MET-008 | DEMO-001 | Implemented |
-| NFR-004 | Provider isolation | PDF | validation/auth | Internal provider-scoped validation implemented; all scoped APIs planned | all scoped UI planned | AC-011 | MET-012 | DEMO-001 | In Progress |
+| NFR-003 | Bad data reduces confidence | PDF | validation/liquidity/fusion | Internal validation and liquidity confidence degradation implemented; public APIs planned | Degraded-confidence fixture UI | Validation and liquidity fallback tests | MET-008 | DEMO-001 | Implemented |
+| NFR-004 | Provider isolation | PDF | validation/liquidity/auth | Internal provider-scoped validation and forecasting implemented; scoped APIs planned | role/scenario demo views implemented | provider isolation and PostgreSQL persistence tests | MET-012 | DEMO-001 | In Progress |
 | DATA-001 | Synthetic data only | PDF | scenario | CLI implemented; /api/v1/scenarios planned | n/a | AC-009 | MET-005 | DEMO-001 | Implemented |
 | DATA-002 | Synthetic non-phone-like IDs | Governance | scenario | CLI implemented; /api/v1/transactions planned | Evidence UI planned | AC-004 | MET-003 | DEMO-001 | Implemented |
 | DATA-003 | Shared cash is not provider feed | Governance | data model | CLI seed data implemented; /api/v1/agents/{agent_id}/cash-snapshots planned | Overview planned | AC-001 | MET-006 | DEMO-001 | Implemented |
@@ -31,8 +31,8 @@ Status values: Documented, Approved, In Progress, Implemented, Verified, Deferre
 | SAFE-001 | No real financial activity | PDF | all | no execution endpoint | no command UI | safety tests | MET-012 | DEMO-001 | Implemented |
 | SAFE-002 | No wrongdoing declaration | PDF | explanation | alerts planned | alert UI planned | safety tests | MET-006 | DEMO-001 | Implemented |
 | SAFE-003 | Advisory recommendations only | Governance | explanation | alerts planned | alert UI | safety validation planned | MET-006 | DEMO-001 | Approved |
-| MET-001 | Shortage detection lead time | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-001 | DEMO-001 | Approved |
-| MET-002 | Forecast error | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-002 | DEMO-001 | Approved |
+| MET-001 | Shortage detection lead time | Metrics | liquidity/metrics | Internal synthetic evaluation implemented; /api/v1/metrics planned | metrics fixture UI | controlled fixture measured 40.0000 min | MET-001 | DEMO-001 | Implemented |
+| MET-002 | Forecast error | Metrics | liquidity/metrics | Internal synthetic evaluation implemented; /api/v1/metrics planned | metrics fixture UI | controlled fixture measured 0.0000 min | MET-002 | DEMO-001 | Implemented |
 | MET-003 | Anomaly precision | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-003 | DEMO-001 | Approved |
 | MET-004 | Anomaly recall | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-004 | DEMO-001 | Approved |
 | MET-005 | False-positive rate | Metrics | metrics | /api/v1/metrics planned | metrics UI | AC-010 | MET-005 | DEMO-001 | Approved |

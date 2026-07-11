@@ -7,6 +7,7 @@ from pathlib import Path
 from scripts.validate_commit_traceability import (
     CommitRecord,
     commits_for_event,
+    is_legacy_sha,
     validate_records,
 )
 
@@ -70,6 +71,11 @@ class TraceabilityValidatorTests(unittest.TestCase):
             for path in (root / "prompts" / "history").glob("*"):
                 path.unlink()
             self.assertIn("missing prompt file", " ".join(validate_records(root, [CommitRecord("a", VALID_MESSAGE)])["a"]))
+
+
+    def test_legacy_short_sha_prefix_matches_full_sha(self):
+        full_sha = "c581dd4bfcc089cce785a40245e59761aa2bc3dd"
+        self.assertTrue(is_legacy_sha(full_sha, {"c581dd4"}))
 
     def test_merge_commit_handling(self):
         tmp, root = self.repo()

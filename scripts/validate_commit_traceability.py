@@ -80,8 +80,12 @@ def load_legacy_shas(repo: Path) -> set[str]:
     return legacy
 
 
+def is_legacy_sha(commit_sha: str, legacy_shas: set[str]) -> bool:
+    return any(commit_sha.startswith(legacy_sha) or legacy_sha.startswith(commit_sha) for legacy_sha in legacy_shas)
+
+
 def is_exempt(commit: CommitRecord, legacy_shas: set[str]) -> bool:
-    if commit.sha in legacy_shas:
+    if is_legacy_sha(commit.sha, legacy_shas):
         return True
     first_line = commit.message.splitlines()[0] if commit.message else ""
     if commit.parents > 1 and first_line.startswith("Merge "):

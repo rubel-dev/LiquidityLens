@@ -432,6 +432,7 @@ or
 - scripts/validate_prompt_records.py
 - tests/governance/* line-ending normalization
 - tests/governance/test_validate_prompt_records.py
+- tests/governance/test_validate_commit_traceability.py
 
 ## Checks Run
 - python scripts/validate_prompt_records.py: passed
@@ -442,6 +443,7 @@ or
 - YAML validation for .github/workflows/ci.yml: passed
 - git diff --check: passed
 - practical secret-value scan: passed
+- remote initial-push CI inspection: failed before fix because legacy short SHA prefixes were not matched against full SHAs
 
 ## Sonar Status
 Pending remote run.
@@ -450,4 +452,4 @@ Pending remote run.
 Local governance audit passed. Human review pending.
 
 ## Final Outcome
-Corrective governance cleanup prepared for one traceable commit without product implementation. Remote SonarQube and Quality Gate remain pending until the clean repository is pushed with required secrets configured.
+Corrective governance cleanup prepared and remote initial-push traceability issue identified for follow-up correction without product implementation. Remote SonarQube and Quality Gate remain pending until the clean repository passes traceability and required SonarQube secrets are configured.

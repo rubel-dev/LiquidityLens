@@ -28,7 +28,7 @@ The only allowed exemptions are:
 - legacy commits explicitly recorded in docs/commit-ledger.md.
 
 ## Legacy Pre-Enforcement Exceptions
-Recent shared history contains non-compliant commits such as `Delete prompts directory`, `Delete frontend directory`, `Delete scripts directory`, and older planning commits. These are recorded in docs/commit-ledger.md and must not be used as examples for future commits.
+Recent shared history contains non-compliant commits such as `Delete prompts directory`, `Delete frontend directory`, `Delete scripts directory`, and early problem-statement, summary, judge-strategy, and older planning commits. These are recorded in docs/commit-ledger.md and must not be used as examples for future commits.
 
 All commits after the governance-hardening commit are subject to mandatory enforcement.
 

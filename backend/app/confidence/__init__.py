@@ -1,1 +1,1 @@
-"""Confidence module boundary. Business logic is intentionally not implemented yet."""
+"""Deterministic confidence assessment and core-signal fusion."""

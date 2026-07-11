@@ -8,8 +8,8 @@
 | 3 | Synthetic scenario engine | Implemented |
 | 4 | Provider ingestion and validation | Implemented |
 | 5 | Liquidity engine | Implemented/Verified |
-| 6 | Anomaly engine | Not Started |
-| 7 | Confidence and decision fusion | Not Started |
+| 6 | Anomaly engine | Implemented/Verified |
+| 7 | Confidence and decision fusion | Implemented/Verified |
 | 8 | Explanation service and fallback | Not Started |
 | 9 | Alerts and cases | Not Started |
 | 10 | Authentication and provider-scope authorization | Not Started |

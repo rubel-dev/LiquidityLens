@@ -72,6 +72,9 @@ Default parameters:
 
 SCN-002 is the positive ground-truth fixture for MET-003 and MET-004. SCN-005 is the expected-demand false-positive fixture and must not automatically create a suspicious case.
 
+## Implemented Anomaly Rule Boundary
+The core intelligence module implements only `near_identical_cash_out_velocity` as a provider-scoped deterministic rule. It evaluates completed synthetic cash-outs within the configured rolling window, finds the largest amount cluster within the similarity tolerance, compares provider velocity with prior provider baseline activity, enforces the maximum synthetic group size, and emits all five evidence-fingerprint dimensions. Missing baseline and delayed/missing/conflicting feeds reduce confidence. A finding recommends human review only when evidence, severity, feed completeness, and confidence thresholds pass; it is never proof of wrongdoing and does not create an alert or case.
+
 ## Reset Scope
 Demo reset is scoped to a scenario run. It must never delete static reference data or rule versions.
 

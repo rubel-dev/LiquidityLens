@@ -77,3 +77,14 @@ Latest measured evidence on 2026-07-11:
 - Deterministic calculation latency over 250 runs: average `0.1401 ms`, p95 `0.3069 ms`.
 
 The accuracy fixture is intentionally controlled and synthetic; it demonstrates arithmetic correctness, not production calibration. Neon persistence timings include remote network and pooled-database latency and are not presented as local API latency.
+
+## Implemented Core Intelligence Evidence
+The anomaly module implements only `near_identical_cash_out_velocity`. Unit tests cover repeated/near-identical amounts, provider-scoped velocity, concentrated synthetic groups, baseline/time-window evidence, provider isolation, insufficient count, varied amounts, delayed/missing feeds, deterministic output, seasonal uncertainty, and the Eid broad-demand false-positive control. Confidence tests cover data-quality reduction, evidence coverage, weakest-signal capping, liquidity recommendations, review recommendations, and empty-signal fallback. Safety tests reject LLM, alert/API, unsafe financial-execution, and final fraud-declaration dependencies.
+
+Latest measured evidence on 2026-07-11:
+- New core-intelligence unit/metric/safety tests: `18 passed`.
+- Neon PostgreSQL core persistence/rollback tests: `4 passed` in `77.62s` using transaction rollback without schema downgrade.
+- Controlled anomaly fixtures: precision `1.0000`, recall `1.0000`, false-positive rate `0.0000` across four labelled fixtures.
+- Deterministic anomaly-plus-confidence calculation over 250 runs: average `0.1542 ms`, p95 `0.3454 ms`.
+
+The anomaly metrics use two positive and two negative controlled synthetic fixtures, including one broad Eid-demand case. They validate deterministic rule behavior but are not production calibration or evidence of real-world detection quality.

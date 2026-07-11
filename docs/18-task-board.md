@@ -9,8 +9,8 @@
 | 3 | Add deterministic synthetic scenarios | DATA-001,DATA-002,DATA-003,FR-002,FR-009,FR-012,NFR-003,NFR-004,SEC-001,SAFE-001,SAFE-002,SAFE-003,DEMO-002 | Done |
 | 4 | Add provider ingestion and validation | FR-001,FR-002,NFR-003,NFR-004,DATA-001,DATA-002,DATA-003,DB-001,SEC-001,SAFE-001,SAFE-002,SAFE-003 | Done |
 | 5 | Add liquidity runway engine | FR-004,NFR-003,NFR-004,MET-001,MET-002 | Done; unit, controlled synthetic metrics, and Neon PostgreSQL persistence verified |
-| 6 | Add primary anomaly engine | FR-005,FR-006 | Not Started |
-| 7 | Add confidence fusion | NFR-003 | Not Started |
+| 6 | Add primary anomaly engine | FR-005,FR-006,MET-003,MET-004,MET-005 | Done; unit metrics and Neon persistence verified |
+| 7 | Add confidence fusion | NFR-003,SAFE-002,SAFE-003 | Done; deterministic weakest-signal fusion and advisory recommendations verified |
 | 8 | Add explanation provider and fallback | FR-010,FR-011 | Not Started |
 | 9 | Add alerts and cases | FR-007,FR-008 | Not Started |
 | 10 | Add RBAC/provider-scope auth and AuthContext middleware contract | NFR-004 | Not Started |

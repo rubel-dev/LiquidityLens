@@ -12,8 +12,8 @@ Canonical design/governance repository is prepared. Repository foundation produc
 | 3 | Synthetic scenario engine | Implemented/Locally Verified |
 | 4 | Provider ingestion and validation | Implemented/Locally Verified |
 | 5 | Liquidity engine | Implemented/Verified with unit and Neon PostgreSQL tests |
-| 6 | Anomaly engine | Not started |
-| 7 | Confidence and decision fusion | Not started |
+| 6 | Anomaly engine | Implemented/Verified with unit and Neon PostgreSQL tests |
+| 7 | Confidence and decision fusion | Implemented/Verified |
 | 8 | Explanation service and fallback | Not started |
 | 9 | Alerts and cases | Not started |
 | 10 | Backend APIs | Not started |
@@ -34,7 +34,7 @@ Canonical design/governance repository is prepared. Repository foundation produc
 - Product-code CI checks for backend, frontend, coverage, governance, Sonar scan, and Quality Gate.
 
 ## Explicitly Not Implemented
-Anomaly detection services, cross-engine confidence fusion, explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until those APIs exist; frontend controls do not execute financial activity or persist backend state.
+Explanation services, alert services, case services, authentication, provider-scope authorization, public feature APIs, metrics endpoints, and production deployment remain not started. Frontend feature views use clearly labeled, contract-aligned synthetic fixtures until those APIs exist; frontend controls do not execute financial activity or persist backend state.
 
 ## Frontend Demo Surface Status
 The role-based Next.js demo surface is implemented for agent, provider operations, field officer, risk reviewer, manager/judge, and demo operator views. It includes separate shared-cash/provider balances, deceptive-total visibility, provider runway, feed-quality degradation, safe multilingual explanation previews, evidence fingerprints, a local case-lifecycle preview, metrics/audit evidence, and run/replay/reset controls. Local frontend evidence: formatter, ESLint, TypeScript, seven Vitest interaction tests, coverage thresholds, and the optimized production build pass. Public feature API integration remains pending Phase 11.
@@ -56,3 +56,8 @@ Local evidence: required Git Bash closeout chain from `backend/` passed with Ruf
 Implemented deterministic provider e-money and provider-independent shared-cash runway forecasting with Decimal arithmetic, rolling windows, bounded volatility adjustment, configurable horizons, Eid/salary context, confidence degradation, safe unknown fallbacks, explainable evidence, risk tiers, and atomic persistence across forecasts, evidence, confidence assessments, rule versions, and audit events. The module creates no alerts and performs no financial action.
 
 Local evidence includes 17 core unit/safety tests, 2 measured metric tests, and 6 Neon PostgreSQL integration tests. The combined liquidity closeout passed `25` tests with `96.01%` module coverage. Controlled synthetic evaluation measured `0.0000` minutes forecast error, `40.0000` minutes shortage lead time, and `0.1401 ms` average / `0.3069 ms` p95 deterministic calculation latency over 250 runs. Neon integration passed in `247.33s`; remote persistence latency is recorded separately from calculation latency.
+
+## Anomaly and Confidence Status
+Implemented the one approved provider-scoped anomaly rule with repeated-amount, velocity, concentration, time-window, and baseline evidence. Deterministic confidence assessment incorporates evidence coverage and feed-quality multipliers, then fuses liquidity and anomaly signals using a weakest-signal cap. Recommendations remain advisory and no alerts, cases, APIs, LLM decisions, or financial actions are created.
+
+Local evidence includes `18` new unit/metric/safety tests and `4` Neon PostgreSQL persistence/rollback tests. Controlled four-fixture evaluation measured precision `1.0000`, recall `1.0000`, false-positive rate `0.0000`, and deterministic anomaly-plus-confidence latency of `0.1542 ms` average / `0.3454 ms` p95 over 250 runs. These limited synthetic metrics are not production calibration.

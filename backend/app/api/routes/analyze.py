@@ -37,7 +37,7 @@ ACCESS = Depends(get_access_scope)
 _ACTIONABLE_RISK = {RiskLevel.CRITICAL, RiskLevel.WARNING, RiskLevel.WATCH}
 
 
-@router.post("/analyze/{run_ref}", response_model=AnalysisResponse, status_code=201)
+@router.post("/{run_ref}", response_model=AnalysisResponse, status_code=201)
 def analyze_run(
     run_ref: str,
     session: Session = SESSION,

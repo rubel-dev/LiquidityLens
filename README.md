@@ -41,7 +41,9 @@ Open `http://localhost:3000` in your browser.
 
 ## 🏗️ Architecture Diagram & Data Flow
 
-Our complete system architecture diagram (including main interfaces, backend, data flow, analytics services, provider boundaries, and alert coordination flow) is available in the root directory as **`architecture_diagram.tex`** (compile with `pdflatex` to generate the PDF). 
+Our complete system architecture diagram is shown below. It outlines main interfaces, backend services, data flow, analytics services, provider boundaries, and alert coordination workflows.
+
+![Architecture Diagram](./architecture_diagram.png)
 
 **Key Components:**
 1. **Frontend (Next.js / React):** A clean, industry-standard role-based dashboard. It visualizes separated provider balances, alert queues, and coordination workflows without implying unauthorized conversion between rails.

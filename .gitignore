@@ -1,6 +1,4 @@
 # Secrets
-.env
-.env.local
 .env.*.local
 
 # Python
@@ -50,7 +48,6 @@ junit.xml
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/
 *.swp
 *.swo
 
@@ -59,3 +56,4 @@ Thumbs.db
 logs/
 .tmp/
 tests/.tmp-governance/
+config.bat

@@ -439,12 +439,21 @@ function AlertWorkspace({
         <>
           <h3>Evidence fingerprint · live</h3>
           <div className="evidence-grid">
-            {liveAlert.evidence.slice(0, 5).map((item, idx) => (
-              <div className="evidence-item" key={idx}>
-                <span>{titleCase(item.evidence_type)}</span>
-                <strong>{JSON.stringify(item.payload).slice(0, 40)}</strong>
-              </div>
-            ))}
+            {liveAlert.evidence.slice(0, 5).map((item, idx) => {
+              const p = item.payload as Record<string, any>;
+              const display = p.label && p.value 
+                ? `${p.value}` 
+                : Object.entries(p).map(([k, v]) => `${k}: ${v}`).join(", ");
+              
+              return (
+                <div className="evidence-item" key={idx}>
+                  <span>{p.label ? p.label : titleCase(item.evidence_type)}</span>
+                  <strong title={display}>
+                    {display.length > 45 ? display.slice(0, 42) + "..." : display}
+                  </strong>
+                </div>
+              );
+            })}
           </div>
         </>
       )}
